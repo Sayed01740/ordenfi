@@ -1,11 +1,11 @@
-# AGFusion — Notes for Arc / Arc House reviewers
+# OrdenFi — Notes for Arc / Arc House reviewers
 
 ## One-liner
 
-**AGFusion is the AI-native command layer for stablecoin finance on Arc:** natural language → fee estimate → confirm → live wallet signature (Circle App Kit bridge/swap + native Arc USDC send).
+**OrdenFi is the AI-native command layer for stablecoin finance on Arc:** natural language → fee estimate → confirm → live wallet signature (Circle App Kit bridge/swap + native Arc USDC send).
 
-**Live demo:** https://agfusion.vercel.app  
-**Documentation:** https://agfusion.vercel.app/docs  
+**Live demo:** https://ordenfi.vercel.app  
+**Documentation:** https://ordenfi.vercel.app/docs  
 **X:** https://x.com/AGfusion_
 
 ## Honest model (live-only)
@@ -34,11 +34,11 @@ Every transaction records `executionMode: "live"`. Demo money paths are disabled
 | Explorer | https://testnet.arcscan.app |
 | Faucet | https://faucet.circle.com |
 
-Health: https://agfusion.vercel.app/api/rpc?chain=arc → `ok: true`
+Health: https://ordenfi.vercel.app/api/rpc?chain=arc → `ok: true`
 
 ## 10-minute review path (recommended)
 
-1. Open https://agfusion.vercel.app/dashboard  
+1. Open https://ordenfi.vercel.app/dashboard  
 2. **Connect** Rabby → **Arc Testnet**  
 3. Fund test USDC: https://faucet.circle.com  
 4. **Payment Engine**: amount `0.05`, recipient = **a 0x you control** → Confirm → ArcScan  
@@ -52,7 +52,7 @@ Health: https://agfusion.vercel.app/api/rpc?chain=arc → `ok: true`
 ## Product thesis (for Arc)
 
 Users should think in **intents** (“bridge 5 USDC Arc → Base”), not in six dapps.  
-Arc’s infrastructure (USDC gas, CCTP, App Kit, agentic economy) makes that possible; AGFusion is the **AI OS UX** on top, with **confirm-before-execute**.
+Arc’s infrastructure (USDC gas, CCTP, App Kit, agentic economy) makes that possible; OrdenFi is the **AI OS UX** on top, with **confirm-before-execute**.
 
 ## Security
 
@@ -64,7 +64,7 @@ Arc’s infrastructure (USDC gas, CCTP, App Kit, agentic economy) makes that pos
 
 ## Contact
 
-- Site: https://agfusion.vercel.app  
-- Documentation: https://agfusion.vercel.app/docs  
+- Site: https://ordenfi.vercel.app  
+- Documentation: https://ordenfi.vercel.app/docs  
 - X: https://x.com/AGfusion_  
 - Architecture: `docs/ARCHITECTURE.md`

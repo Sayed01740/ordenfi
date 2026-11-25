@@ -1,8 +1,8 @@
-# AGFusion — On-chain contracts & project identity (Arc Testnet)
+# OrdenFi — On-chain contracts & project identity (Arc Testnet)
 
 ## Important honesty
 
-**AGFusion does not currently deploy its own app-specific Solidity contracts.**  
+**OrdenFi does not currently deploy its own app-specific Solidity contracts.**  
 It is a **live app** that uses **Arc + Circle official contracts** (USDC, EURC, CCTP, App Kit bridge adapter, ERC-8004 registries).
 
 Your **project blockchain identity** is:

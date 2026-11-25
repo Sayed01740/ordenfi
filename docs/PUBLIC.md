@@ -1,8 +1,8 @@
-# AGFusion — public access
+# OrdenFi — public access
 
 ## Permanent public URL
 
-**https://agfusion.vercel.app**
+**https://ordenfi.vercel.app**
 
 - Hosted on Vercel (production)
 - Project: `sayeds-projects-e086c1e7/agfusion`
@@ -12,7 +12,7 @@ Dashboard: https://vercel.com/sayeds-projects-e086c1e7/agfusion
 
 ### For Arc reviewers
 
-1. Open https://agfusion.vercel.app  
+1. Open https://ordenfi.vercel.app  
 2. Connect wallet → Arc Testnet (`5042002`)  
 3. Fund test USDC: https://faucet.circle.com  
 4. Workspace → Send / transfer / agent  
@@ -22,7 +22,7 @@ Dashboard: https://vercel.com/sayeds-projects-e086c1e7/agfusion
 ## Redeploy
 
 ```bash
-cd agfusion
+cd ordenfi
 vercel --yes --prod
 ```
 

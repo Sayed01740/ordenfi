@@ -1,4 +1,4 @@
-# AGFusion — Staging & production deploy checklist
+# OrdenFi — Staging & production deploy checklist
 
 ## Environments
 

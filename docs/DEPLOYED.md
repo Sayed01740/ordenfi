@@ -1,4 +1,4 @@
-# AGFusion — Deployed on Arc Testnet
+# OrdenFi — Deployed on Arc Testnet
 
 ## Custom contract (yours)
 

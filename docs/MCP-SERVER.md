@@ -1,6 +1,6 @@
-# AGFusion MCP Server — Arc Network AI Integration
+# OrdenFi MCP Server — Arc Network AI Integration
 
-The **AGFusion MCP Server** implements the open [Model Context Protocol (MCP)](https://modelcontextprotocol.io) to allow AI coding assistants and autonomous agents (such as Claude Desktop, Cursor, Antigravity, and custom LLM loops) to interact directly with **Arc Network** (Chain ID: `5042002`).
+The **OrdenFi MCP Server** implements the open [Model Context Protocol (MCP)](https://modelcontextprotocol.io) to allow AI coding assistants and autonomous agents (such as Claude Desktop, Cursor, Antigravity, and custom LLM loops) to interact directly with **Arc Network** (Chain ID: `5042002`).
 
 ---
 

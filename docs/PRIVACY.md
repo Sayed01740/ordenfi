@@ -1,4 +1,4 @@
-# AGFusion — privacy & exposure controls
+# OrdenFi — privacy & exposure controls
 
 ## What is public vs private
 

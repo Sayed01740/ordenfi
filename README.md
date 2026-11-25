@@ -1,10 +1,11 @@
 # OrdenFi
 
-OrdenFi is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails. Deployed contracts are verified under the OrdenFi namespace on Arc Mainnet, with full backwards compatibility for existing configurations and browser storage identifiers. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
+OrdenFi is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively built for **Arc Network** (**Arc Mainnet** `5042` and **Arc Testnet** `5042002`). It unites multi-chain liquidity, cross-chain CCTP v2 settlement, Uniswap V3 swaps, single-signature batch disbursements, and AI-assisted treasury planning under strict, wallet-confirmed policy guardrails. Deployed contracts are verified under the OrdenFi namespace on Arc Mainnet, with full backwards compatibility for existing configurations and browser storage identifiers. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
 
-* **Live Application:** [https://ordenfi.vercel.app](https://ordenfi.vercel.app)
-* **Interactive Docs:** [https://ordenfi.vercel.app/docs](https://ordenfi.vercel.app/docs)
+* **Live Application:** [https://ordenfi.xyz](https://ordenfi.xyz)
+* **Interactive Docs:** [https://ordenfi.xyz/docs](https://ordenfi.xyz/docs)
 * **Mainnet Block Explorer:** [https://explorer.arc.io](https://explorer.arc.io)
+* **Testnet Block Explorer:** [https://testnet.arcscan.app](https://testnet.arcscan.app)
 
 ---
 
@@ -54,10 +55,14 @@ Arc Network utilizes USDC as its native gas currency (18 decimals in the EVM exe
 * **Connected Networks:** Bidirectional transfers between Arc Mainnet, Ethereum, Arbitrum, Base, Optimism, and Avalanche.
 * **Automated Iris Attestation Tracking:** Real-time polling and verification against Circle's off-chain Iris attestation service.
 
-### 4. Smart Contract Treasury Protocols
+### 4. Smart Contract Treasury Protocols & Single-Signature Batch Payments
+* **Single-Signature Batch Disperse (`OrdenFiDisperse`):** Pay up to **200 recipients in 1 wallet signature** directly from the workspace **Batch Payments** panel (`BatchPayrollCard`). Supports both **Arc Mainnet** and **Arc Testnet** with automatic per-network contract resolution, on-chain bytecode verification before approval, and seamless sequential fallback—reducing gas overhead by up to $65\%$.
 * **Conditional Escrow (`OrdenFiEscrow`):** Trust-minimized milestone payouts with configurable arbitrator dispute resolution, 50 bps protocol fees, and emergency recovery timelocks.
-* **Batch Disperse (`OrdenFiDisperse`):** Single-transaction mass distribution of native and ERC-20 stablecoins, reducing network gas overhead by up to $65\%$.
 * **On-Chain Agent Registry (`OrdenFiRegistry`):** EIP-712 compatible agent identity registration and decentralized metadata anchors.
+
+### 5. Kona AI — Network-Aware Execution Assistant
+* **Intelligent Network Detection:** Automatically detects the active workspace network (**Arc Mainnet** vs **Arc Testnet**) and connected wallet chain, dynamically adapting greetings, quick suggestions, fee/route estimates, and LLM system prompts in real time.
+* **Human-in-the-Loop Guardrails:** Plans swaps, transfers, and cross-chain bridges in plain English, always requiring explicit UI confirmation and a local wallet signature before any funds move.
 
 ---
 
@@ -129,6 +134,8 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
    NEXT_PUBLIC_ORDENFI_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
    NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
    NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
+   # Optional: Arc Testnet Disperse address for 1-signature Testnet batches
+   NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS=""
    ```
 
 4. **Initialize Database & Run Development Server:**

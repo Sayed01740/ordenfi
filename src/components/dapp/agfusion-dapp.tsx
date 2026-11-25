@@ -147,7 +147,7 @@ export function AGFusionDapp() {
       {/* Footer links */}
       <div className="relative mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[12px] text-slate-500">
         <Link href="/welcome" className="transition-colors hover:text-slate-300">
-          About AGFusion
+          About OrdenFi
         </Link>
         <span className="text-slate-700">·</span>
         <Link href="/docs" className="transition-colors hover:text-emerald-400 font-semibold">

@@ -31,9 +31,9 @@ export async function GET(request: Request) {
     {
       x402Version: 2,
       gateway: "circle-nanopayments",
-      provider: "AGFusion",
+      provider: "OrdenFi",
       service: {
-        name: "AGFusion Arc Route & Liquidity Oracle",
+        name: "OrdenFi Arc Route & Liquidity Oracle",
         category: "defi-infrastructure",
         endpoint: "/api/x402/gateway",
         method: "GET",

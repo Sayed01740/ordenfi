@@ -286,7 +286,7 @@ export function WalletModal({
             </div>
             <ul className="list-disc pl-4 space-y-0.5">
               <li>
-                Connecting only reveals your public address. AGFusion never asks
+                Connecting only reveals your public address. OrdenFi never asks
                 for your seed phrase.
               </li>
               <li>

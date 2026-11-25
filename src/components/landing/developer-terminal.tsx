@@ -8,11 +8,11 @@ const SNIPPETS = {
   sdk: {
     language: "typescript",
     filename: "agent-runner.ts",
-    code: `import { createAGFusionClient } from "@agfusion/sdk";
-import { arcTestnet } from "@agfusion/chains";
+    code: `import { createOrdenFiClient } from "@ordenfi/sdk";
+import { arcTestnet } from "@ordenfi/chains";
 
 // 1. Initialize non-custodial autonomous operator
-const client = await createAGFusionClient({
+const client = await createOrdenFiClient({
   network: arcTestnet,
   accountMode: "erc4337", // ZeroDev / Circle Programmable Wallet
 });
@@ -43,11 +43,11 @@ curl -X POST /api/ai/agent \\
   },
   solidity: {
     language: "solidity",
-    filename: "IAGFusionReceiver.sol",
+    filename: "IOrdenFiReceiver.sol",
     code: `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-interface IAGFusionIntentReceiver {
+interface IOrdenFiIntentReceiver {
     event IntentSettled(bytes32 indexed intentHash, address indexed user, uint256 volume);
 
     /// @notice Callback triggered when an AI agent executes on-chain settlement

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type BrandLogoProps = {
-  /** icon = compact fusion mark; full = master AGFusion lockup */
+  /** icon = compact fusion mark; full = master OrdenFi lockup */
   variant?: "icon" | "full";
   className?: string;
   height?: number;
@@ -15,13 +15,13 @@ export function BrandLogo({
   height = 36,
   priority = false,
 }: BrandLogoProps) {
-  const src = variant === "full" ? "/brand/agfusion-main.svg" : "/brand/agfusion-mark.svg";
+  const src = variant === "full" ? "/brand/ordenfi-main.svg" : "/brand/ordenfi-mark.svg";
   const width = variant === "full" ? Math.round(height * 1.67) : height;
 
   return (
     <Image
       src={src}
-      alt="AGFusion"
+      alt="OrdenFi"
       width={width}
       height={height}
       priority={priority}

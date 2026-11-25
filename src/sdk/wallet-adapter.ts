@@ -241,7 +241,7 @@ const MANUAL_FIX = `Delete the old network in your wallet, then re-add:
    • Chain ID: ${ARC_NETWORK_MANUAL.chainId}  (hex ${ARC_NETWORK_MANUAL.chainIdHex})
    • Currency: ${ARC_NETWORK_MANUAL.currencySymbol}
    • Explorer: ${ARC_NETWORK_MANUAL.explorerUrl}
-3. Click Connect again in AGFusion`;
+3. Click Connect again in OrdenFi`;
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));

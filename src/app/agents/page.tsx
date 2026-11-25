@@ -55,7 +55,7 @@ export default function AgentsPage() {
 
   /**
    * Live ERC-8004: IdentityRegistry.register(metadataURI) on Arc Testnet.
-   * Uses AGFusion public metadata; works for any agent card as the project agent.
+   * Uses OrdenFi public metadata; works for any agent card as the project agent.
    */
   async function register8004(agent: AgentProfile) {
     if (registering) return;
@@ -79,11 +79,11 @@ export default function AgentsPage() {
         list.map((a) =>
           a.id === agent.id
             ? {
-                ...a,
-                erc8004Id: idLabel,
-                reputation: Math.min(99, a.reputation + 2),
-                status: "active" as const,
-              }
+              ...a,
+              erc8004Id: idLabel,
+              reputation: Math.min(99, a.reputation + 2),
+              status: "active" as const,
+            }
             : a,
         ),
       );
@@ -167,18 +167,18 @@ export default function AgentsPage() {
       const fee = quoteSendFee("1");
       const tx = isEscrowConfigured()
         ? await runCreateEscrowTask({
-            agentAddress: payTo as Address,
-            amount: "1",
-            taskTitle: `${agent.name} Milestone Escrow`,
-          })
+          agentAddress: payTo as Address,
+          amount: "1",
+          taskTitle: `${agent.name} Milestone Escrow`,
+        })
         : await executeSend({
-            amount: "1",
-            token: "USDC",
-            chain: "Arc_Testnet",
-            recipient: payTo,
-            recipientLabel: `${agent.name} escrow payout`,
-            preferLive: true,
-          });
+          amount: "1",
+          token: "USDC",
+          chain: "Arc_Testnet",
+          recipient: payTo,
+          recipientLabel: `${agent.name} escrow payout`,
+          preferLive: true,
+        });
       addTransaction({
         ...tx,
         feeUsd: fee.totalUsdc,
@@ -193,11 +193,11 @@ export default function AgentsPage() {
         list.map((a) =>
           a.id === agent.id
             ? {
-                ...a,
-                actions24h: a.actions24h + 1,
-                status: "active" as const,
-                reputation: Math.min(99, a.reputation + 0.5),
-              }
+              ...a,
+              actions24h: a.actions24h + 1,
+              status: "active" as const,
+              reputation: Math.min(99, a.reputation + 0.5),
+            }
             : a,
         ),
       );
@@ -244,10 +244,10 @@ export default function AgentsPage() {
         list.map((a) =>
           a.id === agent.id
             ? {
-                ...a,
-                actions24h: a.actions24h + 1,
-                status: "active" as const,
-              }
+              ...a,
+              actions24h: a.actions24h + 1,
+              status: "active" as const,
+            }
             : a,
         ),
       );
@@ -309,7 +309,7 @@ export default function AgentsPage() {
               ) : (
                 <Fingerprint className="h-3.5 w-3.5" />
               )}
-              Register AGFusion (ERC-8004)
+              Register OrdenFi (ERC-8004)
             </Button>
           </div>
         </div>
@@ -439,13 +439,12 @@ export default function AgentsPage() {
 
                 {jobLog[agent.id] && (
                   <p
-                    className={`text-xs ${
-                      jobLog[agent.id].startsWith("✓")
+                    className={`text-xs ${jobLog[agent.id].startsWith("✓")
                         ? "text-emerald-400"
                         : jobLog[agent.id].startsWith("✗")
                           ? "text-red-400"
                           : "text-cyan-300/90"
-                    }`}
+                      }`}
                   >
                     {jobLog[agent.id]}
                   </p>

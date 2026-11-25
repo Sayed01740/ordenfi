@@ -1,6 +1,6 @@
-# AGFusion custom contracts (Arc Testnet)
+# OrdenFi custom contracts (Arc Testnet)
 
-This folder contains **AGFusion’s own Solidity** — separate from Circle USDC / CCTP / App Kit contracts.
+This folder contains **OrdenFi’s own Solidity** — separate from Circle USDC / CCTP / App Kit contracts.
 
 ## Contract
 

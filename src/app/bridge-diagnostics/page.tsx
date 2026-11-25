@@ -33,7 +33,7 @@ export default function BridgeDiagnosticsPage() {
   const exportAll = () => {
     const payload = { diagnosticVersion: 5, exportedAt: new Date().toISOString(), storage, eventCount: events.length, sessions: [...new Set(serverEvents.map((e) => e.sessionId))], events };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `agfusion-bridge-diagnostics-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `ordenfi-bridge-diagnostics-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (
@@ -41,7 +41,7 @@ export default function BridgeDiagnosticsPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">AGFusion</p><h1 className="mt-2 text-2xl font-bold">Bridge Diagnostics</h1><p className="mt-1 text-sm text-slate-400">Full bridge execution trace from wallet RPC through Circle SDK and destination settlement.</p></div>
+            <div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">OrdenFi</p><h1 className="mt-2 text-2xl font-bold">Bridge Diagnostics</h1><p className="mt-1 text-sm text-slate-400">Full bridge execution trace from wallet RPC through Circle SDK and destination settlement.</p></div>
             <div className="flex flex-wrap gap-2"><button onClick={() => void refresh()} className="rounded-lg border border-slate-700 px-4 py-2 text-sm">Refresh</button><button onClick={exportAll} className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950">Export server data</button><button onClick={downloadBridgeDebugLog} className="rounded-lg border border-slate-700 px-4 py-2 text-sm">Export browser data</button><button onClick={() => { clearBridgeDebugEvents(); setLocalEvents([]); }} className="rounded-lg border border-red-900 px-4 py-2 text-sm text-red-300">Clear browser</button></div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs"><span className={`rounded-full px-3 py-1 ${storage === "database" ? "bg-emerald-950 text-emerald-300" : "bg-amber-950 text-amber-300"}`}>Server storage: {storage}</span><span className="rounded-full bg-slate-800 px-3 py-1">Chains: {chains.join(", ") || "none yet"}</span><span className="rounded-full bg-slate-800 px-3 py-1">Sessions: {new Set(serverEvents.map((e) => e.sessionId)).size}</span></div>

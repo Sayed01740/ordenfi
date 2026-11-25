@@ -111,7 +111,7 @@ export function ReviewerPathCard() {
             href="/docs"
             className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold"
           >
-            AGFusion Docs <ExternalLink className="h-3 w-3" />
+            OrdenFi Docs <ExternalLink className="h-3 w-3" />
           </Link>
         </div>
       </CardContent>

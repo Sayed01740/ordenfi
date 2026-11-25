@@ -15,7 +15,7 @@ export default function NotFound() {
           Page not found
         </h1>
         <p className="mt-2 text-sm text-slate-400">
-          The route you requested does not exist in AGFusion.
+          The route you requested does not exist in OrdenFi.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Link

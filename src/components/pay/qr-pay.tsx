@@ -23,7 +23,7 @@ export function QrPayCard({ embedded = false }: { embedded?: boolean }) {
     executionMode,
   } = usePilotStore();
   const [amount, setAmount] = useState("10");
-  const [memo, setMemo] = useState("AGFusion pay");
+  const [memo, setMemo] = useState("OrdenFi pay");
   const [payTo, setPayTo] = useState("");
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -38,7 +38,7 @@ export function QrPayCard({ embedded = false }: { embedded?: boolean }) {
     const base =
       typeof window !== "undefined"
         ? window.location.origin
-        : "https://agfusion.vercel.app";
+        : "https://ordenfi.vercel.app";
     const q = new URLSearchParams({
       amount,
       token: "USDC",

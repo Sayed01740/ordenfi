@@ -44,7 +44,7 @@ export function BatchCard({ connected }: { connected: boolean }) {
   const transactions = usePilotStore((s) => s.transactions);
 
   const bal = useArcBalance(token);
-  const singleSig = isDisperseConfigured();
+  const singleSig = isDisperseConfigured(meta.isMainnet);
 
   const filled = rows.filter((r) => r.address.trim() || r.amount.trim());
   const total = filled.reduce((sum, r) => {

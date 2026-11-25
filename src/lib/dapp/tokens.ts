@@ -97,22 +97,35 @@ export function getToken(symbol: string, isMainnet: boolean = IS_ARC_MAINNET): A
 }
 
 /**
- * OrdenFiDisperse batch-send contract address. Populated after the user
- * deploys contracts/src/OrdenFiDisperse.sol and sets the env var. Empty until
- * then — the Batch panel falls back to sequential sends automatically.
+ * OrdenFiDisperse batch-send contract addresses per Arc network.
+ * Mainnet defaults to the deployed OrdenFiDisperse contract; Testnet uses
+ * NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS (or falls back to sequential sends).
  */
-export const DISPERSE_ADDRESS = (
+export const MAINNET_DISPERSE_ADDRESS = (
+  process.env.NEXT_PUBLIC_ORDENFI_MAINNET_DISPERSE_ADDRESS ||
   process.env.NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS ||
   process.env.NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS ||
+  "0x376323cCE5233C0C20339BBeeCFEB838602B5578"
+).trim();
+
+export const TESTNET_DISPERSE_ADDRESS = (
+  process.env.NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS ||
+  process.env.NEXT_PUBLIC_AGFUSION_TESTNET_DISPERSE_ADDRESS ||
   ""
 ).trim();
+
+export const DISPERSE_ADDRESS = MAINNET_DISPERSE_ADDRESS;
+
+export function getDisperseAddress(isMainnet: boolean = IS_ARC_MAINNET): string {
+  return isMainnet ? MAINNET_DISPERSE_ADDRESS : TESTNET_DISPERSE_ADDRESS;
+}
 
 export function isAddress(value: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(value.trim());
 }
 
-export function isDisperseConfigured(): boolean {
-  return isAddress(DISPERSE_ADDRESS);
+export function isDisperseConfigured(isMainnet: boolean = IS_ARC_MAINNET): boolean {
+  return isAddress(getDisperseAddress(isMainnet));
 }
 
 /** Bridge routes offered in the UI (Circle CCTP pairs). */

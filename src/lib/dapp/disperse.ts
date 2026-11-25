@@ -19,7 +19,7 @@ import {
 import { explorerTxUrl, getArcNetworkMeta } from "@/lib/arc-chain";
 import { arcPublicClient, encodeApprove, readAllowance } from "@/lib/dapp/erc20";
 import {
-  DISPERSE_ADDRESS,
+  getDisperseAddress,
   isAddress,
   isDisperseConfigured,
   type ArcToken,
@@ -110,27 +110,29 @@ export async function runBatchDisperse(params: {
   rows: BatchRow[];
   onStep?: (steps: TxStep[]) => void;
   provider?: InjectedProvider;
+  expectedChainId?: 5042 | 5042002;
 }): Promise<TransactionRecord> {
   if (typeof window === "undefined") {
     throw new Error("Batch send must run in the browser with your connected wallet.");
   }
-  if (!isDisperseConfigured()) {
-    throw new Error(
-      "Disperse contract not configured. Set NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS (or NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS).",
-    );
-  }
 
-  const spender = DISPERSE_ADDRESS as Address;
   const { recipients, values, total, totalDisplay } = validateBatch(params.rows, params.token);
 
   const id = uid("tx");
 
-  // ── Detect network early so we can label steps correctly ──────────────────
+  // ── Detect network early so we can resolve the network-specific Disperse contract ──
   const provider = params.provider || (await getInjectedProvider());
   const detectedChainId = await getChainId(provider);
-  const meta = getArcNetworkMeta(detectedChainId);
+  const meta = getArcNetworkMeta(params.expectedChainId ?? detectedChainId);
   const networkLabel = meta.isMainnet ? "Arc Mainnet" : "Arc Testnet";
   const activeChain: "Arc" | "Arc_Testnet" = meta.isMainnet ? "Arc" : "Arc_Testnet";
+
+  if (!isDisperseConfigured(meta.isMainnet)) {
+    throw new Error(
+      `Disperse contract is not configured for ${networkLabel}.`,
+    );
+  }
+  const spender = getDisperseAddress(meta.isMainnet) as Address;
 
   const steps: TxStep[] = [
     { name: "Connect wallet", state: "active" },
@@ -155,6 +157,10 @@ export async function runBatchDisperse(params: {
   emit();
 
   const publicClient = arcPublicClient(meta.isMainnet);
+  const contractCode = await publicClient.getCode({ address: spender }).catch(() => undefined);
+  if (!contractCode || contractCode === "0x") {
+    throw new Error(`OrdenFiDisperse contract is not deployed on ${networkLabel} (${spender}).`);
+  }
 
   // --- Step 1: approval (only when the current allowance is insufficient) ---
   let approvalTxHash: `0x${string}` | undefined;

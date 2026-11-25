@@ -11,6 +11,8 @@ import { BATCH_RECIPIENT_LIMIT, buildBatchReportCsv, buildUnsentCsv, isBlankBatc
 import { explorerTxUrl } from "@/lib/arc-chain";
 import { quotePayrollBatchFee } from "@/lib/fees";
 import { executeSend } from "@/lib/client-actions";
+import { runBatchDisperse } from "@/lib/dapp/disperse";
+import { getToken, isDisperseConfigured } from "@/lib/dapp/tokens";
 import { paymentChain, runPaymentBatch, type PaymentChain } from "@/lib/payment-tools";
 import { isValidTxHash } from "@/lib/tx-verify";
 import { useWallet } from "@/providers/wallet-provider";
@@ -124,42 +126,100 @@ export function BatchPayrollCard() {
     };
 
     try {
-      const result = await runPaymentBatch(plan.rows, async (row, index) => {
-        checkBeforePayment();
-        const provider = await getInjectedProvider();
-        const [accounts, activeChain] = await Promise.all([
-          provider.request({ method: "eth_accounts" }) as Promise<string[]>,
-          getChainId(provider),
-        ]);
-        checkBeforePayment();
-        if (accounts?.[0]?.toLowerCase() !== plan.wallet.toLowerCase() || activeChain !== CHAIN_ID[plan.chain]) {
-          throw new Error("The active wallet account or network changed. The remaining payments are unsent.");
-        }
-        setOutcome(index, { status: "awaiting_wallet" });
+      const isMainnet = plan.chain === "Arc_Mainnet";
+      let usedSingleSig = false;
+
+      if (plan.rows.length > 1 && isDisperseConfigured(isMainnet)) {
         try {
-          const tx = await executeSend({
-            amount: row.amountUsdc,
-            token: "USDC",
-            chain: plan.chain,
-            recipient: row.address,
-            recipientLabel: `${plan.label} · ${row.label || `Recipient ${index + 1}`}`,
-            preferLive: true,
-            fromAddress: plan.wallet,
+          checkBeforePayment();
+          const provider = await getInjectedProvider();
+          const [accounts, activeChain] = await Promise.all([
+            provider.request({ method: "eth_accounts" }) as Promise<string[]>,
+            getChainId(provider),
+          ]);
+          checkBeforePayment();
+          if (accounts?.[0]?.toLowerCase() !== plan.wallet.toLowerCase() || activeChain !== CHAIN_ID[plan.chain]) {
+            throw new Error("The active wallet account or network changed. The remaining payments are unsent.");
+          }
+          setOutcomes(plan.rows.map(() => ({ status: "awaiting_wallet" })));
+          const tx = await runBatchDisperse({
+            token: getToken("USDC", isMainnet),
+            rows: plan.rows.map((row) => ({
+              label: row.label,
+              address: row.address,
+              amount: row.amountUsdc,
+            })),
+            provider,
+            expectedChainId: CHAIN_ID[plan.chain],
           });
-          setOutcome(index, {
-            status: tx.status === "success" ? "confirmed" : tx.status === "error" ? "failed" : "needs_review",
-            hash: tx.txHash,
-            detail: tx.message,
-          });
+          usedSingleSig = true;
+          const mappedStatus: BatchOutcome["status"] =
+            tx.status === "success" ? "confirmed" : tx.status === "error" ? "failed" : "needs_review";
+          setOutcomes(
+            plan.rows.map(() => ({
+              status: mappedStatus,
+              hash: tx.txHash,
+              detail: tx.message,
+            })),
+          );
           store.addTransaction(tx);
           store.setActiveTx(tx.id);
-          return tx;
-        } catch (error) {
-          setOutcome(index, { status: "needs_review", detail: error instanceof Error ? error.message : "Check your wallet activity." });
-          throw error;
+          store.refreshBalances();
+          setNotice(
+            tx.status === "success"
+              ? `All ${plan.rows.length} payments confirmed in 1 signature.`
+              : tx.message || "Batch transaction did not confirm.",
+          );
+        } catch (disperseErr) {
+          const msg = disperseErr instanceof Error ? disperseErr.message : String(disperseErr);
+          // Fall back to sequential sends only if Disperse isn't deployed/configured on this chain yet.
+          if (!/not deployed on|not configured/i.test(msg)) {
+            usedSingleSig = true;
+            setOutcomes(plan.rows.map(() => ({ status: "queued", detail: msg })));
+            setNotice(msg);
+          }
         }
-      });
-      setNotice(result.complete ? "All payments confirmed." : result.error ?? "Batch stopped.");
+      }
+
+      if (!usedSingleSig) {
+        const result = await runPaymentBatch(plan.rows, async (row, index) => {
+          checkBeforePayment();
+          const provider = await getInjectedProvider();
+          const [accounts, activeChain] = await Promise.all([
+            provider.request({ method: "eth_accounts" }) as Promise<string[]>,
+            getChainId(provider),
+          ]);
+          checkBeforePayment();
+          if (accounts?.[0]?.toLowerCase() !== plan.wallet.toLowerCase() || activeChain !== CHAIN_ID[plan.chain]) {
+            throw new Error("The active wallet account or network changed. The remaining payments are unsent.");
+          }
+          setOutcome(index, { status: "awaiting_wallet" });
+          try {
+            const tx = await executeSend({
+              amount: row.amountUsdc,
+              token: "USDC",
+              chain: plan.chain,
+              recipient: row.address,
+              recipientLabel: `${plan.label} · ${row.label || `Recipient ${index + 1}`}`,
+              preferLive: true,
+              fromAddress: plan.wallet,
+            });
+            setOutcome(index, {
+              status: tx.status === "success" ? "confirmed" : tx.status === "error" ? "failed" : "needs_review",
+              hash: tx.txHash,
+              detail: tx.message,
+            });
+            store.addTransaction(tx);
+            store.setActiveTx(tx.id);
+            return tx;
+          } catch (error) {
+            setOutcome(index, { status: "needs_review", detail: error instanceof Error ? error.message : "Check your wallet activity." });
+            throw error;
+          }
+        });
+        store.refreshBalances();
+        setNotice(result.complete ? "All payments confirmed." : result.error ?? "Batch stopped.");
+      }
     } finally {
       setBusy(false);
       store.setThinking(false);
@@ -319,11 +379,17 @@ export function BatchPayrollCard() {
         </div>
       </div>
       <ModalDialog open={reviewOpen} onDismiss={closeReview} labelledBy={reviewId} initialFocusRef={reviewHeading}>
-        {plan && (
+        {plan && (() => {
+          const planSingleSig = plan.rows.length > 1 && isDisperseConfigured(plan.chain === "Arc_Mainnet");
+          return (
           <div className="w-full max-w-lg space-y-4 rounded-2xl border border-border bg-card p-4 shadow-2xl sm:p-5">
             <div>
               <h2 id={reviewId} ref={reviewHeading} tabIndex={-1} className="text-lg font-semibold">Review batch payments</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Confirm each transfer in your wallet. The batch stops if a transfer fails or remains unconfirmed.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {planSingleSig
+                  ? "Confirm once in your wallet to pay all recipients in a single transaction (plus a one-time USDC approval if needed)."
+                  : "Confirm each transfer in your wallet. The batch stops if a transfer fails or remains unconfirmed."}
+              </p>
             </div>
             <dl className="space-y-2 rounded-xl border border-border bg-background/60 p-3 text-sm">
               <div className="flex flex-wrap justify-between gap-x-3">
@@ -350,10 +416,15 @@ export function BatchPayrollCard() {
             <FeeLineItems quote={quotePayrollBatchFee(plan.rows.length)} compact />
             <div className="flex flex-wrap justify-end gap-2">
               <Button type="button" variant="outline" onClick={closeReview}>Edit payments</Button>
-              <Button type="button" onClick={() => void runBatch()}>Start {plan.rows.length} {plan.rows.length === 1 ? "payment" : "payments"}</Button>
+              <Button type="button" onClick={() => void runBatch()}>
+                {planSingleSig
+                  ? `Send ${plan.rows.length} payments (1 signature)`
+                  : `Start ${plan.rows.length} ${plan.rows.length === 1 ? "payment" : "payments"}`}
+              </Button>
             </div>
           </div>
-        )}
+          );
+        })()}
       </ModalDialog>
     </div>
   );

@@ -73,7 +73,7 @@ interface PilotState {
 }
 
 export const usePilotStore = create<PilotState>((set, get) => ({
-  messages: [welcomeMessage()],
+  messages: [welcomeMessage(IS_ARC_MAINNET ? "mainnet" : "testnet")],
   transactions: [],
   balances: emptyBalanceSnapshot(),
   activeTxId: null,
@@ -182,7 +182,17 @@ export const usePilotStore = create<PilotState>((set, get) => ({
           : chainId === 5042002
             ? "testnet"
             : s.networkMode;
-      return { walletAddress: address, walletChainId: chainId ?? null, networkMode: nextMode, transactions };
+      const isInitialWelcome =
+        s.messages.length === 1 &&
+        s.messages[0].role === "assistant" &&
+        s.messages[0].intent === "unknown";
+      return {
+        walletAddress: address,
+        walletChainId: chainId ?? null,
+        networkMode: nextMode,
+        messages: isInitialWelcome && nextMode !== s.networkMode ? [welcomeMessage(nextMode)] : s.messages,
+        transactions,
+      };
     }),
   setWalletType: (t) => {
     try { window.localStorage?.setItem("agfusion_wallet_type_v1", t); } catch { /* ignore */ }
@@ -190,7 +200,16 @@ export const usePilotStore = create<PilotState>((set, get) => ({
   },
   setNetworkMode: (mode) => {
     try { window.localStorage?.setItem("agfusion_network_mode_v1", mode); } catch { /* ignore */ }
-    set({ networkMode: mode });
+    set((s) => {
+      const isInitialWelcome =
+        s.messages.length === 1 &&
+        s.messages[0].role === "assistant" &&
+        s.messages[0].intent === "unknown";
+      return {
+        networkMode: mode,
+        messages: isInitialWelcome ? [welcomeMessage(mode)] : s.messages,
+      };
+    });
     get().refreshBalances();
   },
   setLiveBalance: (v) => set({ liveBalanceUsdc: v }),
@@ -251,7 +270,7 @@ export const usePilotStore = create<PilotState>((set, get) => ({
     }
     set({ balances: emptyBalanceSnapshot() });
   },
-  resetChat: () => set({ messages: [welcomeMessage()] }),
+  resetChat: () => set({ messages: [welcomeMessage(get().networkMode)] }),
   markPreviewExecuted: (messageId) => set((s) => ({ messages: s.messages.map((m) => m.id === messageId && m.actionPreview ? { ...m, actionPreview: { ...m.actionPreview, executed: true } } : m) })),
   hydrate: () => {
     if (get().hydrated) return;
@@ -261,7 +280,20 @@ export const usePilotStore = create<PilotState>((set, get) => ({
     try { const wt = window.localStorage?.getItem("agfusion_wallet_type_v1"); if (wt === "circle" || wt === "evm") walletType = wt; } catch { /* ignore */ }
     let networkMode: "mainnet" | "testnet" = IS_ARC_MAINNET ? "mainnet" : "testnet";
     try { const nm = window.localStorage?.getItem("agfusion_network_mode_v1"); if (nm === "mainnet" || nm === "testnet") networkMode = nm; } catch { /* ignore */ }
-    set({ transactions: stored.map(normalizeTransactionForActivity), hydrated: true, forceDemo: false, walletType, networkMode });
+    set((s) => {
+      const isInitialWelcome =
+        s.messages.length === 1 &&
+        s.messages[0].role === "assistant" &&
+        s.messages[0].intent === "unknown";
+      return {
+        transactions: stored.map(normalizeTransactionForActivity),
+        hydrated: true,
+        forceDemo: false,
+        walletType,
+        networkMode,
+        messages: isInitialWelcome ? [welcomeMessage(networkMode)] : s.messages,
+      };
+    });
   },
   executionMode: () => "live",
   clearTransactions: () => { clearStoredTransactions(get().walletAddress); set({ transactions: [] }); },

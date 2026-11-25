@@ -18,7 +18,7 @@ import {
   type LlmConfig,
 } from "@/lib/llm-config";
 import {
-  AGENT_SYSTEM,
+  getAgentSystemPrompt,
   anthropicMessages,
   type ClaudeMessage,
 } from "@/lib/claude-client";
@@ -156,7 +156,7 @@ async function runAnthropicAgentLoop(input: {
       for (const model of tryModels) {
         const result = await anthropicMessages(llm, {
           model,
-          system: AGENT_SYSTEM,
+          system: getAgentSystemPrompt(wallet.networkMode, wallet.chainId),
           messages,
           withTools: true,
           temperature: 0.3,
@@ -303,20 +303,36 @@ async function runOpenAiCompatAgentLoop(input: {
   let codeBlocks: CodeBlock[] | undefined;
   let preview: ActionPreview | undefined;
 
+  const isMainnet =
+    wallet.chainId === 5042
+      ? true
+      : wallet.chainId === 5042002
+        ? false
+        : wallet.networkMode === "mainnet"
+          ? true
+          : wallet.networkMode === "testnet"
+            ? false
+            : IS_ARC_MAINNET;
+  const arcChainId = isMainnet ? 5042 : 5042002;
+  const arcNetworkName = isMainnet ? "Arc Mainnet" : "Arc Testnet";
+  const activeArcChain = isMainnet ? "Arc_Mainnet" : "Arc_Testnet";
+  const activePeerChain = isMainnet ? "Base" : "Base_Sepolia";
+
   const walletNote = `Wallet context: ${JSON.stringify({
     address: wallet.address ?? null,
     chainId: wallet.chainId ?? null,
     liveBalanceUsdc: wallet.liveBalanceUsdc ?? null,
-    activeNetwork: ARC_NETWORK_NAME,
-    activeArcChainId: ARC_CHAIN_ID,
-    defaultArcChain: IS_ARC_MAINNET ? "Arc_Mainnet" : "Arc_Testnet",
-    defaultPeerChain: IS_ARC_MAINNET ? "Base" : "Base_Sepolia",
+    networkMode: wallet.networkMode ?? (isMainnet ? "mainnet" : "testnet"),
+    activeNetwork: arcNetworkName,
+    activeArcChainId: arcChainId,
+    defaultArcChain: activeArcChain,
+    defaultPeerChain: activePeerChain,
     forceDemo: wallet.forceDemo ?? false,
     userConfirmedExecute: execute,
   })}`;
 
   const messages: ChatMsg[] = [
-    { role: "system", content: AGENT_SYSTEM },
+    { role: "system", content: getAgentSystemPrompt(wallet.networkMode, wallet.chainId) },
     {
       role: "user",
       content: execute

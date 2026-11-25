@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUp,
@@ -29,14 +29,19 @@ import type { AssistantMood } from "@/components/workspace/assistant-robot";
 import type { AssistantPlan } from "@/lib/assistant-plan";
 import type { AssistantGuide } from "@/lib/assistant-tools";
 
-const SUGGESTIONS = [
-  "What can you do?",
-  "Show my balances",
-  "How do I send USDC?",
-  "Register an ERC-8004 Agent",
-  "Bridge 5 USDC from Arc to Base",
-  "Check transaction status",
-];
+function getSuggestions(networkMode: "mainnet" | "testnet"): string[] {
+  const isTestnet = networkMode === "testnet";
+  return [
+    "What can you do?",
+    "Show my balances",
+    "How do I send USDC?",
+    "Register an ERC-8004 Agent",
+    isTestnet
+      ? "Bridge 5 USDC from Arc Testnet to Base Sepolia"
+      : "Bridge 5 USDC from Arc to Base",
+    "Check transaction status",
+  ];
+}
 
 function renderMarkdownish(text: string) {
   // Defense in depth: this output is injected via dangerouslySetInnerHTML, so
@@ -87,6 +92,7 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
     liveBalanceUsdc,
     forceDemo,
   } = usePilotStore();
+  const suggestions = useMemo(() => getSuggestions(networkMode), [networkMode]);
   const [input, setInput] = useState("");
   const [statusLine, setStatusLine] = useState<string | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
@@ -140,6 +146,7 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
       chainId: walletChainId,
       liveBalanceUsdc,
       forceDemo,
+      networkMode,
     };
 
     try {
@@ -599,7 +606,7 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
 
       <div className="border-t border-border bg-card/60 p-2.5 sm:p-4 space-y-2.5 sm:space-y-3 shrink-0">
         <div className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-thin [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:[scrollbar-width:thin] sm:[&::-webkit-scrollbar]:block pb-0.5">
-          {SUGGESTIONS.map((s) => (
+          {suggestions.map((s) => (
             <button
               key={s}
               type="button"

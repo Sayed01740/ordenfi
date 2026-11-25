@@ -28,6 +28,7 @@ export const walletContextSchema = z.object({
   chainId: z.number().int().nullable().optional(),
   liveBalanceUsdc: z.string().nullable().optional(),
   forceDemo: z.boolean().optional(),
+  networkMode: z.enum(["mainnet", "testnet"]).optional(),
 });
 
 export const confirmationPreviewSchema = z.record(z.unknown());

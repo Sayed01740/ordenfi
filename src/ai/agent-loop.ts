@@ -23,8 +23,8 @@ const DEFAULT_ARC_CHAIN = IS_ARC_MAINNET ? "Arc_Mainnet" : "Arc_Testnet";
 const DEFAULT_PEER_CHAIN = IS_ARC_MAINNET ? "Base" : "Base_Sepolia";
 const NETWORK_LABEL = IS_ARC_MAINNET ? "Arc Mainnet" : "Arc Testnet";
 
-function chainDisplay(id?: string): string {
-  if (!id) return NETWORK_LABEL;
+function chainDisplay(id?: string, defaultLabel = NETWORK_LABEL): string {
+  if (!id) return defaultLabel;
   return CHAINS[id as keyof typeof CHAINS]?.label || id.replace(/_/g, " ");
 }
 
@@ -90,6 +90,21 @@ export async function runAgentLoop(
   let codeBlocks: CodeBlock[] | undefined;
   let preview: ActionPreview | undefined;
 
+  const isMainnet =
+    wallet.chainId === 5042
+      ? true
+      : wallet.chainId === 5042002
+        ? false
+        : wallet.networkMode === "mainnet"
+          ? true
+          : wallet.networkMode === "testnet"
+            ? false
+            : IS_ARC_MAINNET;
+
+  const defaultArcChain = isMainnet ? "Arc_Mainnet" : "Arc_Testnet";
+  const defaultPeerChain = isMainnet ? "Base" : "Base_Sepolia";
+  const networkLabel = isMainnet ? "Arc Mainnet" : "Arc Testnet";
+
   const emitTool = async (
     name: string,
     args: Record<string, unknown>,
@@ -128,8 +143,8 @@ export async function runAgentLoop(
     )
   ) {
     const amount = intent.amount || "100";
-    const fromChain = intent.fromChain || DEFAULT_PEER_CHAIN;
-    const toChain = intent.toChain || DEFAULT_ARC_CHAIN;
+    const fromChain = intent.fromChain || defaultPeerChain;
+    const toChain = intent.toChain || defaultArcChain;
     const risk = await emitTool("assess_route_risk", {
       amount,
       fromChain,
@@ -138,7 +153,7 @@ export async function runAgentLoop(
     const content = [
       "**Route Risk Assessment** (x402 Oracle)",
       "",
-      `• **Route:** ${chainDisplay(fromChain)} → ${chainDisplay(toChain)}`,
+      `• **Route:** ${chainDisplay(fromChain, networkLabel)} → ${chainDisplay(toChain, networkLabel)}`,
       `• **Amount:** ${amount} USDC`,
       `• **Assessment:** ${risk.summary}`,
       "",
@@ -156,15 +171,15 @@ export async function runAgentLoop(
       const bal = await emitTool("get_balances", {});
       const walletState = toolTrace.find((t) => t.name === "get_wallet_state");
       const content = [
-        `**Portfolio & Balances (${NETWORK_LABEL})**`,
+        `**Portfolio & Balances (${networkLabel})**`,
         "",
         bal.summary,
         "",
         walletState?.summary || "",
         "",
         wallet.address
-          ? `Live balances fetched directly via ${NETWORK_LABEL} RPC.`
-          : `Connect your wallet on **${NETWORK_LABEL}** to view live balances and execute transactions.`,
+          ? `Live balances fetched directly via ${networkLabel} RPC.`
+          : `Connect your wallet on **${networkLabel}** to view live balances and execute transactions.`,
         "",
         "Next: `Swap 10 USDC to EURC` · `Bridge 5 USDC from Arc to Base` · `Send 1 USDC to 0x…`",
       ]
@@ -224,7 +239,7 @@ export async function runAgentLoop(
         const content = [
           "Doing great — ready to help with your on-chain operations.",
           "",
-          `I'm the **Ordenfi** execution assistant for **${NETWORK_LABEL}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
+          `I'm the **Ordenfi** execution assistant for **${networkLabel}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
           "",
           wallet.address
             ? `Wallet connected: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\``
@@ -233,7 +248,7 @@ export async function runAgentLoop(
           "Try asking:",
           '• "Show my balances"',
           '• "Swap 1 USDC to EURC"',
-          '• "Bridge 5 USDC from Arc to Base"',
+          `• "Bridge 5 USDC from Arc to ${isMainnet ? "Base" : "Base Sepolia"}"`,
           '• "Send 0.5 USDC to 0x…"',
         ].join("\n");
         return finish(content, "explain", { toolTrace, onEvent });
@@ -242,8 +257,8 @@ export async function runAgentLoop(
       if (whoAmI || greet) {
         const content = [
           wallet.address
-            ? `Wallet connected (\`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\`) on **${NETWORK_LABEL}**.`
-            : `Welcome to **Ordenfi** — your stablecoin operations workspace on **${NETWORK_LABEL}**.`,
+            ? `Wallet connected (\`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\`) on **${networkLabel}**.`
+            : `Welcome to **Ordenfi** — your stablecoin operations workspace on **${networkLabel}**.`,
           "",
           "Capabilities:",
           "• **Send** — Instant native USDC transfers (21k gas, sub-second finality)",
@@ -253,7 +268,7 @@ export async function runAgentLoop(
           "",
           "Examples:",
           '• "Show my balances"',
-          '• "Bridge 5 USDC from Arc to Base"',
+          `• "Bridge 5 USDC from Arc to ${isMainnet ? "Base" : "Base Sepolia"}"`,
           '• "Swap 5 USDC to EURC"',
           '• "Send 1 USDC to 0xYourRecipient…"',
           "",
@@ -267,7 +282,7 @@ export async function runAgentLoop(
       await emitTool("explain_arc", { topic: raw });
       const last = toolTrace[toolTrace.length - 1];
       const content = [
-        last?.summary || `Arc is a stablecoin-native L1 with USDC gas and sub-second finality (${NETWORK_LABEL}).`,
+        last?.summary || `Arc is a stablecoin-native L1 with USDC gas and sub-second finality (${networkLabel}).`,
         "",
         "Ask me to **send**, **swap**, **bridge**, or **check balances**.",
       ].join("\n");
@@ -277,8 +292,8 @@ export async function runAgentLoop(
     case "bridge": {
       const amount = intent.amount || "10";
       // Honor parseIntent direction; fall back to active network defaults
-      const fromChain = intent.fromChain || DEFAULT_PEER_CHAIN;
-      const toChain = intent.toChain || DEFAULT_ARC_CHAIN;
+      const fromChain = intent.fromChain || defaultPeerChain;
+      const toChain = intent.toChain || defaultArcChain;
       let from = fromChain;
       let to = toChain;
       const rawL = intent.raw.toLowerCase();
@@ -287,15 +302,15 @@ export async function runAgentLoop(
         /\bbase\b/.test(rawL) &&
         /arc[\s\S]{0,24}(?:to|→|->)[\s\S]{0,12}base/.test(rawL)
       ) {
-        from = DEFAULT_ARC_CHAIN;
-        to = DEFAULT_PEER_CHAIN;
+        from = defaultArcChain;
+        to = defaultPeerChain;
       } else if (
         /\barc\b/.test(rawL) &&
         /\bbase\b/.test(rawL) &&
         /base[\s\S]{0,24}(?:to|→|->)[\s\S]{0,12}arc/.test(rawL)
       ) {
-        from = DEFAULT_PEER_CHAIN;
-        to = DEFAULT_ARC_CHAIN;
+        from = defaultPeerChain;
+        to = defaultArcChain;
       }
 
       await emitTool("estimate_bridge", {
@@ -429,11 +444,11 @@ export async function runAgentLoop(
       preview = prep.preview ?? {
         type: "swap" as const,
         title: `Swap ${tokenIn} → ${tokenOut}`,
-        summary: `Exchange ${amount} ${tokenIn} for ${tokenOut} on ${NETWORK_LABEL}`,
+        summary: `Exchange ${amount} ${tokenIn} for ${tokenOut} on ${networkLabel}`,
         amount,
         token: tokenIn,
         tokenOut,
-        toChain: DEFAULT_ARC_CHAIN,
+        toChain: defaultArcChain,
         estimatedFeeUsd: 0.05,
         estimatedTime: "~2s",
         canExecute: true,
@@ -461,7 +476,7 @@ export async function runAgentLoop(
               `• **Reason:** ${ex.summary}`,
               "",
               "**Quick Checklist:**",
-              `1. Connect your wallet on **${NETWORK_LABEL}**`,
+              `1. Connect your wallet on **${networkLabel}**`,
               `2. Verify sufficient **${tokenIn}** balance and USDC gas`,
               "3. For interactive Permit2 quotes, you can also use the **Swap** tab directly",
             ].join("\n"),
@@ -533,7 +548,7 @@ export async function runAgentLoop(
             [
               "**Cannot execute send** — no wallet connected.",
               "",
-              `Click **Connect Wallet**, switch to **${NETWORK_LABEL}**, then press Confirm again.`,
+              `Click **Connect Wallet**, switch to **${networkLabel}**, then press Confirm again.`,
             ].join("\n"),
             "send",
             { toolTrace, preview, onEvent },
@@ -553,7 +568,7 @@ export async function runAgentLoop(
               "",
               `• **Reason:** ${ex.summary}`,
               "",
-              `**Check:** ${NETWORK_LABEL} selected · sufficient USDC balance · approve signature in your wallet.`,
+              `**Check:** ${networkLabel} selected · sufficient USDC balance · approve signature in your wallet.`,
             ].join("\n"),
             "send",
             { toolTrace, preview, transaction, onEvent },
@@ -575,7 +590,7 @@ export async function runAgentLoop(
 
     case "route": {
       const amount = intent.amount || "10";
-      const fromChain = intent.fromChain || DEFAULT_PEER_CHAIN;
+      const fromChain = intent.fromChain || defaultPeerChain;
       const recipient = intent.recipient;
       const recipientLabel = intent.recipientLabel;
       const hasAddr = Boolean(
@@ -585,7 +600,7 @@ export async function runAgentLoop(
       await emitTool("estimate_bridge", {
         amount,
         fromChain,
-        toChain: DEFAULT_ARC_CHAIN,
+        toChain: defaultArcChain,
       });
       await emitTool("estimate_send", { amount, recipient: recipient || "" });
       const prep = await emitTool("prepare_payment", {
@@ -673,15 +688,15 @@ export async function runAgentLoop(
             ? "You're welcome!"
             : "I'm here and ready to help.",
           "",
-          `I'm the Ordenfi execution assistant for **${NETWORK_LABEL}** (Send · Swap · Bridge).`,
+          `I'm the Ordenfi execution assistant for **${networkLabel}** (Send · Swap · Bridge).`,
           "",
-          'Try: `"Show my balances"`, `"Swap 1 USDC to EURC"`, or `"Bridge 5 USDC from Arc to Base"`.',
+          `Try: \`"Show my balances"\`, \`"Swap 1 USDC to EURC"\`, or \`"Bridge 5 USDC from Arc to ${isMainnet ? "Base" : "Base Sepolia"}"\`.`,
         ].join("\n");
         return finish(content, "unknown", { toolTrace, onEvent });
       }
 
       const content = [
-        `I’m the **Ordenfi** assistant for **${NETWORK_LABEL}**.`,
+        `I’m the **Ordenfi** assistant for **${networkLabel}**.`,
         "",
         wallet.address
           ? `Wallet: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\` · Chain ID \`${wallet.chainId ?? "?"}\``
@@ -690,7 +705,7 @@ export async function runAgentLoop(
         "**Supported commands:**",
         '• `"Show my balances"`',
         '• `"Swap 5 USDC to EURC"` (or `cirBTC`)',
-        '• `"Bridge 10 USDC from Arc to Base"`',
+        `• \`"Bridge 10 USDC from Arc to ${isMainnet ? "Base" : "Base Sepolia"}"\``,
         '• `"Send 1 USDC to 0x…"`',
         '• `"What is Arc?"` / `"Help"`',
         "",
@@ -707,13 +722,24 @@ function planBlurb(
   trace: AgentRunResult["toolTrace"],
   wallet: WalletContext,
 ): string {
+  const isMainnet =
+    wallet.chainId === 5042
+      ? true
+      : wallet.chainId === 5042002
+        ? false
+        : wallet.networkMode === "mainnet"
+          ? true
+          : wallet.networkMode === "testnet"
+            ? false
+            : IS_ARC_MAINNET;
+  const label = isMainnet ? "Arc Mainnet" : "Arc Testnet";
   const tools = trace
     .filter((t) => t.ok)
     .map((t) => `✓ \`${t.name}\` — ${t.summary}`)
     .join("\n");
   const failed = trace.filter((t) => !t.ok);
   return [
-    `**${title} Plan Ready** (${NETWORK_LABEL})`,
+    `**${title} Plan Ready** (${label})`,
     "",
     preview?.summary || "",
     preview?.estimatedFeeUsd != null

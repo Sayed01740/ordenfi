@@ -195,21 +195,40 @@ export async function anthropicMessages(
   };
 }
 
-export const HELP_SYSTEM = `You are the Ordenfi product guide — a friendly onboarding coach for users.
+export function getHelpSystemPrompt(
+  networkMode?: "mainnet" | "testnet",
+  chainId?: number | null,
+): string {
+  const isMainnet =
+    chainId === 5042
+      ? true
+      : chainId === 5042002
+        ? false
+        : networkMode === "mainnet"
+          ? true
+          : networkMode === "testnet"
+            ? false
+            : IS_ARC_MAINNET;
+
+  const arcChainId = isMainnet ? 5042 : 5042002;
+  const arcNetworkName = isMainnet ? "Arc Mainnet" : "Arc Testnet";
+  const activePeerLabel = isMainnet ? "Base" : "Base Sepolia";
+
+  return `You are the Ordenfi product guide — a friendly onboarding coach for users.
 
 ${
-  IS_ARC_MAINNET
-    ? `Ordenfi is a live stablecoin & DeFi execution app on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
-Users connect any EVM browser wallet (MetaMask, Rabby, Coinbase Wallet, etc.) funded with USDC on ${ARC_NETWORK_NAME} or supported chains, then:`
-    : `Ordenfi is a **testnet** app (not real cash) on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
-Users connect a browser wallet (MetaMask, Rabby, etc.), get free test USDC from https://faucet.circle.com (select ${ARC_NETWORK_NAME}), then:`
+  isMainnet
+    ? `Ordenfi is a live stablecoin & DeFi execution app on **${arcNetworkName}** (chain id ${arcChainId}).
+Users connect any EVM browser wallet (MetaMask, Rabby, Coinbase Wallet, etc.) funded with USDC on ${arcNetworkName} or supported chains, then:`
+    : `Ordenfi is a **testnet** app (not real cash) on **${arcNetworkName}** (chain id ${arcChainId}).
+Users connect a browser wallet (MetaMask, Rabby, etc.), get free test USDC from https://faucet.circle.com (select ${arcNetworkName}), then:`
 }
 
 1. **Send USDC** — Payment Engine / "Send USDC" panel: paste a full 0x address (42 chars), amount, Confirm, sign in wallet.
 2. **Swap** — USDC ↔ EURC ↔ cirBTC on Arc (Stablecoin FX panel or chat "Swap 1 USDC to EURC").
-3. **Bridge** — Move USDC Arc ↔ ${ACTIVE_PEER_LABEL} (Cross-chain panel or chat).
+3. **Bridge** — Move USDC Arc ↔ ${activePeerLabel} (Cross-chain panel or chat).
 4. **Chat agent** — Type plain English; agent plans; **nothing moves until Confirm + wallet signature**.
-5. **Unified Balance** — Deposit from ${ACTIVE_PEER_LABEL} or Ethereum, spend on Arc.
+5. **Unified Balance** — Deposit from ${activePeerLabel} or Ethereum, spend on Arc.
 6. **Agents page** — Optional ERC-8004 on-chain identity registration.
 7. **Risk oracle** — Free assess, or pay 0.001 USDC x402 micropayment for paid assess.
 
@@ -225,8 +244,30 @@ Rules:
 ${ARC_SYSTEM_KNOWLEDGE_BLOCK}
 
 You are only helping them understand and use Ordenfi — not executing money.`;
+}
 
-export const AGENT_SYSTEM = `You are Ordenfi Agent — a helpful AI agent for stablecoin finance on Arc Network (Circle).
+export function getAgentSystemPrompt(
+  networkMode?: "mainnet" | "testnet",
+  chainId?: number | null,
+): string {
+  const isMainnet =
+    chainId === 5042
+      ? true
+      : chainId === 5042002
+        ? false
+        : networkMode === "mainnet"
+          ? true
+          : networkMode === "testnet"
+            ? false
+            : IS_ARC_MAINNET;
+
+  const arcChainId = isMainnet ? 5042 : 5042002;
+  const arcNetworkName = isMainnet ? "Arc Mainnet" : "Arc Testnet";
+  const activeArcChain = isMainnet ? "Arc_Mainnet" : "Arc_Testnet";
+  const activePeerChain = isMainnet ? "Base" : "Base_Sepolia";
+  const activePeerLabel = isMainnet ? "Base" : "Base Sepolia";
+
+  return `You are Ordenfi Agent — a helpful AI agent for stablecoin finance on Arc Network (Circle).
 
 You behave like a normal conversational agent: answer questions clearly, explain concepts, and help the user get things done.
 
@@ -238,8 +279,19 @@ Rules:
 3. Before money plans: get_wallet_state / get_balances when useful; estimate_* before prepare_payment.
 4. NEVER call execute_* with confirmed=true unless the user already confirmed (flag will be set).
 5. For first-turn money requests: estimate → prepare_payment, then stop and wait for confirm.
-6. Active network is **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}, chain key \`${ACTIVE_ARC_CHAIN_ID}\`). Default peer bridge chain is **${ACTIVE_PEER_LABEL}** (\`${ACTIVE_PEER_CHAIN_ID}\`). Gas on Arc is paid in USDC.
-7. NEVER select \`Arc_Testnet\` or \`Base_Sepolia\` when the active network is ${ARC_NETWORK_NAME} (or when \`wallet.chainId\` is ${ARC_CHAIN_ID}), unless the user explicitly asks for testnet.
+6. Active network is **${arcNetworkName}** (chain id ${arcChainId}, chain key \`${activeArcChain}\`). Default peer bridge chain is **${activePeerLabel}** (\`${activePeerChain}\`). Gas on Arc is paid in USDC.
+7. ${
+    isMainnet
+      ? `NEVER select \`Arc_Testnet\` or \`Base_Sepolia\` when the active network is ${arcNetworkName} (or when \`wallet.chainId\` is ${arcChainId}), unless the user explicitly asks for testnet.`
+      : `NEVER select \`Arc_Mainnet\` or \`Base\` when the active network is ${arcNetworkName} (or when \`wallet.chainId\` is ${arcChainId}), unless the user explicitly asks for mainnet.`
+  }
 8. Keep answers concise with light markdown.
-9. If the user is confused about the UI, explain in plain English and point to Connect Wallet → ${IS_ARC_MAINNET ? "Send / Swap / Bridge" : "faucet → Send USDC"} or the "New here?" guide.
+9. If the user is confused about the UI, explain in plain English and point to Connect Wallet → ${
+    isMainnet ? "Send / Swap / Bridge" : "faucet → Send USDC"
+  } or the "New here?" guide.
 10. Max 6 tool rounds.`;
+}
+
+export const HELP_SYSTEM = getHelpSystemPrompt();
+
+export const AGENT_SYSTEM = getAgentSystemPrompt();

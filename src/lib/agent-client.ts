@@ -115,6 +115,7 @@ async function runLocalSilent(opts: {
         address: opts.wallet?.address ?? null,
         chainId: opts.wallet?.chainId ?? null,
         liveBalanceUsdc: opts.wallet?.liveBalanceUsdc ?? null,
+        networkMode: opts.wallet?.networkMode,
         forceDemo: false,
       },
     });
@@ -145,6 +146,7 @@ async function runServerAgent(opts: {
         address: opts.wallet?.address ?? null,
         chainId: opts.wallet?.chainId ?? null,
         liveBalanceUsdc: opts.wallet?.liveBalanceUsdc ?? null,
+        networkMode: opts.wallet?.networkMode,
         forceDemo: false,
       },
       stream: true,
@@ -277,6 +279,7 @@ async function runLocal(opts: {
         address: opts.wallet?.address ?? null,
         chainId: opts.wallet?.chainId ?? null,
         liveBalanceUsdc: opts.wallet?.liveBalanceUsdc ?? null,
+        networkMode: opts.wallet?.networkMode,
         forceDemo: false,
       },
       onEvent: (e) => {

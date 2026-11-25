@@ -1,5 +1,5 @@
 /**
- * Shared CCTP v2 testnet chain configuration for AGFusion.
+ * Shared CCTP v2 testnet chain configuration for OrdenFi.
  *
  * Contract/domain data is pinned to Circle's published testnet configuration.
  * Runtime RPC health is handled separately by rpc-proxy.ts.

@@ -1,8 +1,8 @@
-# AGFusion Arc quote-session D1 Worker runbook
+# OrdenFi Arc quote-session D1 Worker runbook
 
 ## Scope and data model
 
-Cloudflare D1 is used only for one-time Arc quote-session replay protection. It does not replace AGFusion's existing Prisma/PostgreSQL application database for users, transactions, x402, or other application records.
+Cloudflare D1 is used only for one-time Arc quote-session replay protection. It does not replace OrdenFi's existing Prisma/PostgreSQL application database for users, transactions, x402, or other application records.
 
 The Worker stores only:
 - SHA-256 digest of the opaque encrypted quote-session token
@@ -18,19 +18,19 @@ Verified on 2026-11-09:
 
 | Resource | Current configuration |
 |---|---|
-| D1 database | `agfusion-quote-sessions` |
+| D1 database | `OrdenFi-quote-sessions` |
 | D1 database ID | `1e10c8f3-2dbe-4574-b599-65fe690d17b5` |
 | Table | `arc_quote_sessions` |
 | Indexes | Expiry and account/expiry indexes |
-| Dedicated Worker | `agfusion-quote-session-store` |
-| Worker URL | `https://agfusion-quote-session-store.sayedhasan01740.workers.dev` |
+| Dedicated Worker | `OrdenFi-quote-session-store` |
+| Worker URL | `https://OrdenFi-quote-session-store.sayedhasan01740.workers.dev` |
 | D1 binding | `DB` |
 | Worker secret binding | `API_TOKEN` |
 | Scheduled cleanup | `17 * * * *` (hourly) |
 
 The dedicated Worker `workers.dev` endpoint is enabled. It requires a Bearer token and returns `401` for requests without valid authentication. Its separate Workers Preview URL remains disabled.
 
-The main AGFusion application Worker `agfusion` still has its Production and Preview routes disabled. The Cloudflare feature-branch build/Preview pipeline completed successfully, but there is no public application Preview URL because Preview routing is disabled. Do not enable it without deciding how to protect the URL and which bindings/resources it may reach.
+The main OrdenFi application Worker `OrdenFi` still has its Production and Preview routes disabled. The Cloudflare feature-branch build/Preview pipeline completed successfully, but there is no public application Preview URL because Preview routing is disabled. Do not enable it without deciding how to protect the URL and which bindings/resources it may reach.
 
 ## Vercel Preview environment
 
@@ -38,10 +38,10 @@ The following variables are configured only for Preview deployments on branch `f
 
 | Variable | Type | Purpose |
 |---|---|---|
-| `AGFUSION_QUOTE_SESSION_STORE_URL` | Plain | HTTPS Worker origin |
-| `AGFUSION_QUOTE_SESSION_STORE_TOKEN` | Sensitive | Must match Cloudflare `API_TOKEN` |
-| `AGFUSION_QUOTE_SESSION_SECRET` | Sensitive | AES-256-GCM quote-session encryption secret |
-| `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED` | Plain | Remains `false` |
+| `OrdenFi_QUOTE_SESSION_STORE_URL` | Plain | HTTPS Worker origin |
+| `OrdenFi_QUOTE_SESSION_STORE_TOKEN` | Sensitive | Must match Cloudflare `API_TOKEN` |
+| `OrdenFi_QUOTE_SESSION_SECRET` | Sensitive | AES-256-GCM quote-session encryption secret |
+| `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED` | Plain | Remains `false` |
 
 The Vercel and Cloudflare secret values are write-only through the connected account APIs. Their presence and environment scope can be verified, but the values are not returned. Do not paste either value into chat, source control, a browser bundle, or build logs. If either side is rotated, set the exact same newly generated credential directly in both dashboards and redeploy the Preview branch.
 
@@ -81,15 +81,15 @@ A local HTTP harness is included at `scripts/test-arc-quote-session-worker-http.
    git checkout feature/arc-quote-session-d1-worker-20261109
    git pull origin feature/arc-quote-session-d1-worker-20261109
    ```
-2. Confirm that Cloudflare `API_TOKEN` and the Vercel Preview variable `AGFUSION_QUOTE_SESSION_STORE_TOKEN` contain the same random 32-byte hex value. If the original value is no longer available, generate a new value locally with `openssl rand -hex 32`, then update both secret stores directly. Do not paste the value into chat or commit it.
+2. Confirm that Cloudflare `API_TOKEN` and the Vercel Preview variable `OrdenFi_QUOTE_SESSION_STORE_TOKEN` contain the same random 32-byte hex value. If the original value is no longer available, generate a new value locally with `openssl rand -hex 32`, then update both secret stores directly. Do not paste the value into chat or commit it.
 3. Run the script from a local terminal. It prompts for the token without echoing it:
    ```bash
-   export AGFUSION_QUOTE_SESSION_STORE_URL="https://agfusion-quote-session-store.sayedhasan01740.workers.dev"
-   read -rsp "Worker API_TOKEN: " AGFUSION_QUOTE_SESSION_STORE_TOKEN
+   export OrdenFi_QUOTE_SESSION_STORE_URL="https://OrdenFi-quote-session-store.sayedhasan01740.workers.dev"
+   read -rsp "Worker API_TOKEN: " OrdenFi_QUOTE_SESSION_STORE_TOKEN
    echo
-   export AGFUSION_QUOTE_SESSION_STORE_TOKEN
+   export OrdenFi_QUOTE_SESSION_STORE_TOKEN
    node scripts/test-arc-quote-session-worker-http.mjs
-   unset AGFUSION_QUOTE_SESSION_STORE_TOKEN
+   unset OrdenFi_QUOTE_SESSION_STORE_TOKEN
    ```
 4. Save the pass/fail summary (not the secret) and attach it to PR #58. The script verifies authentication, validation, registration, exactly-one-winner concurrent consume, replay rejection, wallet binding, and body-size limits.
 
@@ -105,7 +105,7 @@ The script creates a small number of synthetic D1 rows with short expiries. The 
 - Synthetic rows from the SQL checks were deleted after the tests.
 - The dedicated Worker's observability settings have invocation logs, persisted logs, and issue detection enabled. Traces are currently disabled.
 - From an isolated Vercel Sandbox restricted to the Worker hostname, unauthenticated registration, a wrong Bearer token, and unauthenticated method probing each returned HTTP 401 with `{"error":"unauthorized"}`.
-- The Vercel Preview deployment for commit `a6252017b3fe73f50a455971194b115001444394` is READY. Fetching its root page returned HTTP 200 and the AGFusion Next.js HTML.
+- The Vercel Preview deployment for commit `a6252017b3fe73f50a455971194b115001444394` is READY. Fetching its root page returned HTTP 200 and the OrdenFi Next.js HTML.
 - A recent Vercel Preview runtime-log query returned no error/warning records for its supported 30-minute window. This is not a full observability audit.
 
 ### Authenticated live HTTP verification (2026-11-10)
@@ -115,7 +115,7 @@ The script creates a small number of synthetic D1 rows with short expiries. The 
 - Authenticated session registration returned HTTP 201.
 - Two concurrent consume requests for the same synthetic session returned exactly one HTTP 200 and one HTTP 409. A subsequent replay returned HTTP 409.
 - A wallet mismatch returned HTTP 409 without consuming the session; the correct wallet then consumed it with HTTP 200.
-- The AGFusion application wrapper registered a session successfully through the same Worker and its concurrent consume test returned exactly one success and one rejection.
+- The OrdenFi application wrapper registered a session successfully through the same Worker and its concurrent consume test returned exactly one success and one rejection.
 - All six rows created by the smoke test for the reserved synthetic wallet fixtures were deleted. A follow-up D1 query confirmed zero remaining rows for those fixtures.
 - No wallet signing, transaction submission, or transaction broadcast was performed.
 
@@ -129,7 +129,7 @@ The script creates a small number of synthetic D1 rows with short expiries. The 
 - The Testnet App Kit estimate was performed without a Kit Key, wallet signing, approval, transaction preparation, transaction submission, or broadcast. The temporary Preview route was deleted after the test.
 - After the keyless route change, a second protected-by-environment temporary Preview wrapper invoked the actual POST /api/circle/swap/prepare handler with the same synthetic Testnet request. It returned HTTP 200, chain ID 5042002, network testnet, and a USDC/EURC estimate (0.01842 EURC estimated output; 0.018236 EURC stop limit). The wrapper was deleted immediately afterward; the estimate-only route performs no wallet signing, approval, transaction submission, or broadcast.
 - A keyless Testnet regression test was added to src/app/api/circle/swap/prepare/route.test.ts; the route now passes kitKey only when a server key is configured. Mainnet remains rejected by the existing hard gate, and the feature-branch Mainnet flag remains false.
-- An isolated D1 database with no arc_quote_sessions table and a separate temporary Worker were created solely to exercise the storage-exception path. A syntactically valid registration reached the missing-table failure and returned HTTP 503 storage_unavailable, as intended. Both the temporary Worker and D1 database were deleted immediately after the test. The live agfusion-quote-sessions database was not changed.
+- An isolated D1 database with no arc_quote_sessions table and a separate temporary Worker were created solely to exercise the storage-exception path. A syntactically valid registration reached the missing-table failure and returned HTTP 503 storage_unavailable, as intended. Both the temporary Worker and D1 database were deleted immediately after the test. The live OrdenFi-quote-sessions database was not changed.
 
 Scope distinction: the D1 quote-session store and Uniswap quote-session module are intentionally pinned to Arc Mainnet chain ID 5042; they must not be represented as Testnet session storage. The successful Arc Testnet App Kit check validates the separate Circle estimate-only route. It does not validate Mainnet quote/session execution, and no Mainnet quote was requested.
 ### Remaining validation before any release
@@ -142,7 +142,7 @@ The authenticated live Worker HTTP verification is complete at 16/16 checks. The
 
 ## Security and release gates
 
-- `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED=false`.
+- `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED=false`.
 - No wallet signing, transaction broadcast, Mainnet transaction preparation, Production app deployment, or PR merge is authorized by this runbook.
-- Elliptic fork provenance/source review and independent ECDSA approval remain tracked in [Issue #30](https://github.com/Sayed01740/agfusion/issues/30). A green npm audit is not independent cryptographic approval.
+- Elliptic fork provenance/source review and independent ECDSA approval remain tracked in [Issue #30](https://github.com/Sayed01740/OrdenFi/issues/30). A green npm audit is not independent cryptographic approval.
 - Keep PR #58 Draft until authenticated live HTTP checks and the independent Mainnet security review are complete.

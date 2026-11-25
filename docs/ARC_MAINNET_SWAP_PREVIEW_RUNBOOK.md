@@ -6,8 +6,8 @@ The Mainnet swap UI uses the server-side Uniswap quote/session API. The UI can r
 
 This is not a live swap execution release:
 - The server returns `executionEnabled: false`.
-- AGFusion does not call `eth_sendTransaction`, `wallet_sendCalls`, or broadcast a signed swap transaction in this flow.
-- Production transaction preparation is blocked. The preparation gate requires both `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED=true` and `VERCEL_ENV=preview`.
+- OrdenFi does not call `eth_sendTransaction`, `wallet_sendCalls`, or broadcast a signed swap transaction in this flow.
+- Production transaction preparation is blocked. The preparation gate requires both `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED=true` and `VERCEL_ENV=preview`.
 - Keep the Preview preparation flag set to `false` until independent security review and owner approval.
 
 ## Preview environment variables
@@ -17,10 +17,10 @@ Set these only on the dedicated Preview branch `feature/arc-quote-session-d1-wor
 | Variable | Purpose | Current requirement |
 | --- | --- | --- |
 | `UNISWAP_API_KEY` | Server-only Uniswap Trade API access | Required for live quote requests |
-| `AGFUSION_QUOTE_SESSION_SECRET` | AES-256-GCM short-lived quote-session encryption | Required |
-| `AGFUSION_QUOTE_SESSION_STORE_URL` | Dedicated Cloudflare D1 quote-session Worker URL | Required |
-| `AGFUSION_QUOTE_SESSION_STORE_TOKEN` | Bearer credential for the D1 Worker | Required |
-| `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED` | Explicit Preview-only preparation gate | Keep `false` |
+| `OrdenFi_QUOTE_SESSION_SECRET` | AES-256-GCM short-lived quote-session encryption | Required |
+| `OrdenFi_QUOTE_SESSION_STORE_URL` | Dedicated Cloudflare D1 quote-session Worker URL | Required |
+| `OrdenFi_QUOTE_SESSION_STORE_TOKEN` | Bearer credential for the D1 Worker | Required |
+| `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED` | Explicit Preview-only preparation gate | Keep `false` |
 
 The current Preview branch already has the quote-session secret, D1 Worker URL, D1 Worker token, and a disabled preparation flag. It does not currently have a branch-specific `UNISWAP_API_KEY`. A Preview-only key is present on the older branch `feature/arc-mainnet-swap-support-20261106`; copy it into the current branch's Preview environment through Vercel's environment settings without pasting the secret into source control or chat.
 

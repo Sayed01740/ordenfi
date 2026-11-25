@@ -1,4 +1,4 @@
-# Path A — Deploy AGFusionRegistry with Foundry (Arc Testnet)
+# Path A — Deploy OrdenFiRegistry with Foundry (Arc Testnet)
 
 ## Status on this machine
 
@@ -34,13 +34,13 @@ forge --version
 ## 3. Deploy (this session only)
 
 ```powershell
-cd C:\Users\sayed\.grok\bin\agfusion\contracts
+cd C:\Users\sayed\.grok\bin\ordenfi\contracts
 $env:Path = "$env:USERPROFILE\.foundry\bin;$env:Path"
 
 # NEVER commit this. NEVER paste into chat.
 $env:PRIVATE_KEY = "0xYOUR_PRIVATE_KEY"
 $env:ARC_TESTNET_RPC_URL = "https://rpc.testnet.arc.network"
-$env:AGFUSION_METADATA_URI = "https://agfusion.vercel.app/identity/agfusion-agent.json"
+$env:AGFUSION_METADATA_URI = "https://ordenfi.vercel.app/identity/agfusion-agent.json"
 
 .\deploy.ps1
 ```
@@ -48,7 +48,7 @@ $env:AGFUSION_METADATA_URI = "https://agfusion.vercel.app/identity/agfusion-agen
 Look for:
 
 ```text
-AGFusionRegistry deployed at: 0x...
+OrdenFiRegistry deployed at: 0x...
 ```
 
 Save that address.
@@ -57,10 +57,10 @@ Save that address.
 
 ```powershell
 $ADDRESS = "0xYOUR_DEPLOYED_ADDRESS"
-$URI = "https://agfusion.vercel.app/identity/agfusion-agent.json"
+$URI = "https://ordenfi.vercel.app/identity/agfusion-agent.json"
 $args = cast abi-encode "constructor(string)" $URI
 
-forge verify-contract $ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry `
+forge verify-contract $ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry `
   --chain-id 5042002 `
   --verifier blockscout `
   --verifier-url https://testnet.arcscan.app/api/ `
@@ -69,12 +69,12 @@ forge verify-contract $ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry `
 
 Open: `https://testnet.arcscan.app/address/0xYOUR_DEPLOYED_ADDRESS`
 
-## 5. Register AGFusion agent on your contract
+## 5. Register OrdenFi agent on your contract
 
 ```powershell
 $REGISTRY = "0xYOUR_DEPLOYED_ADDRESS"
 cast send $REGISTRY "register(string,string,string)" `
-  "AGFusion Agent" "agent" "https://agfusion.vercel.app/identity/agfusion-agent.json" `
+  "AGFusion Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
   --rpc-url https://rpc.testnet.arc.network `
   --private-key $env:PRIVATE_KEY
 ```
@@ -86,7 +86,7 @@ cast call $REGISTRY "projectInfo()(string,string,address,string,bool,uint256)" `
   --rpc-url https://rpc.testnet.arc.network
 ```
 
-## 7. Tell AGFusion app
+## 7. Tell OrdenFi app
 
 Vercel → Environment Variables:
 
@@ -99,12 +99,12 @@ Then redeploy the Next app (optional wiring next).
 ## Form paste after deploy
 
 ```
-Project: AGFusion
+Project: OrdenFi
 Network: Arc Testnet (5042002)
 Owner / deployer: 0xYOUR_WALLET
-Custom contract: AGFusionRegistry @ 0xYOUR_DEPLOYED_ADDRESS
+Custom contract: OrdenFiRegistry @ 0xYOUR_DEPLOYED_ADDRESS
 Explorer: https://testnet.arcscan.app/address/0xYOUR_DEPLOYED_ADDRESS
-Metadata: https://agfusion.vercel.app/identity/agfusion-agent.json
+Metadata: https://ordenfi.vercel.app/identity/agfusion-agent.json
 ```
 
 ## Security

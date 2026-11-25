@@ -3,7 +3,7 @@
  * 1) Circle APIs → same-origin server proxies (auth + CORS safety)
  * 2) Public chain RPCs → /api/rpc (avoids flaky browser RPC)
  *
- * IMPORTANT: AGFusion is a testnet project and must not require a paid RPC plan.
+ * IMPORTANT: OrdenFi is a testnet project and must not require a paid RPC plan.
  * If Circle/App Kit supplies a dRPC URL internally, the request is rewritten to
  * our same-origin /api/rpc proxy before it can reach dRPC directly.
  */

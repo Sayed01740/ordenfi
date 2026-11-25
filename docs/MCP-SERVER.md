@@ -11,8 +11,8 @@ The **OrdenFi MCP Server** implements the open [Model Context Protocol (MCP)](ht
 | `arc_get_network_info` | Returns Arc Network parameters, RPC, native USDC gas config, contract addresses, and ArcScan links. |
 | `arc_get_balance` | Fetches live native USDC balance for any EVM address on Arc Testnet. |
 | `arc_estimate_gas_savings` | Computes live gas cost in USDC and compares savings against Ethereum L1 (typically >99.9% savings). |
-| `arc_prepare_batch_disperse` | Generates execution plan for `AGFusionDisperse` (single-signature batch token sends). |
-| `arc_escrow_query` | Queries status of on-chain AI Agent milestone escrows in `AGFusionEscrow`. |
+| `arc_prepare_batch_disperse` | Generates execution plan for `OrdenFiDisperse` (single-signature batch token sends). |
+| `arc_escrow_query` | Queries status of on-chain AI Agent milestone escrows in `OrdenFiEscrow`. |
 
 ---
 
@@ -28,9 +28,9 @@ Add this block to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "agfusion-arc": {
+    "ordenfi-arc": {
       "command": "node",
-      "args": ["C:/Users/sayed/.grok/bin/agfusion/mcp/server.mjs"]
+      "args": ["C:/Users/sayed/.grok/bin/ordenfi/mcp/server.mjs"]
     }
   }
 }
@@ -39,9 +39,9 @@ Add this block to your `claude_desktop_config.json`:
 ### 2. Cursor / Antigravity IDE
 
 In Cursor Settings → Features → MCP:
-- Name: `agfusion-arc`
+- Name: `ordenfi-arc`
 - Type: `command`
-- Command: `node C:/Users/sayed/.grok/bin/agfusion/mcp/server.mjs`
+- Command: `node C:/Users/sayed/.grok/bin/ordenfi/mcp/server.mjs`
 
 ---
 

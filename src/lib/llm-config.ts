@@ -153,8 +153,8 @@ function buildHcnsecConfig(rawKey: string): LlmConfig | null {
     modelFallbacks: [model],
     chatCompletionsUrl: `${baseUrl}/chat/completions`,
     extraHeaders: {
-      "HTTP-Referer": "https://agfusion.vercel.app",
-      "X-Title": "AGFusion",
+      "HTTP-Referer": "https://ordenfi.vercel.app",
+      "X-Title": "OrdenFi",
     },
   };
 }
@@ -220,7 +220,7 @@ function buildBazaarConfig(rawKey: string): LlmConfig | null {
     chatCompletionsUrl: `${baseUrl}/chat/completions`,
     extraHeaders: {
       "HTTP-Referer": referer,
-      "X-Title": "AGFusion",
+      "X-Title": "OrdenFi",
     },
   };
 }

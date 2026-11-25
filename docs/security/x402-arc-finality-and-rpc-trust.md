@@ -15,7 +15,7 @@ References:
 - Arc Network, Network overview and finality FAQ: https://www.arc.io/network
 - Arc node documentation, independent block verification and JSON-RPC access: https://docs.arc.io/arc/concepts/running-a-node
 
-Accordingly, AGFusion must **not invent a fixed Ethereum-style N-confirmation threshold** for Arc. The source-level verifier may check receipt inclusion and consistency with the block returned at the receipt height, but this is not itself a cryptographic proof of the validator commit certificate.
+Accordingly, OrdenFi must **not invent a fixed Ethereum-style N-confirmation threshold** for Arc. The source-level verifier may check receipt inclusion and consistency with the block returned at the receipt height, but this is not itself a cryptographic proof of the validator commit certificate.
 
 ## Current verifier trust boundary
 

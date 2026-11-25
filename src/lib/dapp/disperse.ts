@@ -2,7 +2,7 @@
  * Single-signature batch send ("disperse") on Arc (Mainnet or Testnet).
  *
  * Dynamically detects the active Arc network and switches accordingly.
- * When the AGFusionDisperse contract is deployed and configured
+ * When the OrdenFiDisperse contract is deployed and configured
  * (NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS), a whole batch of USDC/EURC/cirBTC
  * payouts is executed with ONE wallet signature via disperseToken().
  *

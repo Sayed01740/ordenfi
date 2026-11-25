@@ -6,7 +6,7 @@ This folder contains **AGFusion’s own Solidity** — separate from Circle USDC
 
 | Contract | Purpose |
 |----------|---------|
-| `AGFusionRegistry` | On-chain project identity + module/agent registrations |
+| `OrdenFiRegistry` | On-chain project identity + module/agent registrations |
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ Create `contracts/.env` (gitignored):
 ```ini
 ARC_TESTNET_RPC_URL=https://rpc.testnet.arc.network
 PRIVATE_KEY=0xYOUR_PRIVATE_KEY_FROM_RABBY_EXPORT
-AGFUSION_METADATA_URI=https://agfusion.vercel.app/identity/agfusion-agent.json
+AGFUSION_METADATA_URI=https://ordenfi.vercel.app/identity/agfusion-agent.json
 ```
 
 ## Test locally
@@ -51,9 +51,9 @@ forge test -vv
 # PowerShell
 $env:ARC_RPC_URL="https://rpc.mainnet.arc.io"
 $env:PRIVATE_KEY="0xYOUR_MAINNET_DEPLOYER_PRIVATE_KEY"
-$env:AGFUSION_METADATA_URI="https://agfusion.vercel.app/identity/agfusion-agent.json"
+$env:AGFUSION_METADATA_URI="https://ordenfi.vercel.app/identity/agfusion-agent.json"
 
-forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
+forge script script/DeployOrdenFiRegistry.s.sol:DeployOrdenFiRegistry `
   --rpc-url $env:ARC_RPC_URL `
   --chain-id 5042 `
   --broadcast `
@@ -62,7 +62,7 @@ forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
 
 Or bash:
 ```bash
-forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry \
+forge script script/DeployOrdenFiRegistry.s.sol:DeployOrdenFiRegistry \
   --rpc-url https://rpc.mainnet.arc.io \
   --chain-id 5042 \
   --private-key $PRIVATE_KEY \
@@ -81,9 +81,9 @@ NEXT_PUBLIC_AGFUSION_REGISTRY=0x...
 # PowerShell
 $env:ARC_TESTNET_RPC_URL="https://rpc.testnet.arc.network"
 $env:PRIVATE_KEY="0x..."
-$env:AGFUSION_METADATA_URI="https://agfusion.vercel.app/identity/agfusion-agent.json"
+$env:AGFUSION_METADATA_URI="https://ordenfi.vercel.app/identity/agfusion-agent.json"
 
-forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
+forge script script/DeployOrdenFiRegistry.s.sol:DeployOrdenFiRegistry `
   --rpc-url $env:ARC_TESTNET_RPC_URL `
   --broadcast `
   -vvvv
@@ -93,7 +93,7 @@ Or bash:
 
 ```bash
 source .env
-forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry \
+forge script script/DeployOrdenFiRegistry.s.sol:DeployOrdenFiRegistry \
   --rpc-url $ARC_TESTNET_RPC_URL \
   --broadcast \
   -vvvv
@@ -102,24 +102,24 @@ forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry \
 Save the printed address:
 
 ```text
-AGFusionRegistry deployed at: 0x...
+OrdenFiRegistry deployed at: 0x...
 ```
 
 ## Verify on Arc Explorer
 
 ```bash
-forge verify-contract 0xYOUR_DEPLOYED_ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry \
+forge verify-contract 0xYOUR_DEPLOYED_ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry \
   --chain-id 5042 \
   --verifier blockscout \
   --verifier-url https://explorer.arc.io/api/ \
-  --constructor-args $(cast abi-encode "constructor(string)" "https://agfusion.vercel.app/identity/agfusion-agent.json")
+  --constructor-args $(cast abi-encode "constructor(string)" "https://ordenfi.vercel.app/identity/agfusion-agent.json")
 ```
 
 ## Register the main agent on-chain (after deploy)
 
 ```bash
 cast send $REGISTRY "register(string,string,string)" \
-  "AGFusion Agent" "agent" "https://agfusion.vercel.app/identity/agfusion-agent.json" \
+  "AGFusion Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" \
   --rpc-url $ARC_TESTNET_RPC_URL \
   --private-key $PRIVATE_KEY
 ```

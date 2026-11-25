@@ -48,7 +48,7 @@ type ArcSwapToken = "USDC" | "EURC" | "cirBTC";
 type Provider = { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> };
 export type QuoteResult = { amountOut: string; minimumAmountOut?: string; route: string; slippageBps: number; path: `0x${string}`[] };
 
-/** Mainnet execution is blocked until AGFusion has an authorized, verified RFQ/DEX integration. */
+/** Mainnet execution is blocked until OrdenFi has an authorized, verified RFQ/DEX integration. */
 export function assertArcMainnetSwapAvailable(isMainnet: boolean): void {
   if (isMainnet) {
     throw new Error(

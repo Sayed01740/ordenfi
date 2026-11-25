@@ -8,7 +8,7 @@ Identify a vendor-supported Circle App Kit / adapter dependency set that removes
 
 ## Findings (2026-10-29)
 
-1. The current AGFusion lockfile resolves `@circle-fin/app-kit@1.19.0` and `@circle-fin/adapter-viem-v2@1.19.3`. Their declared Zod 3 dependency keeps nested Zod 3 copies in the install tree.
+1. The current OrdenFi lockfile resolves `@circle-fin/app-kit@1.19.0` and `@circle-fin/adapter-viem-v2@1.19.3`. Their declared Zod 3 dependency keeps nested Zod 3 copies in the install tree.
 2. Circle's public `circle-bridge-kit-transfer` example uses a direct Zod 4 range, but its lockfile still contains Zod 3.25.67 nested under Circle adapter/provider packages. A root-level Zod 4 dependency is therefore not proof that the vulnerable transitive packages are gone.
 3. The project previously tried a blanket Zod 4 override and encountered a runtime incompatibility with the Zod 3 API `z.function(...).returns`. Do not repeat this without a compatibility test.
 4. `npm audit fix --force` proposes a breaking downgrade of App Kit and is not an acceptable remediation.
@@ -63,7 +63,7 @@ The failed audit job's JSON summary identifies the following package families. T
 | Ethers v5 subpackages | Low findings in ABI, abstract-provider, abstract-signer, hash, signing-key and transactions | Trace which Circle packages require these versions and test any vendor-supported upgrade independently |
 | Circle packages | High aggregate findings propagated through adapter, App Kit, borrow/bridge/earn/onramp kits and multiple providers | Do not assume every package-level finding is a distinct direct exploit; resolve the underlying dependency edges and rerun audit |
 
-The audit's automatic fix suggestion is a semver-major downgrade of `@circle-fin/app-kit` to `1.0.0`; this is rejected as unsafe without a deliberate migration and compatibility review. Some transitive provider findings report a fix as available, but that alone does not prove the resulting graph is compatible with AGFusion. Test a candidate on an isolated branch before adopting it.
+The audit's automatic fix suggestion is a semver-major downgrade of `@circle-fin/app-kit` to `1.0.0`; this is rejected as unsafe without a deliberate migration and compatibility review. Some transitive provider findings report a fix as available, but that alone does not prove the resulting graph is compatible with OrdenFi. Test a candidate on an isolated branch before adopting it.
 
 ## Validation evidence boundary
 
@@ -94,9 +94,9 @@ The isolated branch `security/audit-remediation-zod4-elliptic` now carries a com
 4. Keep this PR Draft until those reviews and integration checks are complete.
 
 Audit evidence:
-- CI run #793: https://github.com/Sayed01740/agfusion/actions/runs/40885989397
-- Full dependency audit run #198: https://github.com/Sayed01740/agfusion/actions/runs/40885989387
-- Draft remediation PR #29: https://github.com/Sayed01740/agfusion/pull/29
+- CI run #793: https://github.com/Sayed01740/ordenfi/actions/runs/40885989397
+- Full dependency audit run #198: https://github.com/Sayed01740/ordenfi/actions/runs/40885989387
+- Draft remediation PR #29: https://github.com/Sayed01740/ordenfi/pull/29
 
 ## Scope limitation identified during follow-up review (2026-11-04)
 
@@ -144,12 +144,12 @@ an important compatibility distinction:
   4.6.6).
 - The same release's `packages/zod/src/v3/types.ts` compatibility parser still
   walks array elements after recording `.max()` / `.length()` issues, and
-  walks set elements after recording `.max()` issues. The custom AGFusion build
+  walks set elements after recording `.max()` issues. The custom OrdenFi build
   patch backports early rejection for these two bounded Zod v3 cases.
 - Zod v3's `ZodMap` has no `.max()`, `.size()`, or equivalent container-size
   bound API in this compatibility source. Its map parser eagerly walks all
   entries. The current custom patch does not alter map parsing.
-- Neither the upstream Zod 4 change nor the AGFusion compatibility patch places
+- Neither the upstream Zod 4 change nor the OrdenFi compatibility patch places
   a universal issue-count ceiling on unbounded containers. A schema with no
   upper bound still walks its supplied elements/entries. This behavior must be
   evaluated together with the source and size limits of the data entering each
@@ -161,11 +161,11 @@ The CNA's CVE-2023-54404 record has subsequently been marked rejected; do not
 present that CVE identifier as an active CVE. Upstream PR #6652 explicitly
 states that unbounded containers are unchanged and that its fix moves declared
 size checks ahead of element parsing. These facts are not contradictory to the
-AGFusion compatibility concern: Circle is routed through Zod's v3 API inside
+OrdenFi compatibility concern: Circle is routed through Zod's v3 API inside
 the patched 4.6.7 package, and that v3 compatibility parser does not contain
 the corresponding early-rejection logic.
 
-Current bounded-array/set regression tests demonstrate the AGFusion backport
+Current bounded-array/set regression tests demonstrate the OrdenFi backport
 works for those bounded cases. They do not establish that all Circle schemas
 are bounded, nor that map or unbounded validation paths are protected. The
 remaining review task is therefore to inventory actual Circle SDK schemas and
@@ -224,13 +224,13 @@ and its response parsing paths, or obtain Circle vendor confirmation, before
 making a broader claim.
 
 The Zod size-cap behavior is defensive hardening, not a claim of a confirmed
-remotely exploitable AGFusion vulnerability. GHSA-mrhx-c7xc-m3w5 remains a
+remotely exploitable OrdenFi vulnerability. GHSA-mrhx-c7xc-m3w5 remains a
 GitHub advisory listing versions below 4.6.6 as affected; the associated
 CVE-2023-54404 record was rejected by its CNA on 2026-10-28. The rejection
 reason specifically notes that JSON.parse has already allocated the input and
 that an application request-size limit is relevant. The upstream 4.6.6 change
 only moves declared `.max()`, `.length()`, and `.size()` checks before
-element parsing; it does not cap unbounded containers. AGFusion's local v3
+element parsing; it does not cap unbounded containers. OrdenFi's local v3
 patch likewise does not create a universal issue-count cap.
 
 References:

@@ -1,6 +1,6 @@
 # AGFusion — Arc MAINNET (chain 5042) deploy + Blockscout verify
 #
-# Deploys: AGFusionRegistry, AGFusionEscrow, AGFusionDisperse
+# Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://explorer.arc.io
 # Writes addresses to contracts/deployments/arc-mainnet.json
 #
@@ -129,13 +129,13 @@ function Deploy($name, $path, [string[]]$ctorSig) {
 }
 
 if ($Only -in @("All", "Registry")) {
-  Deploy "AGFusionRegistry" "src/AGFusionRegistry.sol:AGFusionRegistry" @("constructor(string)", $METADATA)
+  Deploy "OrdenFiRegistry" "src/AGFusionRegistry.sol:AGFusionRegistry" @("constructor(string)", $METADATA)
 }
 if ($Only -in @("All", "Escrow")) {
-  Deploy "AGFusionEscrow" "src/AGFusionEscrow.sol:AGFusionEscrow" @("constructor(address,uint256,address)", $deployer, "$EscrowFeeBps", $deployer)
+  Deploy "OrdenFiEscrow" "src/AGFusionEscrow.sol:AGFusionEscrow" @("constructor(address,uint256,address)", $deployer, "$EscrowFeeBps", $deployer)
 }
 if ($Only -in @("All", "Disperse")) {
-  Deploy "AGFusionDisperse" "src/AGFusionDisperse.sol:AGFusionDisperse" $null
+  Deploy "OrdenFiDisperse" "src/AGFusionDisperse.sol:AGFusionDisperse" $null
 }
 
 $pk = $null

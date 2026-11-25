@@ -7,9 +7,9 @@
 ## 1. Current execution boundary
 
 - The Mainnet quote proxy returns a normalized quote summary, a 60-second AES-256-GCM encrypted quote-session token, and only the exact Permit2 typed-data message needed for an explicit wallet signature. It never returns upstream swap calldata or approval transactions. Quotes request EXACT Permit2 amounts and restrict routes to V2/V3 exact-input pools.
-- `AGFUSION_QUOTE_SESSION_SECRET` is configured as a sensitive Preview-only variable scoped to this feature branch. It is not configured for Production or Development.
+- `OrdenFi_QUOTE_SESSION_SECRET` is configured as a sensitive Preview-only variable scoped to this feature branch. It is not configured for Production or Development.
 - `POST /api/uniswap/preflight` performs read-only token, native gas, ERC-20 allowance, and Permit2 allowance/nonce checks. If needed, it returns unsigned exact-amount ERC-20 approval calldata to the canonical Permit2 contract only.
-- `POST /api/uniswap/swap` is a gated preparation endpoint. It defaults to HTTP 403 unless `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED=true`; the Preview branch explicitly sets this switch to `false`. If separately enabled for controlled review, it validates the encrypted quote binding and Permit2 signature, requests Uniswap `/swap` with upstream simulation enabled, validates Universal Router calldata, performs local `eth_call` and `eth_estimateGas`, and returns unsigned transaction data only. It never prompts a wallet or broadcasts.
+- `POST /api/uniswap/swap` is a gated preparation endpoint. It defaults to HTTP 403 unless `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED=true`; the Preview branch explicitly sets this switch to `false`. If separately enabled for controlled review, it validates the encrypted quote binding and Permit2 signature, requests Uniswap `/swap` with upstream simulation enabled, validates Universal Router calldata, performs local `eth_call` and `eth_estimateGas`, and returns unsigned transaction data only. It never prompts a wallet or broadcasts.
 - The browser UI may display a Mainnet quote, but its Swap action remains disabled.
 - `runProductionSwap()` is restricted to the exact `Arc_Testnet` chain before wallet-provider access. The existing ApexiSwap execution path remains Testnet-only.
 - `POST /api/circle/swap/prepare` rejects Mainnet. A Circle estimate is not unsigned transaction data.
@@ -131,11 +131,11 @@ The current official Uniswap Trading API documentation lists Arc (chain ID 5042)
 
 - Arc Universal Router 2.1.2: `0x8702463e73f74d0b6765aBceb314Ef07aCb92650`
 - Arc Permit2: `0x000000000022D473030F116dDEE9F6B43aC78BA3`
-- The no-Permit2 Proxy Approval flow uses `0x0000000085E102724e78eCd2F45DC9cA239Affad`, but Arc is not in the current official deployment list for that proxy. AGFusion must not use `x-permit2-disabled: true` on Arc.
+- The no-Permit2 Proxy Approval flow uses `0x0000000085E102724e78eCd2F45DC9cA239Affad`, but Arc is not in the current official deployment list for that proxy. OrdenFi must not use `x-permit2-disabled: true` on Arc.
 - The API supports `POST /quote` and `POST /swap`; `/swap` returns an unsigned transaction object. The integrator remains responsible for wallet signing and on-chain submission.
-- Arc is also listed for UniswapX V3, but this AGFusion design remains restricted to `CLASSIC` routes until a separate UniswapX order-signing and settlement review is completed.
+- Arc is also listed for UniswapX V3, but this OrdenFi design remains restricted to `CLASSIC` routes until a separate UniswapX order-signing and settlement review is completed.
 
-These references establish that an official Uniswap route exists for Arc; they do not establish that AGFusion's transaction flow is safe or ready. Before using the router, verify its address and deployed bytecode against the current official Supported Chains & Tokens page and on-chain Arc state. Pin the router version to `2.1.2`; do not use the older Arc Universal Router deployment or infer a router from another chain.
+These references establish that an official Uniswap route exists for Arc; they do not establish that OrdenFi's transaction flow is safe or ready. Before using the router, verify its address and deployed bytecode against the current official Supported Chains & Tokens page and on-chain Arc state. Pin the router version to `2.1.2`; do not use the older Arc Universal Router deployment or infer a router from another chain.
 
 Official references:
 - https://developers.uniswap.org/docs/trading/swapping-api/supported-chains
@@ -181,7 +181,7 @@ The current implementation is deliberately split into four server-side stages:
 
 1. **Quote:** `POST /api/uniswap/quote` requests CLASSIC V2/V3 with `permitAmount: "EXACT"`, validates the wallet/token/amount/output/recipient, and returns a normalized summary plus a 60-second encrypted quote session. The raw quote and Permit2 payload are bound to the exact account, chain, token pair, base-unit amount, output, and minimum. The typed-data payload is returned only because the wallet must sign that exact Permit2 message.
 2. **Preflight:** `POST /api/uniswap/preflight` reads token balance, native gas balance, ERC-20 allowance to Permit2, and Permit2 allowance/nonce/expiry. If ERC-20 approval is missing, it returns only an unsigned exact-amount approval to the canonical Permit2 contract. The user must wait for approval confirmation and obtain a fresh quote because quote sessions expire after 60 seconds.
-3. **Swap preparation:** `POST /api/uniswap/swap` requires the Preview-only `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED` switch. It is explicitly `false` in the current Preview branch. When enabled for controlled testing, it validates the quote session and Permit2 signature, verifies the live Permit2 nonce and allowance state, requests Uniswap `/swap` with `simulateTransaction: true`, decodes and validates the exact Universal Router 2.1.2 command stream, then requires local `eth_call` and `eth_estimateGas` to pass with sufficient native USDC for gas plus reserve. It returns an unsigned transaction only.
+3. **Swap preparation:** `POST /api/uniswap/swap` requires the Preview-only `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED` switch. It is explicitly `false` in the current Preview branch. When enabled for controlled testing, it validates the quote session and Permit2 signature, verifies the live Permit2 nonce and allowance state, requests Uniswap `/swap` with `simulateTransaction: true`, decodes and validates the exact Universal Router 2.1.2 command stream, then requires local `eth_call` and `eth_estimateGas` to pass with sufficient native USDC for gas plus reserve. It returns an unsigned transaction only.
 4. **Receipt:** a separate encrypted 24-hour receipt ticket binds the wallet, input/output tokens, exact input, and minimum output. `POST /api/uniswap/receipt` checks transaction chain/sender/router, successful receipt status, exact input token Transfer amount, and output token Transfer amount at or above the quoted minimum.
 
 Security limitations still open:

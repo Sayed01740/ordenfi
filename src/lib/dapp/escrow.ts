@@ -1,5 +1,5 @@
 /**
- * Client integration for AGFusionEscrow on Arc Network.
+ * Client integration for OrdenFiEscrow on Arc Network.
  * Handles creating on-chain agent tasks, submitting proofs, releasing funds,
  * and refunds on Arc Testnet (chainId 5042002).
  */

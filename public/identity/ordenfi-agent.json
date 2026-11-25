@@ -1,14 +1,14 @@
 {
   "name": "Ordenfi Agent",
   "description": "Stablecoin operations agent on Arc. Plans payments, bridges, and swaps; executes only after user confirmation and wallet signature.",
-  "image": "https://agfusion.vercel.app/icon-180.png",
-  "external_url": "https://agfusion.vercel.app",
+  "image": "https://ordenfi.vercel.app/icon-180.png",
+  "external_url": "https://ordenfi.vercel.app",
   "agent_type": "stablecoin_ops",
   "project": {
     "name": "Ordenfi",
-    "website": "https://agfusion.vercel.app",
+    "website": "https://ordenfi.vercel.app",
     "x": "https://x.com/AGfusion_",
-    "docs": "https://agfusion.vercel.app",
+    "docs": "https://ordenfi.vercel.app",
     "network": "Arc Testnet",
     "chainId": 5042002,
     "registry": "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483",
@@ -30,7 +30,7 @@
     "ERC-8004",
     "CCTP",
     "Circle App Kit",
-    "AGFusionRegistry"
+    "OrdenFiRegistry"
   ],
   "active": true
 }

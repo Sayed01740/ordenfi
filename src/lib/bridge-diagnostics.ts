@@ -28,7 +28,7 @@ export interface BridgeDiagnosticSession {
   sessionId: string;
   startedAt: string;
   updatedAt: string;
-  app: "AGFusion";
+  app: "OrdenFi";
   purpose: "Circle CCTP bridge diagnostic log";
   context: Record<string, unknown>;
   events: BridgeDiagnosticEvent[];
@@ -92,7 +92,7 @@ export function startBridgeDiagnostic(context: Record<string, unknown> = {}) {
     sessionId: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
     startedAt: now,
     updatedAt: now,
-    app: "AGFusion",
+    app: "OrdenFi",
     purpose: "Circle CCTP bridge diagnostic log",
     context: safe(context) as Record<string, unknown>,
     events: [],
@@ -201,7 +201,7 @@ export function exportBridgeDiagnostic() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `agfusion-bridge-debug-${session.sessionId}.json`;
+  anchor.download = `ordenfi-bridge-debug-${session.sessionId}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
   return session;

@@ -4,12 +4,12 @@
 
 | Field | Value |
 |-------|--------|
-| **Contract** | `AGFusionRegistry` |
+| **Contract** | `OrdenFiRegistry` |
 | **Address** | `0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483` |
 | **Deployer / owner** | `0xB00f41172c23d31571a3bE850AA0e81e58Ab8828` |
 | **Deploy tx** | `0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99` |
 | **Chain** | Arc Testnet · `5042002` |
-| **Metadata URI** | https://agfusion.vercel.app/identity/agfusion-agent.json |
+| **Metadata URI** | https://ordenfi.vercel.app/identity/agfusion-agent.json |
 
 ### Explorer links
 
@@ -21,11 +21,11 @@
 
 ```powershell
 $env:Path = "$env:USERPROFILE\.foundry\bin;$env:Path"
-cd C:\Users\sayed\.grok\bin\agfusion\contracts
+cd C:\Users\sayed\.grok\bin\ordenfi\contracts
 $ADDRESS = "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
-$URI = "https://agfusion.vercel.app/identity/agfusion-agent.json"
+$URI = "https://ordenfi.vercel.app/identity/agfusion-agent.json"
 $args = cast abi-encode "constructor(string)" $URI
-forge verify-contract $ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry `
+forge verify-contract $ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry `
   --chain-id 5042002 `
   --verifier blockscout `
   --verifier-url https://testnet.arcscan.app/api/ `
@@ -37,7 +37,7 @@ forge verify-contract $ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry `
 ```powershell
 $REGISTRY = "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
 cast send $REGISTRY "register(string,string,string)" `
-  "AGFusion Agent" "agent" "https://agfusion.vercel.app/identity/agfusion-agent.json" `
+  "AGFusion Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
   --rpc-url https://rpc.testnet.arc.network `
   --private-key $env:PRIVATE_KEY
 ```

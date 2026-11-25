@@ -1,5 +1,5 @@
 /**
- * Arc Token Registry for the AGFusion dApp (Mainnet & Testnet).
+ * Arc Token Registry for the OrdenFi dApp (Mainnet & Testnet).
  *
  * USDC is the native gas asset on Arc and is exposed as a 6-decimal ERC-20 at 0x3600…0000.
  */
@@ -97,7 +97,7 @@ export function getToken(symbol: string, isMainnet: boolean = IS_ARC_MAINNET): A
 }
 
 /**
- * AGFusionDisperse batch-send contract address. Populated after the user
+ * OrdenFiDisperse batch-send contract address. Populated after the user
  * deploys contracts/src/AGFusionDisperse.sol and sets the env var. Empty until
  * then — the Batch panel falls back to sequential sends automatically.
  */

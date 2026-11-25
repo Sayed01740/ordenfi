@@ -33,7 +33,7 @@ export default function BridgeDiagnosticsPage() {
   const exportAll = () => {
     const payload = { diagnosticVersion: 5, exportedAt: new Date().toISOString(), storage, eventCount: events.length, sessions: [...new Set(serverEvents.map((e) => e.sessionId))], events };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `agfusion-bridge-diagnostics-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `ordenfi-bridge-diagnostics-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (

@@ -164,7 +164,7 @@ export function BatchCard({ connected }: { connected: boolean }) {
           }`}
           title={
             singleSig
-              ? "AGFusionDisperse contract configured — the whole batch is one signature."
+              ? "OrdenFiDisperse contract configured — the whole batch is one signature."
               : "Deploy AGFusionDisperse and set NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS for a single-signature batch."
           }
         >

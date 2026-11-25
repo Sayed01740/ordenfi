@@ -123,7 +123,7 @@ It contains no assumed traffic thresholds and does not authorize activation.
   selecting a client-IP source: direct Vercel ingress, Cloudflare proxy in
   front of Vercel, or another proxy chain.
 - [x] Inventory the Vercel project domain attachment and branch-scoped Preview
-  environment metadata (checked 2026-11-02): only `agfusion.vercel.app` is
+  environment metadata (checked 2026-11-02): only `ordenfi.vercel.app` is
   attached as a verified project domain; no custom domain is attached; the
   current PR Preview is served on a Vercel deployment hostname; and no
   branch-scoped Preview environment variables are configured.

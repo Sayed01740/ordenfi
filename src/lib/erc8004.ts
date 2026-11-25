@@ -50,7 +50,7 @@ export type Erc8004RegisterResult = {
 };
 
 /**
- * Register AGFusion (or any agent) on ERC-8004 IdentityRegistry.
+ * Register OrdenFi (or any agent) on ERC-8004 IdentityRegistry.
  * User signs with connected wallet on Arc Testnet.
  */
 export async function registerErc8004Agent(opts?: {

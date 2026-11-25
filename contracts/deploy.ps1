@@ -1,4 +1,4 @@
-# AGFusionRegistry deploy to Arc Testnet (Path A — Foundry)
+# OrdenFiRegistry deploy to Arc Testnet (Path A — Foundry)
 # Usage:
 #   1. Fund your wallet with Arc Testnet USDC: https://faucet.circle.com
 #   2. Set private key for THIS session only (never commit):
@@ -69,7 +69,7 @@ if ($bal -eq "0") {
 }
 
 Write-Host ""
-Write-Host "Deploying AGFusionRegistry..." -ForegroundColor Cyan
+Write-Host "Deploying OrdenFiRegistry..." -ForegroundColor Cyan
 
 forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
   --rpc-url $env:ARC_TESTNET_RPC_URL `
@@ -78,7 +78,7 @@ forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
   -vvvv
 
 Write-Host ""
-Write-Host "Done. Copy 'AGFusionRegistry deployed at: 0x...' from the logs above." -ForegroundColor Green
+Write-Host "Done. Copy 'OrdenFiRegistry deployed at: 0x...' from the logs above." -ForegroundColor Green
 Write-Host "Then verify (replace ADDRESS):" -ForegroundColor Cyan
 Write-Host @"
 forge verify-contract ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry ``

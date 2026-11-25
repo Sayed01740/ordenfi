@@ -30,7 +30,7 @@ export function buildAgentRegistration(
     chainId: 5042002,
     chain: "Arc_Testnet",
     registeredAt: new Date().toISOString(),
-    metadataUri: `https://agfusion.vercel.app/agents/${agent.identity}`,
+    metadataUri: `https://ordenfi.vercel.app/agents/${agent.identity}`,
     capabilities: ["payments", "policy", "escrow"],
   };
 }

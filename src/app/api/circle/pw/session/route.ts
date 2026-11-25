@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Establish the AGFusion server session for an already-authenticated Circle
+ * Establish the OrdenFi server session for an already-authenticated Circle
  * user-controlled wallet. Circle wallets cannot use SIWE/personal_sign, so
  * the Circle user token is verified against Circle's wallet list and the
  * resulting session is bound to the exact wallet address.

@@ -1,5 +1,5 @@
 /**
- * Browser client for the AGFusion agent.
+ * Browser client for the OrdenFi agent.
  *
  * Plan: server (BazaarLink) + always attach a Confirm card for money commands.
  * Execute: local only so Rabby/MetaMask can open for signatures.

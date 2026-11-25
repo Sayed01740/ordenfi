@@ -5,7 +5,7 @@ import { IS_ARC_MAINNET } from "@/lib/arc-chain";
 /**
  * Arc swap execution entry point — supports both Arc Mainnet (5042) and Arc Testnet (5042002).
  *
- * AGFusion uses its own Arc DEX path (production-swap.ts) which works with
+ * OrdenFi uses its own Arc DEX path (production-swap.ts) which works with
  * the connected EIP-1193 wallet including Circle Email/Smart Wallet adapter.
  * Circle's hosted Stablecoin Swap Service is not used here because it does
  * not support Arc as a chain.

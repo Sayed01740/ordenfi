@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// src/AGFusionRegistry.sol
-
 /**
- * @title AGFusionRegistry
- * @notice On-chain project identity for AGFusion on Arc Testnet (chainId 5042002).
+ * @title OrdenFiRegistry
+ * @notice On-chain project identity for OrdenFi on Arc Testnet (chainId 5042002).
  * @dev Stores project metadata and registrar-gated agent/product module registrations.
  */
-contract AGFusionRegistry {
-    string public constant PROJECT_NAME = "AGFusion";
+contract OrdenFiRegistry {
+    string public constant PROJECT_NAME = "OrdenFi";
     string public constant VERSION = "1.1.0";
 
     address public owner;
@@ -99,9 +97,9 @@ contract AGFusionRegistry {
     }
 
     /**
-     * @notice Register a product module or agent under AGFusion.
+     * @notice Register a product module or agent under OrdenFi.
      * @dev Gated: Only owner or authorized registrars can call this.
-     * @param name Human label (e.g. "AGFusion Agent")
+     * @param name Human label (e.g. "OrdenFi Agent")
      * @param kind Category (e.g. "agent", "bridge-ui", "studio")
      * @param uri Metadata URI for this registration
      */
@@ -153,7 +151,7 @@ contract AGFusionRegistry {
         return _byRegistrant[who];
     }
 
-    /// @notice Snapshot for explorers / AGFusion UI
+    /// @notice Snapshot for explorers / OrdenFi UI
     function projectInfo()
         external
         view
@@ -175,4 +173,10 @@ contract AGFusionRegistry {
             _registrations.length
         );
     }
+}
+
+
+/// @dev Backwards-compatible contract alias
+contract AGFusionRegistry is OrdenFiRegistry {
+    constructor(string memory initialMetadataURI) OrdenFiRegistry(initialMetadataURI) {}
 }

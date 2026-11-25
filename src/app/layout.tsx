@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Host_Grotesk, JetBrains_Mono } from "next/font/google";
 import { BRAND_DESCRIPTION, BRAND_NAME, BRAND_URL } from "@/lib/brand";
 import "./globals.css";
-import "./agfusion-web3-premium.css";
+import "./ordenfi-web3-premium.css";
 
 const sans = Host_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-host", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-jetbrains-mono", display: "swap" });

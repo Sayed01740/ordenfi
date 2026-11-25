@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// src/AGFusionDisperse.sol
-
 /**
- * @title AGFusionDisperse
- * @notice Single-transaction batch token sender ("multisend") for AGFusion on
+ * @title OrdenFiDisperse
+ * @notice Single-transaction batch token sender ("multisend") for OrdenFi on
  *         Arc Testnet (chainId 5042002). Lets a user pay many recipients with a
  *         SINGLE wallet signature.
  *
@@ -25,7 +23,7 @@ pragma solidity ^0.8.24;
  *         same transaction. A reentrancy guard protects the native path.
  *
  *         Deploy with Foundry on Arc Testnet. Gas is paid in USDC.
- *         See contracts/script/DeployAGFusionDisperse.s.sol.
+ *         See contracts/script/DeployOrdenFiDisperse.s.sol.
  */
 
 interface IERC20 {
@@ -34,8 +32,8 @@ interface IERC20 {
     function allowance(address owner, address spender) external view returns (uint256);
 }
 
-contract AGFusionDisperse {
-    string public constant NAME = "AGFusionDisperse";
+contract OrdenFiDisperse {
+    string public constant NAME = "OrdenFiDisperse";
     string public constant VERSION = "1.0.0";
     uint256 public constant MAX_BATCH_SIZE = 200;
 
@@ -235,3 +233,7 @@ contract AGFusionDisperse {
 
     receive() external payable {}
 }
+
+
+/// @dev Backwards-compatible contract alias
+contract AGFusionDisperse is OrdenFiDisperse {}

@@ -71,7 +71,7 @@ if ($bal -eq "0") {
 Write-Host ""
 Write-Host "Deploying OrdenFiRegistry..." -ForegroundColor Cyan
 
-forge script script/DeployAGFusionRegistry.s.sol:DeployAGFusionRegistry `
+forge script script/DeployOrdenFiRegistry.s.sol:DeployOrdenFiRegistry `
   --rpc-url $env:ARC_TESTNET_RPC_URL `
   --private-key $env:PRIVATE_KEY `
   --broadcast `
@@ -81,7 +81,7 @@ Write-Host ""
 Write-Host "Done. Copy 'OrdenFiRegistry deployed at: 0x...' from the logs above." -ForegroundColor Green
 Write-Host "Then verify (replace ADDRESS):" -ForegroundColor Cyan
 Write-Host @"
-forge verify-contract ADDRESS src/AGFusionRegistry.sol:AGFusionRegistry ``
+forge verify-contract ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry ``
   --chain-id 5042002 ``
   --verifier blockscout ``
   --verifier-url https://testnet.arcscan.app/api/ ``

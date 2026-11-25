@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGFusionEscrow} from "../src/AGFusionEscrow.sol";
+import {OrdenFiEscrow} from "../src/OrdenFiEscrow.sol";
 
 contract MockToken {
     mapping(address => uint256) public balanceOf;
@@ -35,8 +35,8 @@ contract MockToken {
     }
 }
 
-contract AGFusionEscrowTest is Test {
-    AGFusionEscrow public escrow;
+contract OrdenFiEscrowTest is Test {
+    OrdenFiEscrow public escrow;
     MockToken public token;
 
     address public client = address(0x1111);
@@ -47,7 +47,7 @@ contract AGFusionEscrowTest is Test {
     uint256 public feeBps = 50; // 0.5%
 
     function setUp() public {
-        escrow = new AGFusionEscrow(arbitrator, feeBps, feeRecipient);
+        escrow = new OrdenFiEscrow(arbitrator, feeBps, feeRecipient);
         token = new MockToken();
 
         token.mint(client, 1000 ether);

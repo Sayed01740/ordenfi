@@ -37,7 +37,7 @@ forge verify-contract $ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry `
 ```powershell
 $REGISTRY = "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
 cast send $REGISTRY "register(string,string,string)" `
-  "AGFusion Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
+  "OrdenFi Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
   --rpc-url https://rpc.testnet.arc.network `
   --private-key $env:PRIVATE_KEY
 ```

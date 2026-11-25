@@ -98,7 +98,7 @@ export function getToken(symbol: string, isMainnet: boolean = IS_ARC_MAINNET): A
 
 /**
  * OrdenFiDisperse batch-send contract address. Populated after the user
- * deploys contracts/src/AGFusionDisperse.sol and sets the env var. Empty until
+ * deploys contracts/src/OrdenFiDisperse.sol and sets the env var. Empty until
  * then — the Batch panel falls back to sequential sends automatically.
  */
 export const DISPERSE_ADDRESS = (

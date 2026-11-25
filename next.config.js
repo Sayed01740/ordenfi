@@ -23,6 +23,11 @@ const nextConfig = {
       { source: "/", has: [{ type: "query", key: "pay" }], destination: "/app", permanent: false },
     ];
   },
+  async rewrites() {
+    return [
+      { source: "/identity/agfusion-agent.json", destination: "/identity/ordenfi-agent.json" },
+    ];
+  },
   async headers() {
     const cspHeader = `
       default-src 'self';

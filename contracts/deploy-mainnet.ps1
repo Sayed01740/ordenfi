@@ -129,13 +129,13 @@ function Deploy($name, $path, [string[]]$ctorSig) {
 }
 
 if ($Only -in @("All", "Registry")) {
-  Deploy "OrdenFiRegistry" "src/AGFusionRegistry.sol:AGFusionRegistry" @("constructor(string)", $METADATA)
+  Deploy "OrdenFiRegistry" "src/OrdenFiRegistry.sol:OrdenFiRegistry" @("constructor(string)", $METADATA)
 }
 if ($Only -in @("All", "Escrow")) {
-  Deploy "OrdenFiEscrow" "src/AGFusionEscrow.sol:AGFusionEscrow" @("constructor(address,uint256,address)", $deployer, "$EscrowFeeBps", $deployer)
+  Deploy "OrdenFiEscrow" "src/OrdenFiEscrow.sol:OrdenFiEscrow" @("constructor(address,uint256,address)", $deployer, "$EscrowFeeBps", $deployer)
 }
 if ($Only -in @("All", "Disperse")) {
-  Deploy "OrdenFiDisperse" "src/AGFusionDisperse.sol:AGFusionDisperse" $null
+  Deploy "OrdenFiDisperse" "src/OrdenFiDisperse.sol:OrdenFiDisperse" $null
 }
 
 $pk = $null

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGFusionDisperse, IERC20} from "../src/AGFusionDisperse.sol";
+import {OrdenFiDisperse, IERC20} from "../src/OrdenFiDisperse.sol";
 
 /// Minimal EIP-20 for tests (returns bool).
 contract MockERC20 {
@@ -54,8 +54,8 @@ contract NoReturnERC20 {
     }
 }
 
-contract AGFusionDisperseTest is Test {
-    AGFusionDisperse internal disperse;
+contract OrdenFiDisperseTest is Test {
+    OrdenFiDisperse internal disperse;
     MockERC20 internal token;
     address internal sender = address(0xA11CE);
     address internal r1 = address(0xB0B);
@@ -63,7 +63,7 @@ contract AGFusionDisperseTest is Test {
     address internal r3 = address(0xD00D);
 
     function setUp() public {
-        disperse = new AGFusionDisperse();
+        disperse = new OrdenFiDisperse();
         token = new MockERC20();
         token.mint(sender, 1_000_000);
         vm.prank(sender);
@@ -109,7 +109,7 @@ contract AGFusionDisperseTest is Test {
         v[0] = 100;
 
         vm.prank(sender);
-        vm.expectRevert(AGFusionDisperse.LengthMismatch.selector);
+        vm.expectRevert(OrdenFiDisperse.LengthMismatch.selector);
         disperse.disperseToken(IERC20(address(token)), to, v);
     }
 
@@ -120,7 +120,7 @@ contract AGFusionDisperseTest is Test {
         v[0] = 100;
 
         vm.prank(sender);
-        vm.expectRevert(AGFusionDisperse.ZeroRecipient.selector);
+        vm.expectRevert(OrdenFiDisperse.ZeroRecipient.selector);
         disperse.disperseToken(IERC20(address(token)), to, v);
     }
 
@@ -148,7 +148,7 @@ contract AGFusionDisperseTest is Test {
         v[0] = 100;
 
         vm.prank(sender);
-        vm.expectRevert(AGFusionDisperse.TransferFailed.selector);
+        vm.expectRevert(OrdenFiDisperse.TransferFailed.selector);
         disperse.disperseToken(IERC20(nonContract), to, v);
     }
 
@@ -162,7 +162,7 @@ contract AGFusionDisperseTest is Test {
 
         vm.prank(sender);
         vm.expectRevert(
-            abi.encodeWithSelector(AGFusionDisperse.BatchTooLarge.selector, 201, 200)
+            abi.encodeWithSelector(OrdenFiDisperse.BatchTooLarge.selector, 201, 200)
         );
         disperse.disperseToken(IERC20(address(token)), to, v);
     }
@@ -207,7 +207,7 @@ contract AGFusionDisperseTest is Test {
         vm.deal(sender, 10 ether);
         vm.prank(sender);
         vm.expectRevert(
-            abi.encodeWithSelector(AGFusionDisperse.InsufficientValue.selector, uint256(1 ether), uint256(5 ether))
+            abi.encodeWithSelector(OrdenFiDisperse.InsufficientValue.selector, uint256(1 ether), uint256(5 ether))
         );
         disperse.disperseNative{value: 1 ether}(to, v);
     }

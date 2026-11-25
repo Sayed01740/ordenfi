@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 /**
- * @title AGFusionEscrow
+ * @title OrdenFiEscrow
  * @notice Production-grade on-chain escrow for AI Agents and Autonomous Tasks on Arc Network (chainId 5042002).
  * @dev Supports both canonical ERC-20 USDC (6 decimals) and native Arc USDC (18 decimals).
  *      Includes arbitrator dispute resolution, protocol fee support, and permissionless keeper refunds.
@@ -14,8 +14,8 @@ interface IERC20Minimal {
     function balanceOf(address account) external view returns (uint256);
 }
 
-contract AGFusionEscrow {
-    string public constant NAME = "AGFusionEscrow";
+contract OrdenFiEscrow {
+    string public constant NAME = "OrdenFiEscrow";
     string public constant VERSION = "1.1.0";
     uint256 public constant MAX_FEE_BPS = 500; // 5.00% max fee
 
@@ -358,4 +358,10 @@ contract AGFusionEscrow {
     }
 
     receive() external payable {}
+}
+
+
+/// @dev Backwards-compatible contract alias
+contract AGFusionEscrow is OrdenFiEscrow {
+    constructor(address arbitrator_, uint256 feeBps_, address feeRecipient_) OrdenFiEscrow(arbitrator_, feeBps_, feeRecipient_) {}
 }

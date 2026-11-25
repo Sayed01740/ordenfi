@@ -8,7 +8,7 @@ async function main() {
   const image = fs.readFileSync(source);
   const imageUrl = "data:image/jpeg;base64," + image.toString("base64");
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254"><title>Ordenfi</title><image width="1254" height="1254" href="${imageUrl}"/></svg>`;
-  for (const name of ["ordenfi-mark.svg", "agfusion-mark.svg", "agfusion-main.svg", "agfusion-wordmark.svg"]) {
+  for (const name of ["ordenfi-mark.svg", "ordenfi-main.svg", "ordenfi-wordmark.svg"]) {
     fs.writeFileSync(path.resolve("public/brand", name), svg);
   }
   for (const [file, size] of [["brand/ordenfi-logo.png", 256], ["icon-32.png", 32], ["icon-180.png", 180], ["apple-icon.png", 180], ["logo-light.png", 512]]) {

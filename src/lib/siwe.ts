@@ -87,6 +87,8 @@ export function isAllowedSiweDomain(domain: string): boolean {
   const allowed = new Set<string>([
     "localhost",
     "127.0.0.1",
+    "ordenfi.xyz",
+    "www.ordenfi.xyz",
     "ordenfi.vercel.app",
     "agfusion.vercel.app",
   ]);

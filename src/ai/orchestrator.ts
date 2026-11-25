@@ -74,9 +74,9 @@ function narrative(intent: ParsedIntent, preview?: ActionPreview): string {
     case "route": return preview?.canExecute ? [`**Payment plan**`, "", `1. Validate ${intent.fromChain ? CHAINS[intent.fromChain]?.short ?? intent.fromChain : "source"} → ${intent.toChain ? CHAINS[intent.toChain]?.short ?? intent.toChain : "destination"}`, `2. Move **${intent.amount} ${intent.token}**`, `3. Verify destination settlement`, `4. Pay **${intent.recipientLabel || intent.recipient}**`, "", "Confirm to run the complete flow."].join("\n") : "I can build the transfer-and-pay plan once the amount, source, destination, and recipient are explicit.";
     case "code": return [`Here's Arc-ready code for **${intent.codeTopic || "send"}** — aligned with Arc Build docs.`, "", `Use Viem/Foundry on Arc ${IS_ARC_MAINNET ? "Mainnet" : "Testnet"} (chain \`${ARC_CHAIN_ID}\`).`, "I can also scaffold a Next.js payment component or deploy script."].join("\n");
     case "deploy": return [`Deployment assistant ready for **${intent.codeTopic === "contract" ? "ERC-20" : "contract"}** on Arc ${IS_ARC_MAINNET ? "Mainnet" : "Testnet"}.`, "", "Arc is EVM-compatible with **USDC as gas**.", `Chain ID: \`${ARC_CHAIN_ID}\``, "", "I'll keep deployment user-authorized and wallet-signed."].join("\n");
-    case "agent": return ["**AGFusion Operator**", "", "• Interpret financial intent", "• Prepare policy-bound actions", "• Request explicit user confirmation", "• Execute through the connected wallet", "• Verify the resulting on-chain state", "", "The agent never treats its own plan as authorization."].join("\n");
+    case "agent": return ["**Ordenfi Operator**", "", "• Interpret financial intent", "• Prepare policy-bound actions", "• Request explicit user confirmation", "• Execute through the connected wallet", "• Verify the resulting on-chain state", "", "The agent never treats its own plan as authorization."].join("\n");
     case "explain": return ["I can diagnose failed transfers (approve / burn / attestation / mint), recover incomplete routes, and explain fees in USDC terms.", "", "Paste a transaction hash or describe the failure and I'll help."].join("\n");
-    default: return ["I'm **AGFusion** — an AI-native workspace for stablecoin operations on Arc and supported EVM networks.", "", "Try:", '• "Show my balances"', `• "Swap 1 USDC to EURC on Arc"`, `• "Bridge 5 USDC from Arc to ${PEER_CHAIN_LABEL}"`, `• "Bridge 5 USDC from ${PEER_CHAIN_LABEL} to Arc"`, '• "Send 2 USDC to 0x... on Arc"'].join("\n");
+    default: return ["I'm **Ordenfi** — an AI-native workspace for stablecoin operations on Arc and supported EVM networks.", "", "Try:", '• "Show my balances"', `• "Swap 1 USDC to EURC on Arc"`, `• "Bridge 5 USDC from Arc to ${PEER_CHAIN_LABEL}"`, `• "Bridge 5 USDC from ${PEER_CHAIN_LABEL} to Arc"`, '• "Send 2 USDC to 0x... on Arc"'].join("\n");
   }
 }
 
@@ -116,18 +116,13 @@ export function welcomeMessage(): ChatMessage {
     id: uid("msg"),
     role: "assistant",
     content: [
-      `Hi — I'm the **AGFusion Operator** on **${ARC_NETWORK_NAME}** (Chain \`${ARC_CHAIN_ID}\`).`,
+      "**What would you like to move?**",
       "",
-      "I can plan stablecoin operations across Arc and supported EVM networks: bridge, swap, send, balance and route analysis.",
+      `Plan a swap, send a payment, or bridge to ${ARC_NETWORK_NAME}. Tell me what you need in your own words.`,
       "",
-      "**Safety:** I plan first. Money only moves after you confirm the exact action and approve it in your wallet.",
+      "You review the details. Your wallet confirms the move.",
       "",
-      "Try:",
-      "• **Show my balances**",
-      "• **Swap 1 USDC to EURC on Arc**",
-      `• **Bridge 5 USDC from ${PEER_CHAIN_LABEL} to Arc**`,
-      `• **Bridge 5 USDC from Arc to ${PEER_CHAIN_LABEL}**`,
-      "• **Send 0.05 USDC to a full 0x address on Arc**",
+      "Choose a suggestion below to get started.",
     ].join("\n"),
     createdAt: new Date().toISOString(),
     intent: "unknown",

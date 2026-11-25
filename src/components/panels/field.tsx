@@ -11,7 +11,7 @@ export function Field({
 }) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-[11px] uppercase tracking-wider text-slate-500">
+      <span className="text-xs font-medium text-slate-300">
         {label}
       </span>
       {children}

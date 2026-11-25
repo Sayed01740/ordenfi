@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check, Clock, Fuel, Route, Wallet } from "lucide-react";
+import { ArrowRight, Check, Clock, Fuel, Route } from "lucide-react";
 import type { ActionPreview } from "@/types";
 import { Button } from "@/components/ui/button";
 import { formatUsdc } from "@/lib/fees";
 import { CHAINS } from "@/lib/chains";
-import { useWallet } from "@/providers/wallet-provider";
 import { usePilotStore } from "@/store/pilot-store";
+import { getAssistantPlan, type AssistantPlan } from "@/lib/assistant-plan";
+import { assistantGuides, type AssistantGuide } from "@/lib/assistant-tools";
 
 function LiveSpinner({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -22,14 +23,30 @@ function LiveSpinner({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-export function ActionPreviewCard({ preview, onExecute, busy = false }: { preview: ActionPreview; onExecute: () => void; busy?: boolean }) {
+export function ActionPreviewCard({ preview, onExecute, onReviewPlan, onGuide, busy = false }: {
+  preview: ActionPreview;
+  onExecute: () => void;
+  onReviewPlan?: (plan: AssistantPlan) => void;
+  onGuide?: (guide: AssistantGuide) => void;
+  busy?: boolean;
+}) {
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signInSiwe } = useWallet();
   const walletType = usePilotStore((s) => s.walletType);
   const walletAddress = usePilotStore((s) => s.walletAddress);
   const done = Boolean(preview.executed);
   const cta = preview.type === "swap" ? "Confirm Swap" : preview.type === "send" ? "Confirm Send" : preview.type === "bridge" ? "Confirm Bridge" : "Confirm";
+  const draft = onReviewPlan ? getAssistantPlan(preview) : null;
+  let missingField: AssistantGuide | undefined;
+  if (onGuide && !preview.canExecute && !done) {
+    if (preview.type === "send") missingField = Number(preview.amount) > 0 ? "sendRecipient" : "sendAmount";
+    if (preview.type === "swap" && !(Number(preview.amount) > 0)) missingField = "swapAmount";
+    if (preview.type === "bridge") {
+      if (!preview.toChain || preview.fromChain === preview.toChain) missingField = "bridgeDestination";
+      else if (!preview.fromChain) missingField = "bridgeSource";
+      else if (!(Number(preview.amount) > 0)) missingField = "bridgeAmount";
+    }
+  }
 
   async function ensureWalletServerSession() {
     try {
@@ -98,20 +115,38 @@ export function ActionPreviewCard({ preview, onExecute, busy = false }: { previe
     }
   }
   return (
-    <div className="rounded-xl border border-cyan-400/30 bg-gradient-to-br from-cyan-500/10 to-blue-600/5 p-4 space-y-3 shadow-lg shadow-cyan-500/5">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3  shadow-accent/5">
       <div>
-        <div className="text-[10px] uppercase tracking-wider text-cyan-400 font-semibold mb-1">Action Plan</div>
-        <div className="font-semibold text-slate-50 text-base">{preview.title}</div>
-        {preview.type === "bridge" && preview.fromChain && preview.toChain && <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/25 bg-cyan-500/10 px-2.5 py-1 text-xs font-medium text-cyan-100">{String(preview.fromChain).includes("Arc") ? "Arc" : String(preview.fromChain).includes("Base") ? "Base" : preview.fromChain}<span className="text-cyan-400">→</span>{String(preview.toChain).includes("Arc") ? "Arc" : String(preview.toChain).includes("Base") ? "Base" : preview.toChain}</div>}
-        <p className="text-sm text-slate-300 mt-1 leading-relaxed">{preview.summary}</p>
+        <div className="text-xs font-semibold text-accent mb-1">Action Plan</div>
+        <div className="font-semibold text-foreground text-base">{preview.title}</div>
+        {preview.type === "bridge" && preview.fromChain && preview.toChain && <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg border border-accent/25 bg-accent/10 px-2.5 py-1 text-xs font-medium text-foreground">{String(preview.fromChain).includes("Arc") ? "Arc" : String(preview.fromChain).includes("Base") ? "Base" : preview.fromChain}<span className="text-accent">→</span>{String(preview.toChain).includes("Arc") ? "Arc" : String(preview.toChain).includes("Base") ? "Base" : preview.toChain}</div>}
+        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{preview.summary}</p>
       </div>
-      {preview.plan && preview.plan.length > 0 && <ol className="space-y-1.5">{preview.plan.map((step, i) => <li key={step.id} className="flex items-start gap-2 text-xs text-slate-300"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-cyan-500/15 text-[10px] font-mono text-cyan-300">{i + 1}</span><span>{step.label}{step.detail && <span className="text-slate-500"> · {step.detail}</span>}</span></li>)}</ol>}
-      {preview.route && preview.route.length > 0 && <div className="flex flex-wrap items-center gap-1.5 text-xs"><Route className="h-3.5 w-3.5 text-cyan-400" />{preview.route.map((hop, i) => <span key={i} className="flex items-center gap-1.5">{i > 0 && <ArrowRight className="h-3 w-3 text-slate-600" />}<span className="rounded-md bg-white/5 border border-white/10 px-2 py-0.5 text-slate-200">{hop}</span></span>)}</div>}
+      {draft && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-border bg-background px-3 py-2 text-xs">
+          <strong className="tabular-nums text-foreground">
+            {draft.type === "swap" ? `${draft.amount} ${draft.tokenIn} → ${draft.tokenOut}` : `${draft.amount} USDC`}
+          </strong>
+          <span className="text-muted-foreground">{CHAINS[draft.chain].label}</span>
+        </div>
+      )}
+      {preview.plan && preview.plan.length > 0 && <ol className="space-y-1.5">{preview.plan.map((step, i) => <li key={step.id} className="flex items-start gap-2 text-xs text-muted-foreground"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-accent/15 text-xs font-mono text-accent">{i + 1}</span><span>{step.label}{step.detail && <span className="text-muted-foreground/80"> · {step.detail}</span>}</span></li>)}</ol>}
+      {preview.route && preview.route.length > 0 && <div className="flex flex-wrap items-center gap-1.5 text-xs"><Route className="h-3.5 w-3.5 text-accent" />{preview.route.map((hop, i) => <span key={i} className="flex items-center gap-1.5">{i > 0 && <ArrowRight className="h-3 w-3 text-slate-600" />}<span className="rounded-md bg-muted border border-border px-2 py-0.5 text-foreground">{hop}</span></span>)}</div>}
       <div className="flex flex-wrap gap-3 text-xs text-slate-400">{typeof preview.estimatedFeeUsd === "number" && <span className="inline-flex items-center gap-1"><Fuel className="h-3 w-3 text-amber-300" />~{formatUsdc(preview.estimatedFeeUsd)} gas</span>}{preview.estimatedTime && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3 text-emerald-300" />{preview.estimatedTime}</span>}{preview.fromChain && preview.toChain && <span>{CHAINS[preview.fromChain]?.short} → {CHAINS[preview.toChain]?.short}</span>}</div>
-      <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={!preview.canExecute || done || busy || confirming} onClick={(e) => { e.preventDefault(); e.stopPropagation(); void confirmAndExecute(); }} type="button">
-        {done ? <><Check className="h-4 w-4" />Executed</> : busy || confirming ? <><LiveSpinner />{confirming ? "Authorizing…" : "Confirming in wallet…"}</> : preview.canExecute ? cta : "Missing details"}
-      </Button>
-      {error && <div className="rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-[11px] leading-relaxed text-red-200">{error}</div>}
+      {missingField ? (
+        <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={busy} onClick={() => missingField && onGuide?.(missingField)} type="button">
+          {assistantGuides[missingField].label}<ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Button>
+      ) : draft ? (
+        <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={busy} onClick={() => onReviewPlan?.(draft)} type="button">
+          Review in {draft.type === "swap" ? "Swap" : "Send"}<ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={!preview.canExecute || done || busy || confirming} onClick={(e) => { e.preventDefault(); e.stopPropagation(); void confirmAndExecute(); }} type="button">
+          {done ? <><Check className="h-4 w-4" />Executed</> : busy || confirming ? <><LiveSpinner />{confirming ? "Authorizing…" : "Confirming in wallet…"}</> : preview.canExecute ? cta : "Missing details"}
+        </Button>
+      )}
+      {error && <div className="rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs leading-relaxed text-red-200">{error}</div>}
     </div>
   );
 }

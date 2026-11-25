@@ -1,8 +1,7 @@
 import type { ChainId } from "@/types";
 import {
   ARC_CHAIN_ID,
-  ARC_EXPLORER,
-  ARC_NETWORK_NAME,
+  getArcNetworkMeta,
   ARC_TESTNET_RPC,
   ARC_CURRENCY_DECIMALS,
   ARC_CURRENCY_NAME,
@@ -67,7 +66,7 @@ export const CHAINS: Record<ChainId, ChainMeta> = {
     label: "Arc Testnet",
     short: "Arc",
     color: "#a3a3a3",
-    explorer: ARC_EXPLORER,
+    explorer: getArcNetworkMeta(5042002).explorer,
     appKitName: "Arc_Testnet",
     testnet: true,
   },

@@ -12,8 +12,13 @@ import { getArcNetworkMeta } from "@/lib/arc-chain";
 import { executeSend } from "@/lib/client-actions";
 import { quoteSendFee } from "@/lib/fees";
 import type { ChainId } from "@/types";
+import type { AssistantSendPlan } from "@/lib/assistant-plan";
+import { paymentChain } from "@/lib/payment-tools";
 
-export function SendPanelBody() {
+export function SendPanelBody({ initialPlan, onDraftSubmitted }: {
+  initialPlan?: AssistantSendPlan;
+  onDraftSubmitted?: () => void;
+} = {}) {
   const { addTransaction, setActiveTx, setThinking, executionMode, walletChainId, networkMode } =
     usePilotStore();
   const effectiveChainId =
@@ -23,14 +28,21 @@ export function SendPanelBody() {
         ? 5042
         : 5042002;
   const meta = getArcNetworkMeta(effectiveChainId);
-  const [amount, setAmount] = useState("0.05");
-  const [to, setTo] = useState("");
+  const [amount, setAmount] = useState(initialPlan?.amount ?? "0.05");
+  const [to, setTo] = useState(initialPlan?.recipient ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const mode = executionMode();
 
   async function run() {
+    const wallet = usePilotStore.getState();
+    const activeChain: ChainId = paymentChain(wallet.walletChainId, wallet.networkMode);
+    if (initialPlan && initialPlan.chain !== activeChain) {
+      setConfirm(false);
+      setError("The network changed. Return to the plan's network before sending.");
+      return;
+    }
     const n = Number(amount);
     if (!amount || Number.isNaN(n) || n <= 0) {
       setError("Enter a valid amount");
@@ -46,7 +58,6 @@ export function SendPanelBody() {
     setThinking(true);
     setConfirm(false);
     try {
-      const activeChain: ChainId = meta.isMainnet ? "Arc_Mainnet" : "Arc_Testnet";
       const transaction = await executeSend({
         amount,
         token: "USDC",
@@ -56,6 +67,7 @@ export function SendPanelBody() {
       });
       addTransaction(transaction);
       setActiveTx(transaction.id);
+      if (transaction.txHash || transaction.status === "success") onDraftSubmitted?.();
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "Send failed — check wallet / funds",
@@ -69,12 +81,14 @@ export function SendPanelBody() {
   return (
     <>
       <div className="space-y-3">
+        {initialPlan && <p className="text-xs text-muted-foreground">Assistant draft · {meta.name}. Review the amount and address before sending.</p>}
         <Field label="Amount (USDC)">
           <div className="relative">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
               <TokenMark token="USDC" size={18} />
             </span>
             <Input
+              aria-label="Amount (USDC)"
               type="number"
               min="0"
               step="0.01"
@@ -83,13 +97,14 @@ export function SendPanelBody() {
               onChange={(e) => setAmount(e.target.value)}
               disabled={busy}
             />
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold tracking-wide text-muted-foreground">
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold tracking-normal text-muted-foreground">
               USDC
             </span>
           </div>
         </Field>
         <Field label="Recipient Address">
           <Input
+            aria-label="Recipient address"
             value={to}
             onChange={(e) => setTo(e.target.value)}
             disabled={busy}
@@ -112,7 +127,7 @@ export function SendPanelBody() {
       <ConfirmDialog
         open={confirm}
         title="Confirm payment"
-        summary={`Send ${amount} USDC to ${to} on Arc. Live mode opens your wallet.`}
+        summary={`Send ${amount} USDC to ${to} on ${meta.name}. Live mode opens your wallet.`}
         feeQuote={quoteSendFee(amount)}
         mode={mode}
         busy={busy}

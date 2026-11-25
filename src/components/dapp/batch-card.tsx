@@ -157,7 +157,7 @@ export function BatchCard({ connected }: { connected: boolean }) {
           <TokenSelect value={token} options={tokenList} onChange={setToken} />
         </div>
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${
             singleSig
               ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
               : "border-amber-400/25 bg-amber-400/10 text-amber-200"
@@ -183,7 +183,7 @@ export function BatchCard({ connected }: { connected: boolean }) {
         {rows.map((row, i) => {
           const addrBad = row.address.trim() !== "" && !isAddress(row.address);
           return (
-            <div key={i} className="rounded-2xl border border-white/[0.06] bg-[#0a1017] p-2.5">
+            <div key={i} className="rounded-2xl border border-white/[0.06] bg-card p-2.5">
               <div className="mb-1.5 flex items-center gap-2">
                 <Input
                   value={row.label ?? ""}
@@ -253,14 +253,14 @@ export function BatchCard({ connected }: { connected: boolean }) {
             onClick={() => exportTreasuryStatementCsv(transactions)}
             disabled={transactions.length === 0}
             title="Export accounting CSV statement"
-            className="text-slate-400 hover:text-slate-200 text-[11px] px-2"
+            className="text-slate-400 hover:text-slate-200 text-xs px-2"
           >
             <Download className="h-3.5 w-3.5 text-emerald-400" /> Statement
           </Button>
         </div>
 
         <div className="px-1 text-right">
-          <div className="text-[11px] text-slate-500">Total</div>
+          <div className="text-xs text-slate-500">Total</div>
           <div className="text-sm font-semibold text-slate-100">
             {total.toLocaleString(undefined, { maximumFractionDigits: 6 })} {token.symbol}
           </div>
@@ -269,7 +269,7 @@ export function BatchCard({ connected }: { connected: boolean }) {
 
       {busy && steps.length > 0 && <StepList steps={steps} />}
       {log.length > 0 && (
-        <div className="max-h-32 space-y-0.5 overflow-y-auto rounded-2xl border border-white/[0.06] bg-[#0a1017] p-3 font-mono text-[11px] scrollbar-thin">
+        <div className="max-h-32 space-y-0.5 overflow-y-auto rounded-2xl border border-white/[0.06] bg-card p-3 font-mono text-xs scrollbar-thin">
           {log.map((line, i) => (
             <div
               key={i}

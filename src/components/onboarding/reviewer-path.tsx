@@ -34,7 +34,7 @@ export function ReviewerPathCard() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-xs text-slate-400">
-        <p className="text-[11px] text-slate-500 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           Do these in order the first time. Use <strong className="text-slate-400">test</strong>{" "}
           money only.
         </p>
@@ -43,12 +43,12 @@ export function ReviewerPathCard() {
             <li key={s}>{s}</li>
           ))}
         </ol>
-        <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
+        <p className="text-xs text-slate-500 leading-relaxed pt-1">
           Always paste a full <code className="text-cyan-300/90">0x…</code> address
           for sends (42 characters). Cancel any wallet popup you did not start.
         </p>
-        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-2.5 space-y-1 font-mono text-[10px] text-slate-400">
-          <div className="text-[10px] uppercase tracking-wider text-cyan-400/80 font-sans">
+        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-2.5 space-y-1 font-mono text-xs text-slate-400">
+          <div className="text-xs font-semibold text-accent font-sans">
             On-chain identity (Arc Testnet)
           </div>
           <div>
@@ -111,7 +111,7 @@ export function ReviewerPathCard() {
             href="/docs"
             className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold"
           >
-            AGFusion Docs <ExternalLink className="h-3 w-3" />
+            Ordenfi Docs <ExternalLink className="h-3 w-3" />
           </Link>
         </div>
       </CardContent>

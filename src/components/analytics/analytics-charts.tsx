@@ -21,7 +21,7 @@ const chartTooltip = {
   border: "1px solid var(--color-border)",
   borderRadius: 12,
   color: "var(--color-foreground)",
-  boxShadow: "0 12px 28px rgba(0,0,0,.3)",
+  boxShadow: "var(--shadow-popover)",
 };
 const tooltipText = { color: "var(--color-foreground)" };
 
@@ -104,7 +104,7 @@ export function ChainUsagePieChart({ chainUsage }: { chainUsage: ChainUsagePoint
   return (
     <div className="h-56 w-full">
       <ResponsiveContainer width="100%" height={224}>
-        <PieChart accessibilityLayer={false}>
+        <PieChart accessibilityLayer={true}>
           <Pie
             data={chainUsage}
             dataKey="count"
@@ -134,7 +134,7 @@ export function AllocationBarChart({ allocation }: { allocation: AllocationPoint
   return (
     <div className="h-56 w-full">
       <ResponsiveContainer width="100%" height={224}>
-        <BarChart data={allocation} accessibilityLayer={false}>
+        <BarChart data={allocation} accessibilityLayer={true}>
           <CartesianGrid stroke="var(--color-border)" vertical={false} />
           <XAxis dataKey="name" stroke="var(--color-muted-foreground)" fontSize={11} />
           <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />

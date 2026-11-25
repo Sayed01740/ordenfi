@@ -1,6 +1,6 @@
 /**
  * Anthropic Messages API client (Claude).
- * Used for AGFusion agent tool-calling and help/onboarding.
+ * Used for Ordenfi agent tool-calling and help/onboarding.
  */
 
 import type { LlmConfig } from "@/lib/llm-config";
@@ -67,7 +67,7 @@ export async function anthropicMessages(
     messages: ClaudeMessage[];
     maxTokens?: number;
     temperature?: number;
-    /** Include AGFusion money tools */
+    /** Include Ordenfi money tools */
     withTools?: boolean;
   },
 ): Promise<ClaudeResponse> {
@@ -195,13 +195,13 @@ export async function anthropicMessages(
   };
 }
 
-export const HELP_SYSTEM = `You are the AGFusion product guide — a friendly onboarding coach for users.
+export const HELP_SYSTEM = `You are the Ordenfi product guide — a friendly onboarding coach for users.
 
 ${
   IS_ARC_MAINNET
-    ? `AGFusion is a live stablecoin & DeFi execution app on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
+    ? `Ordenfi is a live stablecoin & DeFi execution app on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
 Users connect any EVM browser wallet (MetaMask, Rabby, Coinbase Wallet, etc.) funded with USDC on ${ARC_NETWORK_NAME} or supported chains, then:`
-    : `AGFusion is a **testnet** app (not real cash) on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
+    : `Ordenfi is a **testnet** app (not real cash) on **${ARC_NETWORK_NAME}** (chain id ${ARC_CHAIN_ID}).
 Users connect a browser wallet (MetaMask, Rabby, etc.), get free test USDC from https://faucet.circle.com (select ${ARC_NETWORK_NAME}), then:`
 }
 
@@ -224,9 +224,9 @@ Rules:
 
 ${ARC_SYSTEM_KNOWLEDGE_BLOCK}
 
-You are only helping them understand and use AGFusion — not executing money.`;
+You are only helping them understand and use Ordenfi — not executing money.`;
 
-export const AGENT_SYSTEM = `You are AGFusion Agent — a helpful AI agent for stablecoin finance on Arc Network (Circle).
+export const AGENT_SYSTEM = `You are Ordenfi Agent — a helpful AI agent for stablecoin finance on Arc Network (Circle).
 
 You behave like a normal conversational agent: answer questions clearly, explain concepts, and help the user get things done.
 

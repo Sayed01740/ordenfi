@@ -77,6 +77,7 @@ next-env.d.ts
 /.tmp-help-out.txt
 
 # local AI/editor tooling
+.hallmark/
 .agents/
 .augment/
 .claude/

@@ -7,7 +7,7 @@ export function Card({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("surface-card text-card-foreground border border-border bg-card shadow-lg", className)}
+      className={cn("surface-card text-card-foreground", className)}
       {...props}
     />
   );

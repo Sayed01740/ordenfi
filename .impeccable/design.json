@@ -1,0 +1,462 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T12:02:27.053768+00:00",
+  "title": "Design System: Ordenfi",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Background",
+        "tonalRamp": [
+          "oklch(15% 0.0052 248.11)",
+          "oklch(26.4% 0.0052 248.11)",
+          "oklch(37.9% 0.0052 248.11)",
+          "oklch(49.3% 0.0052 248.11)",
+          "oklch(60.7% 0.0052 248.11)",
+          "oklch(72.1% 0.0052 248.11)",
+          "oklch(83.6% 0.0052 248.11)",
+          "oklch(95% 0.0052 248.11)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0027 286.35)",
+          "oklch(26.4% 0.0027 286.35)",
+          "oklch(37.9% 0.0027 286.35)",
+          "oklch(49.3% 0.0027 286.35)",
+          "oklch(60.7% 0.0027 286.35)",
+          "oklch(72.1% 0.0027 286.35)",
+          "oklch(83.6% 0.0027 286.35)",
+          "oklch(95% 0.0027 286.35)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card",
+        "tonalRamp": [
+          "oklch(15% 0.0074 248.16)",
+          "oklch(26.4% 0.0074 248.16)",
+          "oklch(37.9% 0.0074 248.16)",
+          "oklch(49.3% 0.0074 248.16)",
+          "oklch(60.7% 0.0074 248.16)",
+          "oklch(72.1% 0.0074 248.16)",
+          "oklch(83.6% 0.0074 248.16)",
+          "oklch(95% 0.0074 248.16)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0094 248.17)",
+          "oklch(26.4% 0.0094 248.17)",
+          "oklch(37.9% 0.0094 248.17)",
+          "oklch(49.3% 0.0094 248.17)",
+          "oklch(60.7% 0.0094 248.17)",
+          "oklch(72.1% 0.0094 248.17)",
+          "oklch(83.6% 0.0094 248.17)",
+          "oklch(95% 0.0094 248.17)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Muted Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0135 244.32)",
+          "oklch(26.4% 0.0135 244.32)",
+          "oklch(37.9% 0.0135 244.32)",
+          "oklch(49.3% 0.0135 244.32)",
+          "oklch(60.7% 0.0135 244.32)",
+          "oklch(72.1% 0.0135 244.32)",
+          "oklch(83.6% 0.0135 244.32)",
+          "oklch(95% 0.0135 244.32)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "tonalRamp": [
+          "oklch(15% 0.0119 243.16)",
+          "oklch(26.4% 0.0119 243.16)",
+          "oklch(37.9% 0.0119 243.16)",
+          "oklch(49.3% 0.0119 243.16)",
+          "oklch(60.7% 0.0119 243.16)",
+          "oklch(72.1% 0.0119 243.16)",
+          "oklch(83.6% 0.0119 243.16)",
+          "oklch(95% 0.0119 243.16)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "tonalRamp": [
+          "oklch(15% 0.1500 126.40)",
+          "oklch(26.4% 0.1500 126.40)",
+          "oklch(37.9% 0.1500 126.40)",
+          "oklch(49.3% 0.1500 126.40)",
+          "oklch(60.7% 0.1500 126.40)",
+          "oklch(72.1% 0.1500 126.40)",
+          "oklch(83.6% 0.1500 126.40)",
+          "oklch(95% 0.1500 126.40)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "Primary Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0258 125.86)",
+          "oklch(26.4% 0.0258 125.86)",
+          "oklch(37.9% 0.0258 125.86)",
+          "oklch(49.3% 0.0258 125.86)",
+          "oklch(60.7% 0.0258 125.86)",
+          "oklch(72.1% 0.0258 125.86)",
+          "oklch(83.6% 0.0258 125.86)",
+          "oklch(95% 0.0258 125.86)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0102 242.05)",
+          "oklch(26.4% 0.0102 242.05)",
+          "oklch(37.9% 0.0102 242.05)",
+          "oklch(49.3% 0.0102 242.05)",
+          "oklch(60.7% 0.0102 242.05)",
+          "oklch(72.1% 0.0102 242.05)",
+          "oklch(83.6% 0.0102 242.05)",
+          "oklch(95% 0.0102 242.05)"
+        ]
+      },
+      "secondary-foreground": {
+        "role": "neutral",
+        "displayName": "Secondary Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0077 241.67)",
+          "oklch(26.4% 0.0077 241.67)",
+          "oklch(37.9% 0.0077 241.67)",
+          "oklch(49.3% 0.0077 241.67)",
+          "oklch(60.7% 0.0077 241.67)",
+          "oklch(72.1% 0.0077 241.67)",
+          "oklch(83.6% 0.0077 241.67)",
+          "oklch(95% 0.0077 241.67)"
+        ]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Success",
+        "tonalRamp": [
+          "oklch(15% 0.0800 165.46)",
+          "oklch(26.4% 0.0800 165.46)",
+          "oklch(37.9% 0.0800 165.46)",
+          "oklch(49.3% 0.0800 165.46)",
+          "oklch(60.7% 0.0800 165.46)",
+          "oklch(72.1% 0.0800 165.46)",
+          "oklch(83.6% 0.0800 165.46)",
+          "oklch(95% 0.0800 165.46)"
+        ]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Danger",
+        "tonalRamp": [
+          "oklch(15% 0.1001 21.90)",
+          "oklch(26.4% 0.1001 21.90)",
+          "oklch(37.9% 0.1001 21.90)",
+          "oklch(49.3% 0.1001 21.90)",
+          "oklch(60.7% 0.1001 21.90)",
+          "oklch(72.1% 0.1001 21.90)",
+          "oklch(83.6% 0.1001 21.90)",
+          "oklch(95% 0.1001 21.90)"
+        ]
+      },
+      "info": {
+        "role": "secondary",
+        "displayName": "Info",
+        "tonalRamp": [
+          "oklch(15% 0.0561 246.05)",
+          "oklch(26.4% 0.0561 246.05)",
+          "oklch(37.9% 0.0561 246.05)",
+          "oklch(49.3% 0.0561 246.05)",
+          "oklch(60.7% 0.0561 246.05)",
+          "oklch(72.1% 0.0561 246.05)",
+          "oklch(83.6% 0.0561 246.05)",
+          "oklch(95% 0.0561 246.05)"
+        ]
+      },
+      "inset": {
+        "role": "neutral",
+        "displayName": "Inset",
+        "tonalRamp": [
+          "oklch(15% 0.0061 236.89)",
+          "oklch(26.4% 0.0061 236.89)",
+          "oklch(37.9% 0.0061 236.89)",
+          "oklch(49.3% 0.0061 236.89)",
+          "oklch(60.7% 0.0061 236.89)",
+          "oklch(72.1% 0.0061 236.89)",
+          "oklch(83.6% 0.0061 236.89)",
+          "oklch(95% 0.0061 236.89)"
+        ]
+      },
+      "field-border": {
+        "role": "neutral",
+        "displayName": "Field Border",
+        "tonalRamp": [
+          "oklch(15% 0.0185 245.29)",
+          "oklch(26.4% 0.0185 245.29)",
+          "oklch(37.9% 0.0185 245.29)",
+          "oklch(49.3% 0.0185 245.29)",
+          "oklch(60.7% 0.0185 245.29)",
+          "oklch(72.1% 0.0185 245.29)",
+          "oklch(83.6% 0.0185 245.29)",
+          "oklch(95% 0.0185 245.29)"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Surface Raised",
+        "tonalRamp": [
+          "oklch(15% 0.0095 248.20)",
+          "oklch(26.4% 0.0095 248.20)",
+          "oklch(37.9% 0.0095 248.20)",
+          "oklch(49.3% 0.0095 248.20)",
+          "oklch(60.7% 0.0095 248.20)",
+          "oklch(72.1% 0.0095 248.20)",
+          "oklch(83.6% 0.0095 248.20)",
+          "oklch(95% 0.0095 248.20)"
+        ]
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Surface Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0114 248.21)",
+          "oklch(26.4% 0.0114 248.21)",
+          "oklch(37.9% 0.0114 248.21)",
+          "oklch(49.3% 0.0114 248.21)",
+          "oklch(60.7% 0.0114 248.21)",
+          "oklch(72.1% 0.0114 248.21)",
+          "oklch(83.6% 0.0114 248.21)",
+          "oklch(95% 0.0114 248.21)"
+        ]
+      },
+      "rule-soft": {
+        "role": "neutral",
+        "displayName": "Rule Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0114 248.19)",
+          "oklch(26.4% 0.0114 248.19)",
+          "oklch(37.9% 0.0114 248.19)",
+          "oklch(49.3% 0.0114 248.19)",
+          "oklch(60.7% 0.0114 248.19)",
+          "oklch(72.1% 0.0114 248.19)",
+          "oklch(83.6% 0.0114 248.19)",
+          "oklch(95% 0.0114 248.19)"
+        ]
+      },
+      "ink-secondary": {
+        "role": "neutral",
+        "displayName": "Ink Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0096 242.86)",
+          "oklch(26.4% 0.0096 242.86)",
+          "oklch(37.9% 0.0096 242.86)",
+          "oklch(49.3% 0.0096 242.86)",
+          "oklch(60.7% 0.0096 242.86)",
+          "oklch(72.1% 0.0096 242.86)",
+          "oklch(83.6% 0.0096 242.86)",
+          "oklch(95% 0.0096 242.86)"
+        ]
+      },
+      "accent-soft": {
+        "role": "neutral",
+        "displayName": "Accent Soft",
+        "tonalRamp": [
+          "oklch(15% 0.0394 126.77)",
+          "oklch(26.4% 0.0394 126.77)",
+          "oklch(37.9% 0.0394 126.77)",
+          "oklch(49.3% 0.0394 126.77)",
+          "oklch(60.7% 0.0394 126.77)",
+          "oklch(72.1% 0.0394 126.77)",
+          "oklch(83.6% 0.0394 126.77)",
+          "oklch(95% 0.0394 126.77)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Unified workspace heading; 30px mobile override."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Trade toolbar titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading and interface copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Desktop navigation labels."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Code, wallet addresses, and measured data; tabular numerals."
+      }
+    },
+    "shadows": [
+      {
+        "name": "popover",
+        "value": "0 16px 48px #080a0b66",
+        "purpose": "Available theme overlay token; not applied to the current navbar panels."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "Named theme easing."
+      },
+      {
+        "name": "micro",
+        "value": "120ms",
+        "purpose": "Navigation state transitions."
+      },
+      {
+        "name": "short",
+        "value": "180ms",
+        "purpose": "Named short theme duration."
+      },
+      {
+        "name": "button-state",
+        "value": "150ms",
+        "purpose": "Shared button state transitions; disabled for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stacked-workspace",
+        "value": "768px"
+      },
+      {
+        "name": "desktop-navigation",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared primary action variant.",
+      "html": "<button type=\"button\" class=\"ds-button-primary\">Continue</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:8px;font-family:var(--font-sans, \"Host Grotesk\", sans-serif);font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,opacity 150ms;background:var(--color-accent, #b9fa0a);color:var(--color-accent-foreground, #111609);border:1px solid var(--color-accent, #b9fa0a);} .ds-button-primary:hover{background:color-mix(in oklab, var(--color-accent, #b9fa0a) 90%, transparent);} .ds-button-primary:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} .ds-button-primary:active{transform:translateY(1px);} .ds-button-primary:disabled{pointer-events:none;opacity:.45;} @media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;} .ds-button-primary:active{transform:none;}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Shared secondary action variant.",
+      "html": "<button type=\"button\" class=\"ds-button-secondary\">Continue</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:8px;font-family:var(--font-sans, \"Host Grotesk\", sans-serif);font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,opacity 150ms;background:var(--color-secondary, #252a2e);color:var(--color-secondary-foreground, #d7dce0);border:1px solid var(--color-border, #353b40);} .ds-button-secondary:hover{background:var(--color-muted, #24282c);} .ds-button-secondary:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} .ds-button-secondary:active{transform:translateY(1px);} .ds-button-secondary:disabled{pointer-events:none;opacity:.45;} @media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;} .ds-button-secondary:active{transform:none;}}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Shared ghost action variant.",
+      "html": "<button type=\"button\" class=\"ds-button-ghost\">Continue</button>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:8px;font-family:var(--font-sans, \"Host Grotesk\", sans-serif);font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,opacity 150ms;background:transparent;color:var(--color-muted-foreground, #a5adb4);border:1px solid transparent;} .ds-button-ghost:hover{background:var(--color-muted, #24282c);color:var(--color-foreground, #eeeef0);} .ds-button-ghost:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} .ds-button-ghost:active{transform:translateY(1px);} .ds-button-ghost:disabled{pointer-events:none;opacity:.45;} @media(prefers-reduced-motion:reduce){.ds-button-ghost{transition:none;} .ds-button-ghost:active{transform:none;}}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Shared outline action variant.",
+      "html": "<button type=\"button\" class=\"ds-button-outline\">Continue</button>",
+      "css": ".ds-button-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:8px;font-family:var(--font-sans, \"Host Grotesk\", sans-serif);font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,opacity 150ms;background:transparent;color:var(--color-foreground, #eeeef0);border:1px solid var(--color-border, #353b40);} .ds-button-outline:hover{background:var(--color-muted, #24282c);} .ds-button-outline:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} .ds-button-outline:active{transform:translateY(1px);} .ds-button-outline:disabled{pointer-events:none;opacity:.45;} @media(prefers-reduced-motion:reduce){.ds-button-outline{transition:none;} .ds-button-outline:active{transform:none;}}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Shared danger action variant.",
+      "html": "<button type=\"button\" class=\"ds-button-danger\">Disconnect</button>",
+      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:8px;font-family:var(--font-sans, \"Host Grotesk\", sans-serif);font-size:14px;font-weight:500;white-space:nowrap;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,opacity 150ms;background:color-mix(in oklab, var(--color-danger, #ee9b98) 15%, transparent);color:var(--color-danger, #ee9b98);border:1px solid color-mix(in oklab, var(--color-danger, #ee9b98) 30%, transparent);} .ds-button-danger:hover{background:color-mix(in oklab, var(--color-danger, #ee9b98) 25%, transparent);} .ds-button-danger:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} .ds-button-danger:active{transform:translateY(1px);} .ds-button-danger:disabled{pointer-events:none;opacity:.45;} @media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none;} .ds-button-danger:active{transform:none;}}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Opaque field with visible boundary and lime green keyboard focus.",
+      "html": "<input class=\"ds-input\" aria-label=\"Recipient address\" placeholder=\"Recipient address\">",
+      "css": ".ds-input{height:44px;min-width:0;width:100%;border:1px solid var(--color-field-border, #69737c);background:var(--color-inset, #141719);color:var(--color-foreground, #eeeef0);padding:8px 16px;border-radius:8px;font:16px var(--font-sans,\"Host Grotesk\",sans-serif);caret-color:var(--color-accent, #b9fa0a);transition:color 150ms,border-color 150ms;} .ds-input::placeholder{color:var(--color-muted-foreground, #a5adb4);} .ds-input:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:2px;} .ds-input:disabled{cursor:not-allowed;opacity:.5;} @media(prefers-reduced-motion:reduce){.ds-input{transition:none;}}"
+    },
+    {
+      "name": "Desktop Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Text-first route links with a tonal current-page state.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Preview navigation\"><a class=\"ds-nav-link\" href=\"#swap\" aria-current=\"page\">Swap</a><a class=\"ds-nav-link\" href=\"#dashboard\">Dashboard</a></nav>",
+      "css": ".ds-nav{display:flex;gap:8px;font-family:var(--font-sans,\"Host Grotesk\",sans-serif);} .ds-nav-link{display:flex;align-items:center;min-height:44px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--color-muted-foreground, #a5adb4);transition:color 120ms,background-color 120ms;} .ds-nav-link:hover{background:var(--color-muted, #24282c);color:var(--color-foreground, #eeeef0);} .ds-nav-link[aria-current=\"page\"]{background:var(--surface-raised, #202428);color:var(--color-foreground, #eeeef0);} .ds-nav-link:focus-visible{outline:2px solid var(--color-accent, #b9fa0a);outline-offset:4px;} @media(prefers-reduced-motion:reduce){.ds-nav-link{transition:none;}}"
+    },
+    {
+      "name": "Network Label",
+      "kind": "chip",
+      "refersTo": "network-label",
+      "description": "Noninteractive named network status.",
+      "html": "<span class=\"ds-network\">Arc Testnet</span>",
+      "css": ".ds-network{display:inline-block;padding:4px 8px;border:1px solid var(--color-border, #353b40);border-radius:4px;font:12px var(--font-sans,\"Host Grotesk\",sans-serif);color:var(--ink-secondary, #c2c8cd);}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat bordered workspace container.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card-header\"><h3 class=\"ds-card-title\">Transaction review</h3><p class=\"ds-card-description\">Confirm the route and amount before signing.</p></header><div class=\"ds-card-content\">Your wallet confirms the operation.</div></section>",
+      "css": ".ds-card{background:var(--color-card, #191c1f);color:var(--color-foreground, #eeeef0);border:1px solid var(--color-border, #353b40);border-radius:16px;box-shadow:none;font-family:var(--font-sans,\"Host Grotesk\",sans-serif);} .ds-card-header{display:flex;flex-direction:column;gap:6px;padding:20px 20px 12px;} .ds-card-title{margin:0;font-size:16px;font-weight:600;letter-spacing:-.025em;} .ds-card-description{margin:0;color:var(--color-muted-foreground, #a5adb4);font-size:14px;line-height:1.625;} .ds-card-content{padding:0 20px 20px;font-size:16px;line-height:1.55;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Operator’s Ledger",
+    "overview": "The supplied logo and dark graphite surfaces give Ordenfi the character of an operator’s ledger: precise, composed, and assured. Dark opaque surfaces frame amounts, routes, and approvals; lime green marks the action to take, while cool information colors explain system state.\n\nHost Grotesk carries the interface and JetBrains Mono carries measured data. The reusable signature is a readable progression from request through review to wallet confirmation. Visual emphasis belongs to the operation and its amount.\n\nOne shared workspace serves / and the legacy /dashboard route: account overview above, Swap/Send/Bridge/More on the left, one assistant on the right, and activity below. Mobile stacks actions before the assistant. The active navigation entry is Workspace.\nActions use a clickable vertical sidebar on desktop, beside the selected form; on phones the same controls form a compact horizontal selector. The assistant stays on the right on desktop.",
+    "keyCharacteristics": [
+      "Opaque graphite surfaces with restrained tonal separation.",
+      "Lime green actions and visible keyboard focus.",
+      "Readable amounts, named controls, and wallet-confirmed execution."
+    ],
+    "rules": [
+      {
+        "name": "The Action Rule",
+        "body": "Use lime green for primary actions and focus; use cool information and semantic status colors to explain state.",
+        "section": "colors"
+      },
+      {
+        "name": "The Measured Data Rule",
+        "body": "Use JetBrains Mono with tabular numerals for code, addresses, and measured data; keep navigation and prose in Host Grotesk.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tonal Depth Rule",
+        "body": "Resting workspace surfaces use opaque fills and fine borders, without decorative glow or glass effects.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the semantic theme tokens and existing shared controls.",
+      "Do preserve visible lime green focus, accessible names, and readable amount hierarchy.",
+      "Do keep review and wallet confirmation legible in transaction flows.",
+      "Do respect reduced motion and safe-area space around fixed mobile navigation."
+    ],
+    "donts": [
+      "Don’t introduce neon glows, decorative gradients, or translucent glass surfaces.",
+      "Don’t use color alone to communicate network or transaction state.",
+      "Don’t replace measured-data typography with a decorative display face.",
+      "Don’t invent financial metrics, testimonials, or commercial claims."
+    ]
+  }
+}

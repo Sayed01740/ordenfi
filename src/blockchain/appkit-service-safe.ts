@@ -43,7 +43,7 @@ async function verifySubmittedReceipt(
     if (result.status === "reverted") return "error";
     return "retryable";
   } catch (error) {
-    console.warn(`[AGFusion] ${operation} receipt verification unavailable`, error);
+    console.warn(`[Ordenfi] ${operation} receipt verification unavailable`, error);
     return "retryable";
   }
 }

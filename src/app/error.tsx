@@ -12,12 +12,12 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("[AGFusion] Route error boundary caught:", error);
+    console.error("[Ordenfi] Route error boundary caught:", error);
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#060911] px-4 text-slate-100">
-      <div className="w-full max-w-md rounded-2xl border border-rose-500/25 bg-[#0c1220]/90 p-6 shadow-2xl backdrop-blur-xl">
+    <div className="flex min-h-screen items-center justify-center bg-card px-4 text-slate-100">
+      <div className="w-full max-w-md rounded-2xl border border-rose-500/25 bg-card p-6  ">
         <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-400">
           <AlertTriangle className="h-5 w-5" />
         </div>
@@ -28,7 +28,7 @@ export default function GlobalError({
           {error.message || "An unexpected client error occurred while rendering this view."}
         </p>
         {error.digest && (
-          <p className="mt-2 font-mono text-[11px] text-slate-500">
+          <p className="mt-2 font-mono text-xs text-slate-500">
             Digest: {error.digest}
           </p>
         )}
@@ -42,11 +42,11 @@ export default function GlobalError({
             Try Again
           </button>
           <Link
-            href="/dashboard"
+            href="/app"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-slate-200 transition hover:bg-white/10"
           >
             <Home className="h-3.5 w-3.5" />
-            Dashboard
+            Workspace
           </Link>
         </div>
       </div>

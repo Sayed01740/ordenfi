@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TokenMark } from "@/components/brand/token-mark";
 import { usePilotStore } from "@/store/pilot-store";
+import { useWallet } from "@/providers/wallet-provider";
 import { executeSwap } from "@/lib/client-actions";
 import { getArcDexSwapQuote } from "@/blockchain/production-swap";
 import { explorerTxUrl, getArcNetworkMeta } from "@/lib/arc-chain";
@@ -15,6 +16,9 @@ import { arcPublicClient, readAllowance } from "@/lib/dapp/erc20";
 import { getToken } from "@/lib/dapp/tokens";
 import { ARC_PERMIT2_CONTRACT } from "@/blockchain/uniswap-permit2";
 import { uid } from "@/lib/utils";
+import type { AssistantSwapPlan } from "@/lib/assistant-plan";
+import { quoteHasExpired } from "@/lib/assistant-tools";
+import { useAssistantWorkspace } from "@/components/workspace/assistant-workspace-context";
 import {
   SWAP_HANDOFF_EVENT,
   clearSwapHandoff,
@@ -25,6 +29,7 @@ import {
   ARC_SWAP_TOKENS,
   ERC20_APPROVE_ABI,
   SLIPPAGE_PRESETS,
+  formatSwapRate,
   getVerifiedMainnetProvider,
   isRecord,
   minimumReceived,
@@ -42,15 +47,21 @@ import {
   SwapQuoteSummaryCard,
 } from "./swap-quote-cards";
 
-export function ProductionSwapPanel() {
+export function ProductionSwapPanel({ embedded = false, initialPlan, onDraftSubmitted }: {
+  embedded?: boolean;
+  initialPlan?: AssistantSwapPlan;
+  onDraftSubmitted?: () => void;
+} = {}) {
+  const { openConnectModal } = useWallet();
   const { addTransaction, setActiveTx, setThinking, walletAddress, walletChainId } = usePilotStore();
-  const meta = getArcNetworkMeta(walletChainId);
+  const meta = getArcNetworkMeta(initialPlan ? 5042 : walletChainId);
 
-  const [tokenIn, setTokenIn] = useState<ArcSwapToken>("USDC");
-  const [tokenOut, setTokenOut] = useState<ArcSwapToken>("EURC");
-  const [amount, setAmount] = useState("0.50");
+  const [tokenIn, setTokenIn] = useState<ArcSwapToken>(initialPlan?.tokenIn ?? "USDC");
+  const [tokenOut, setTokenOut] = useState<ArcSwapToken>(initialPlan?.tokenOut ?? "EURC");
+  const [amount, setAmount] = useState(initialPlan?.amount ?? "0.50");
   const [slippage, setSlippage] = useState("1");
   const [quote, setQuote] = useState<SwapQuote | null>(null);
+  const [expiredQuote, setExpiredQuote] = useState<SwapQuote | null>(null);
   const [prepared, setPrepared] = useState<PreparedMainnetTransaction | null>(null);
   const [pendingApproval, setPendingApproval] = useState<PendingApprovalTransaction | null>(null);
   const [quoteBusy, setQuoteBusy] = useState(false);
@@ -60,6 +71,28 @@ export function ProductionSwapPanel() {
   const [flowStep, setFlowStep] = useState<SwapFlowStep>("idle");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const { setQuoteExpired } = useAssistantWorkspace() ?? {};
+  const quoteExpired = quote !== null && expiredQuote === quote;
+
+  useEffect(() => {
+    const expiresAt = quote?.quoteSessionExpiresAt;
+    if (!quote || !Number.isSafeInteger(expiresAt) || expiresAt === undefined) return;
+    const checkDeadline = () => {
+      if (quoteHasExpired(expiresAt, Date.now())) setExpiredQuote(quote);
+    };
+    checkDeadline();
+    const timer = window.setTimeout(checkDeadline, Math.max(0, Math.min(2_147_483_647, expiresAt * 1000 - Date.now())));
+    document.addEventListener("visibilitychange", checkDeadline);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", checkDeadline);
+    };
+  }, [quote]);
+
+  useEffect(() => {
+    setQuoteExpired?.(quoteExpired && !swapBusy && !quoteBusy);
+    return () => setQuoteExpired?.(false);
+  }, [quoteExpired, swapBusy, quoteBusy, setQuoteExpired]);
 
   useEffect(() => {
     setQuote(null);
@@ -185,6 +218,7 @@ export function ProductionSwapPanel() {
   }
 
   async function getQuote() {
+    if (quoteBusy || swapBusy) return;
     if (!walletAddress) {
       setError("Connect your wallet before requesting a swap quote.");
       return;
@@ -241,6 +275,7 @@ export function ProductionSwapPanel() {
 
   async function approvePermit2InWallet() {
     if (!pendingApproval || !walletAddress) return;
+    if (!canUseQuote()) return;
     setSwapBusy(true);
     setThinking(true);
     setError(null);
@@ -250,11 +285,13 @@ export function ProductionSwapPanel() {
       if (pendingApproval.from.toLowerCase() !== account.toLowerCase() || pendingApproval.chainId !== 5042) {
         throw new Error("Approval transaction does not match connected Arc Mainnet wallet.");
       }
+      if (!canUseQuote()) return;
       const approveTxHash = String(
         await provider.request({
           method: "eth_sendTransaction",
           params: [
             {
+              chainId: meta.chainIdHex,
               from: account,
               to: pendingApproval.to,
               data: pendingApproval.data,
@@ -283,6 +320,7 @@ export function ProductionSwapPanel() {
 
   async function executePreparedMainnetSwap() {
     if (!prepared || !walletAddress) return;
+    if (!canUseQuote()) return;
     setSwapBusy(true);
     setThinking(true);
     setError(null);
@@ -305,12 +343,14 @@ export function ProductionSwapPanel() {
         ? (rawValue.startsWith("0x") ? rawValue : `0x${BigInt(rawValue).toString(16)}`)
         : "0x0";
       const txParams: Record<string, string> = {
+        chainId: meta.chainIdHex,
         from: account,
         to: prepared.transaction.to,
         data: prepared.transaction.data,
         value: valueHex,
       };
       if (gasHex) txParams.gas = gasHex;
+      if (!canUseQuote()) return;
 
       const txHash = String(
         await provider.request({
@@ -339,7 +379,7 @@ export function ProductionSwapPanel() {
           cache: "no-store",
         });
         if (!verifyRes.ok && verifyRes.status !== 202) {
-          console.warn("[AGFusion] Receipt verification warning", { status: verifyRes.status });
+          console.warn("[Ordenfi] Receipt verification warning", { status: verifyRes.status });
         }
       }
 
@@ -365,6 +405,7 @@ export function ProductionSwapPanel() {
         executionMode: "live",
       });
       setActiveTx(txId);
+      onDraftSubmitted?.();
       setPrepared(null);
       setQuote(null);
       setNotice(`Swap confirmed on Arc Mainnet! Tx: ${txHash.slice(0, 14)}…`);
@@ -388,7 +429,8 @@ export function ProductionSwapPanel() {
     }
 
     const { provider, account } = await getVerifiedMainnetProvider(walletAddress);
-    let activeQuote = quote;
+    const activeQuote = quote;
+    if (!canUseQuote(activeQuote)) return;
 
     // Step 1: Upfront ERC-20 Approval to Permit2 (only when needed for non-native tokens)
     if (needsTokenApproval && tokenIn !== "USDC") {
@@ -404,10 +446,11 @@ export function ProductionSwapPanel() {
         functionName: "approve",
         args: [ARC_PERMIT2_CONTRACT as Address, approveAmount],
       });
+      if (!canUseQuote(activeQuote)) return;
       const approveTxHash = String(
         await provider.request({
           method: "eth_sendTransaction",
-          params: [{ from: account, to: tokenMeta.address, data: approveData, value: "0x0" }],
+          params: [{ chainId: meta.chainIdHex, from: account, to: tokenMeta.address, data: approveData, value: "0x0" }],
         }),
       );
       setNotice(`Waiting for ${tokenIn} approval confirmation (${approveTxHash.slice(0, 10)}…)…`);
@@ -419,13 +462,15 @@ export function ProductionSwapPanel() {
         throw new Error(`${tokenIn} approval reverted on Arc Mainnet.`);
       }
       setNeedsTokenApproval(false);
-      // Automatically refresh quote so quoteSession & permitData reflect confirmed allowance
-      setNotice("Approval confirmed ✓ Refreshing live quote…");
-      activeQuote = await fetchMainnetQuotePayload(account);
-      setQuote(activeQuote);
+      setNotice("Approval confirmed. Refreshing the quote…");
+      const refreshedQuote = await fetchMainnetQuotePayload(account);
+      setQuote(refreshedQuote);
+      setNotice("Approval confirmed. Review the refreshed quote before swapping.");
+      return;
     }
 
     // Step 2: Permit2 EIP-712 Signature (if required by Uniswap quote)
+    if (!canUseQuote(activeQuote)) return;
     let signature: string | undefined;
     if (activeQuote.permitData) {
       setFlowStep("signing");
@@ -451,6 +496,7 @@ export function ProductionSwapPanel() {
     }
 
     // Step 3: Prepare & validate calldata on server
+    if (!canUseQuote(activeQuote)) return;
     setFlowStep("preparing");
     const response = await fetch("/api/uniswap/swap", {
       method: "POST",
@@ -533,12 +579,14 @@ export function ProductionSwapPanel() {
       ? (rawValue.startsWith("0x") ? rawValue : `0x${BigInt(rawValue).toString(16)}`)
       : "0x0";
     const txParams: Record<string, string> = {
+      chainId: meta.chainIdHex,
       from: account,
       to: txObj.to,
       data: txObj.data,
       value: valueHex,
     };
     if (gasHex) txParams.gas = gasHex;
+    if (!canUseQuote(activeQuote)) return;
 
     const txHash = String(
       await provider.request({
@@ -600,9 +648,17 @@ export function ProductionSwapPanel() {
       ],
     });
     setActiveTx(txId);
+    onDraftSubmitted?.();
     setPrepared(null);
     setQuote(null);
     setNotice(`✅ Swap confirmed on Arc Mainnet! Tx: ${txHash.slice(0, 14)}…`);
+  }
+
+  function canUseQuote(candidate = quote) {
+    if (!candidate || !quoteHasExpired(candidate.quoteSessionExpiresAt, Date.now())) return true;
+    setExpiredQuote(candidate);
+    setError("This quote expired. Refresh it and review the new rate.");
+    return false;
   }
 
   async function swap() {
@@ -610,6 +666,7 @@ export function ProductionSwapPanel() {
       await getQuote();
       return;
     }
+    if (!canUseQuote()) return;
     if (!walletAddress) {
       setError("Connect your wallet before swapping.");
       return;
@@ -630,6 +687,7 @@ export function ProductionSwapPanel() {
       }
       const tx = await executeSwap({ amount, tokenIn, tokenOut, chain: "Arc_Testnet", slippageBps });
       addTransaction(tx);
+      if (tx.txHash || tx.status === "success") onDraftSubmitted?.();
       setActiveTx(tx.id);
       if (tx.status === "success") {
         setAmount("0");
@@ -652,66 +710,173 @@ export function ProductionSwapPanel() {
   }
 
   const minOutput = quote?.minimumAmountOut || (quote?.amountOut ? minimumReceived(quote.amountOut, slippage) : "—");
+  const rate = quoteExpired ? null : formatSwapRate(amount, quote?.amountOut);
+  const receiveStatus = rate ? `1 ${tokenIn} ≈ ${rate} ${tokenOut}`
+    : quoteExpired ? "Quote expired"
+    : quoteBusy ? "Getting quote…"
+    : error ? "Quote unavailable"
+    : walletAddress ? "Get a quote to see the rate"
+    : "Connect wallet to get a quote";
 
   return (
     <div className="space-y-3.5 sm:space-y-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-accent">{meta.name} Swap</p>
-        <Badge variant={meta.isMainnet ? "success" : "cyan"} className="shrink-0">{meta.isMainnet ? "Uniswap · Live Swap" : "USDC · EURC"}</Badge>
-      </div>
+      {initialPlan && <p className="text-xs text-muted-foreground">Assistant draft · {meta.name}. Review the token pair and quote.</p>}
+      {!embedded && <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-semibold text-accent">{meta.name} Swap</p>
+        <Badge variant="outline" className="shrink-0">{meta.isMainnet ? "Uniswap routing" : "USDC / EURC"}</Badge>
+      </div>}
 
-      <div className="rounded-xl border border-border bg-muted/40 p-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-2">
-          <label className="min-w-0">
-            <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">From</span>
-            <div className="relative">
+      <div className="space-y-2">
+        {/* You pay module */}
+        <div className="uniswap-glass-module p-3.5">
+          <div className="mb-2 flex items-center justify-between text-xs">
+            <span className="font-medium text-muted-foreground">You pay</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min="0"
+              step="any"
+              inputMode="decimal"
+              value={amount}
+              disabled={quoteBusy || swapBusy}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setQuote(null);
+                setPrepared(null);
+                setError(null);
+                setNotice(null);
+              }}
+              placeholder="0.0"
+              className="h-11 w-full bg-transparent font-sans text-3xl font-semibold tabular-nums text-white outline-none placeholder:text-muted-foreground/30"
+              aria-label="Amount to pay"
+            />
+            <div className="relative shrink-0">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
-                <TokenMark token={tokenIn} size={18} />
+                <TokenMark token={tokenIn} size={20} />
               </span>
-              <select value={tokenIn} disabled={quoteBusy || swapBusy} onChange={(e) => { setTokenIn(e.target.value as ArcSwapToken); setQuote(null); setPrepared(null); setError(null); setNotice(null); }} className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-3 text-sm font-semibold text-foreground focus:border-accent focus:outline-none">
-                {ARC_SWAP_TOKENS.map((token) => <option key={token}>{token}</option>)}
+              <select
+                aria-label="Token to pay"
+                value={tokenIn}
+                disabled={quoteBusy || swapBusy}
+                onChange={(e) => {
+                  setTokenIn(e.target.value as ArcSwapToken);
+                  setQuote(null);
+                  setPrepared(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                className="h-10 rounded-full border border-white/[0.12] bg-white/[0.08] hover:bg-white/[0.14] pl-9 pr-4 text-sm font-semibold text-white shadow-md  focus:border-accent focus:outline-none transition-colors cursor-pointer"
+              >
+                {ARC_SWAP_TOKENS.map((token) => (
+                  <option key={token} value={token} className="bg-card text-white">
+                    {token}
+                  </option>
+                ))}
               </select>
             </div>
-          </label>
-          <Button type="button" variant="outline" size="sm" className="h-11 w-11 shrink-0 px-0 rounded-xl" disabled={quoteBusy || swapBusy} onClick={flip} aria-label="Reverse swap"><ArrowDownUp className="h-4 w-4" /></Button>
-          <label className="min-w-0">
-            <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">To</span>
-            <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
-                <TokenMark token={tokenOut} size={18} />
-              </span>
-              <select value={tokenOut} disabled={quoteBusy || swapBusy} onChange={(e) => { setTokenOut(e.target.value as ArcSwapToken); setQuote(null); setPrepared(null); setError(null); setNotice(null); }} className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-3 text-sm font-semibold text-foreground focus:border-accent focus:outline-none">
-                {ARC_SWAP_TOKENS.map((token) => <option key={token}>{token}</option>)}
-              </select>
-            </div>
-          </label>
+          </div>
         </div>
 
-        <label className="mt-3 block">
-          <span className="mb-1.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Amount</span>
-          <Input type="number" min="0" step="any" inputMode="decimal" value={amount} disabled={quoteBusy || swapBusy} onChange={(e) => { setAmount(e.target.value); setQuote(null); setPrepared(null); setError(null); setNotice(null); }} placeholder="0.50" />
-        </label>
+        {/* Center floating flip button */}
+        <div className="relative -my-2.5 z-10 flex justify-center">
+          <button
+            type="button"
+            disabled={quoteBusy || swapBusy}
+            onClick={flip}
+            className="grid h-9 w-9 place-items-center rounded-2xl border border-white/[0.12] bg-card text-muted-foreground   transition-colors hover:border-accent/50 hover:bg-card hover:text-accent disabled:opacity-50"
+            aria-label="Reverse swap direction"
+          >
+            <ArrowDownUp className="h-4 w-4" />
+          </button>
+        </div>
 
-        <div className="mt-3 rounded-xl border border-border bg-card/70 p-3">
+        {/* You receive module */}
+        <div className="uniswap-glass-module p-3.5">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs">
+            <span className="font-medium text-muted-foreground">You receive</span>
+            <span role="status" className={rate ? "font-mono text-muted-foreground tabular-nums" : "text-muted-foreground"}>
+              {receiveStatus}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-full items-center font-sans text-3xl font-semibold tabular-nums text-white">
+              {quoteBusy ? (
+                <Loader2 className="h-6 w-6 animate-spin text-accent" />
+              ) : (
+                <span className="truncate">{quoteExpired ? "—" : quote?.amountOut || "—"}</span>
+              )}
+            </div>
+            <div className="relative shrink-0">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                <TokenMark token={tokenOut} size={20} />
+              </span>
+              <select
+                aria-label="Token to receive"
+                value={tokenOut}
+                disabled={quoteBusy || swapBusy}
+                onChange={(e) => {
+                  setTokenOut(e.target.value as ArcSwapToken);
+                  setQuote(null);
+                  setPrepared(null);
+                  setError(null);
+                  setNotice(null);
+                }}
+                className="h-10 rounded-full border border-white/[0.12] bg-white/[0.08] hover:bg-white/[0.14] pl-9 pr-4 text-sm font-semibold text-white shadow-md  focus:border-accent focus:outline-none transition-colors cursor-pointer"
+              >
+                {ARC_SWAP_TOKENS.map((token) => (
+                  <option key={token} value={token} className="bg-card text-white">
+                    {token}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Slippage & Route Settings */}
+        <div className="swap-settings py-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div><span className="block text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Slippage tolerance</span></div>
+            <span className="text-xs font-medium text-muted-foreground">Slippage tolerance</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {SLIPPAGE_PRESETS.map((preset) => (
-                <button key={preset} type="button" disabled={quoteBusy || swapBusy} onClick={() => updateSlippage(preset)} className={`rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition ${slippage === preset ? "border-accent/50 bg-accent/15 text-accent" : "border-border bg-muted/50 text-muted-foreground hover:text-foreground"}`}>
+                <button
+                  key={preset}
+                  type="button"
+                  disabled={quoteBusy || swapBusy}
+                  onClick={() => updateSlippage(preset)}
+                  aria-pressed={slippage === preset}
+                  className={`min-h-11 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                    slippage === preset
+                      ? "border border-accent/40 bg-accent/15 text-accent shadow-xs"
+                      : "border border-transparent bg-white/[0.04] text-muted-foreground hover:bg-white/[0.08] hover:text-foreground"
+                  }`}
+                >
                   {preset}%
                 </button>
               ))}
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-2">
-            <Input type="number" min="0.1" max="5" step="0.1" inputMode="decimal" value={slippage} disabled={quoteBusy || swapBusy} onChange={(e) => updateSlippage(e.target.value)} className="h-8 w-20 text-center text-xs" aria-label="Custom slippage percentage" />
-            <span className="text-[11px] text-muted-foreground">%</span>
-            <span className="ml-auto text-[10px] text-muted-foreground">Range: 0.1%–5%</span>
+            <Input
+              type="number"
+              min="0.1"
+              max="5"
+              step="0.1"
+              inputMode="decimal"
+              value={slippage}
+              disabled={quoteBusy || swapBusy}
+              onChange={(e) => updateSlippage(e.target.value)}
+              className="h-8 w-20 text-center text-xs"
+              aria-label="Custom slippage percentage"
+            />
+            <span className="text-xs text-muted-foreground">%</span>
+            <span className="ml-auto text-xs text-muted-foreground font-mono">Range: 0.1%–5%</span>
           </div>
         </div>
       </div>
 
-      {quote && (
+      {quote && !quoteExpired && (
         <SwapQuoteSummaryCard
           quote={quote}
           tokenIn={tokenIn}
@@ -726,7 +891,7 @@ export function ProductionSwapPanel() {
         />
       )}
 
-      {pendingApproval && (
+      {pendingApproval && !quoteExpired && (
         <SwapPendingApprovalCard
           pendingApproval={pendingApproval}
           swapBusy={swapBusy}
@@ -734,7 +899,7 @@ export function ProductionSwapPanel() {
         />
       )}
 
-      {prepared && (
+      {prepared && !quoteExpired && (
         <SwapPreparedTxCard
           prepared={prepared}
           swapBusy={swapBusy}
@@ -742,14 +907,25 @@ export function ProductionSwapPanel() {
         />
       )}
 
-      {notice && <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2.5 text-[11px] leading-relaxed text-cyan-200">{notice}</div>}
-      {error && <div className="rounded-xl border border-red-400/15 bg-red-400/[0.04] px-3 py-2.5 text-[11px] leading-relaxed text-red-200 whitespace-pre-wrap">{error}</div>}
+      {notice && <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-2.5 text-xs leading-relaxed text-cyan-200">{notice}</div>}
+      {error && <div className="rounded-xl border border-red-400/15 bg-red-400/[0.04] px-3 py-2.5 text-xs leading-relaxed text-red-200 whitespace-pre-wrap">{error}</div>}
 
-      {!quote && <Button className="w-full font-semibold" disabled={!canQuote || quoteBusy || swapBusy} onClick={() => void getQuote()}>{quoteBusy ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Getting quote…</> : "Get Quote"}</Button>}
+      {!walletAddress ? (
+        <Button size="lg" data-wallet-connect className="w-full h-12 rounded-xl text-base font-medium" onClick={openConnectModal}>Connect wallet</Button>
+      ) : !quote && <Button size="lg" className="w-full h-12 rounded-xl text-base font-medium" disabled={!canQuote || quoteBusy || swapBusy} onClick={() => void getQuote()}>{quoteBusy ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Getting quote…</> : "Get quote"}</Button>}
 
-      {quote && (
+      {quoteExpired && (
         <div className="space-y-2">
-          <Button className="w-full font-semibold" disabled={swapBusy || !walletAddress || !!prepared} onClick={() => void swap()}>
+          <p role="status" className="text-sm text-warning">This quote expired. Refresh to get the current rate.</p>
+          <Button data-assistant-refresh-quote type="button" className="w-full" disabled={quoteBusy || swapBusy || !canQuote} onClick={() => void getQuote()}>
+            <RefreshCw aria-hidden="true" className="h-4 w-4" /> Refresh quote
+          </Button>
+        </div>
+      )}
+
+      {quote && !quoteExpired && (
+        <div className="space-y-2">
+          <Button size="lg" className="w-full h-12 rounded-2xl text-base font-medium " disabled={swapBusy || !walletAddress || !!prepared} onClick={() => void swap()}>
             {swapBusy ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -764,7 +940,7 @@ export function ProductionSwapPanel() {
                         : "Confirming in wallet…"}
               </>
             ) : meta.isMainnet ? (
-              needsTokenApproval ? `Approve ${tokenIn} & Swap` : "Confirm & Swap"
+              needsTokenApproval ? `Approve ${tokenIn}` : "Confirm & Swap"
             ) : (
               "Confirm Swap"
             )}
@@ -773,7 +949,7 @@ export function ProductionSwapPanel() {
             <RefreshCw className="mr-2 h-3.5 w-3.5" />Refresh Quote
           </Button>
           {meta.isMainnet && (
-            <p className="text-center text-[10px] text-slate-500">Secured by Uniswap Universal Router 2.1.2 &amp; Permit2 on Arc Mainnet.</p>
+            <p className="text-center text-xs text-slate-500">Secured by Uniswap Universal Router 2.1.2 &amp; Permit2 on Arc Mainnet.</p>
           )}
         </div>
       )}

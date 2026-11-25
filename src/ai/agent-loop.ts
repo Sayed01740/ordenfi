@@ -224,7 +224,7 @@ export async function runAgentLoop(
         const content = [
           "Doing great — ready to help with your on-chain operations.",
           "",
-          `I'm the **AGFusion** execution assistant for **${NETWORK_LABEL}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
+          `I'm the **Ordenfi** execution assistant for **${NETWORK_LABEL}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
           "",
           wallet.address
             ? `Wallet connected: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\``
@@ -243,7 +243,7 @@ export async function runAgentLoop(
         const content = [
           wallet.address
             ? `Wallet connected (\`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\`) on **${NETWORK_LABEL}**.`
-            : `Welcome to **AGFusion** — your stablecoin operations workspace on **${NETWORK_LABEL}**.`,
+            : `Welcome to **Ordenfi** — your stablecoin operations workspace on **${NETWORK_LABEL}**.`,
           "",
           "Capabilities:",
           "• **Send** — Instant native USDC transfers (21k gas, sub-second finality)",
@@ -673,7 +673,7 @@ export async function runAgentLoop(
             ? "You're welcome!"
             : "I'm here and ready to help.",
           "",
-          `I'm the AGFusion execution assistant for **${NETWORK_LABEL}** (Send · Swap · Bridge).`,
+          `I'm the Ordenfi execution assistant for **${NETWORK_LABEL}** (Send · Swap · Bridge).`,
           "",
           'Try: `"Show my balances"`, `"Swap 1 USDC to EURC"`, or `"Bridge 5 USDC from Arc to Base"`.',
         ].join("\n");
@@ -681,7 +681,7 @@ export async function runAgentLoop(
       }
 
       const content = [
-        `I’m the **AGFusion** assistant for **${NETWORK_LABEL}**.`,
+        `I’m the **Ordenfi** assistant for **${NETWORK_LABEL}**.`,
         "",
         wallet.address
           ? `Wallet: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\` · Chain ID \`${wallet.chainId ?? "?"}\``

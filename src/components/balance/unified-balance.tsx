@@ -245,7 +245,7 @@ export function UnifiedBalanceCard({
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 px-2 text-[11px]"
+              className="h-7 px-2 text-xs"
               type="button"
               disabled={busy}
               onClick={() => refreshBalances()}
@@ -256,7 +256,7 @@ export function UnifiedBalanceCard({
             <Button
               size="sm"
               variant="outline"
-              className="h-7 px-2 text-[11px] border-cyan-500/30 text-cyan-300"
+              className="h-7 px-2 text-xs border-cyan-500/30 text-cyan-300"
               type="button"
               disabled={busy || syncingGateway}
               onClick={() => void syncGateway()}
@@ -266,7 +266,7 @@ export function UnifiedBalanceCard({
           </div>
         )}
         {hasVerifiedLiveBalance && (
-          <p className="mt-1 text-[11px] text-emerald-400/90">
+          <p className="mt-1 text-xs text-emerald-400/90">
             Available to spend: {liveN.toFixed(6)} USDC
           </p>
         )}
@@ -285,7 +285,7 @@ export function UnifiedBalanceCard({
       <div className="rounded-xl border border-white/5 bg-slate-950/30 p-3">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-[11px] uppercase tracking-wider text-slate-500">
+            <p className="text-xs font-medium text-slate-300">
               Network allocation
             </p>
             <p className="mt-1 text-xs text-slate-500">
@@ -331,7 +331,7 @@ export function UnifiedBalanceCard({
       </div>
 
       <div className="space-y-2 border-t border-white/5 pt-3">
-        <label className="text-[11px] uppercase tracking-wider text-slate-500">
+        <label className="text-xs font-medium text-slate-300">
           Amount (USDC)
         </label>
         <div className="relative">
@@ -347,11 +347,11 @@ export function UnifiedBalanceCard({
             onChange={(e) => setAmount(e.target.value)}
             disabled={busy}
           />
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold tracking-wide text-slate-400">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold tracking-normal text-slate-400">
             USDC
           </span>
         </div>
-        <label className="text-[11px] uppercase tracking-wider text-slate-500">
+        <label className="text-xs font-medium text-slate-300">
           Deposit from chain
         </label>
         <div className="relative">
@@ -373,7 +373,7 @@ export function UnifiedBalanceCard({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label className="text-[11px] uppercase tracking-wider text-slate-500">
+            <label className="text-xs font-medium text-slate-300">
               Spend destination chain
             </label>
             <div className="relative mt-1">
@@ -404,7 +404,7 @@ export function UnifiedBalanceCard({
             <span>Gateway Forwarder (&lt;500ms)</span>
           </label>
         </div>
-        <label className="text-[11px] uppercase tracking-wider text-slate-500">
+        <label className="text-xs font-medium text-slate-300">
           Spend recipient (0x)
         </label>
         <Input
@@ -439,7 +439,7 @@ export function UnifiedBalanceCard({
             {busy && confirm === "spend" ? "…" : "Spend on Arc"}
           </Button>
         </div>
-        <p className="text-[10px] leading-relaxed text-slate-500">
+        <p className="text-xs leading-relaxed text-slate-500">
           Deposits and spends update the verified live balance after execution. A spend is blocked until the live Arc USDC balance is verified and sufficient.
         </p>
       </div>

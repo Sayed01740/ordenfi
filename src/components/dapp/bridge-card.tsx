@@ -78,7 +78,7 @@ export function BridgeCard({ connected }: { connected: boolean }) {
               className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm transition-colors ${
                 i === safeRouteIdx
                   ? "border-cyan-400/40 bg-cyan-400/10 text-slate-100"
-                  : "border-white/[0.06] bg-[#0a1017] text-slate-300 hover:border-white/15"
+                  : "border-white/[0.06] bg-card text-slate-300 hover:border-white/15"
               }`}
             >
               <span className="flex items-center gap-2 font-medium">
@@ -86,7 +86,7 @@ export function BridgeCard({ connected }: { connected: boolean }) {
                 <ArrowRight className="h-3.5 w-3.5 text-slate-500" />
                 {r.label.split(" → ")[1]}
               </span>
-              {i === safeRouteIdx && <span className="text-[11px] font-semibold text-cyan-300">Selected</span>}
+              {i === safeRouteIdx && <span className="text-xs font-semibold text-cyan-300">Selected</span>}
             </button>
           ))}
         </div>
@@ -103,21 +103,21 @@ export function BridgeCard({ connected }: { connected: boolean }) {
         lockToken
       />
 
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0a1017] p-2.5 space-y-1.5">
-        <label className="text-[11px] font-medium text-slate-400">Bridge Mode</label>
+      <div className="rounded-2xl border border-white/[0.06] bg-card p-2.5 space-y-1.5">
+        <label className="text-xs font-medium text-slate-400">Bridge Mode</label>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             disabled={busy}
             onClick={() => setBridgeMode("fast-direct")}
-            className={`rounded-xl p-2.5 text-left border transition-all text-xs ${
+            className={`rounded-xl p-2.5 text-left border transition-colors text-xs ${
               bridgeMode === "fast-direct"
-                ? "border-cyan-400 bg-cyan-400/10 text-cyan-200"
+                ? "border-accent bg-accent/10 text-accent"
                 : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/15"
             }`}
           >
-            <div className="font-semibold text-slate-100">⚡ Fast Direct</div>
-            <div className="text-[10px] text-emerald-400 font-medium">0.00 USDC Fee</div>
+            <div className="font-semibold text-slate-100">Fast direct (CCTP)</div>
+            <div className="text-xs text-emerald-400 font-medium">0.00 USDC Fee</div>
             <div className="text-[9px] text-slate-500 mt-0.5">Self-mint on dest</div>
           </button>
 
@@ -125,14 +125,14 @@ export function BridgeCard({ connected }: { connected: boolean }) {
             type="button"
             disabled={busy}
             onClick={() => setBridgeMode("auto-relayer")}
-            className={`rounded-xl p-2.5 text-left border transition-all text-xs ${
+            className={`rounded-xl p-2.5 text-left border transition-colors text-xs ${
               bridgeMode === "auto-relayer"
-                ? "border-cyan-400 bg-cyan-400/10 text-cyan-200"
+                ? "border-accent bg-accent/10 text-accent"
                 : "border-white/5 bg-white/[0.02] text-slate-400 hover:border-white/15"
             }`}
           >
-            <div className="font-semibold text-slate-100">🤖 Auto-Relayer</div>
-            <div className="text-[10px] text-cyan-300 font-medium">Low Tier Fee</div>
+            <div className="font-semibold text-slate-100">Auto-relayer</div>
+            <div className="text-xs text-accent font-medium">Low Tier Fee</div>
             <div className="text-[9px] text-slate-500 mt-0.5">Gasless dest mint</div>
           </button>
         </div>
@@ -149,10 +149,10 @@ export function BridgeCard({ connected }: { connected: boolean }) {
           className="font-mono text-[13px]"
           spellCheck={false}
         />
-        {!recipientValid && <p className="mt-1 px-1 text-[11px] text-red-300">Not a valid 0x address.</p>}
+        {!recipientValid && <p className="mt-1 px-1 text-xs text-red-300">Not a valid 0x address.</p>}
       </div>
 
-      <div className="flex items-start gap-2 rounded-2xl border border-white/[0.06] bg-[#0a1017] p-3 text-[12px] text-slate-400">
+      <div className="flex items-start gap-2 rounded-2xl border border-white/[0.06] bg-card p-3 text-[12px] text-slate-400">
         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
         <span>
           Cross-chain transfers use Circle CCTP (burn → attest → mint) and can take a few minutes to

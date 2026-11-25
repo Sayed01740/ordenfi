@@ -1,4 +1,5 @@
 import { ARC_CHAIN_ID, ARC_EXPLORER } from "@/lib/arc-chain";
+import { BRAND_URL } from "@/lib/brand";
 
 export { ARC_CHAIN_ID };
 
@@ -17,7 +18,7 @@ export const AGFUSION_DEPLOY_TX =
   "0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99";
 
 export const AGFUSION_METADATA_URI =
-  "https://agfusion.vercel.app/identity/agfusion-agent.json";
+  `${BRAND_URL}/identity/ordenfi-agent.json`;
 
 /** ERC-8004 IdentityRegistry — see src/lib/erc8004.ts */
 export const ERC8004_IDENTITY_REGISTRY =

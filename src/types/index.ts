@@ -148,6 +148,7 @@ export interface TxStep {
   state: "pending" | "active" | "success" | "error" | "noop";
   txHash?: string;
   message?: string;
+  nativeTransferSender?: string;
 }
 
 export interface AgentToolTrace {

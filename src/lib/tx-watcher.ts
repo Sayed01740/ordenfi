@@ -5,6 +5,7 @@ import { usePilotStore } from "@/store/pilot-store";
 import { isValidTxHash, verifyReceiptOnChain } from "@/lib/tx-verify";
 import { getCctpConfig } from "@/lib/cctp-chains";
 import { explorerTxUrl, IS_ARC_MAINNET } from "@/lib/arc-chain";
+import { matchesNativeArcTransfer } from "@/blockchain/live-send";
 import type { TransactionRecord, TxStep } from "@/types";
 
 export interface FinalityCheckResult {
@@ -220,8 +221,17 @@ export async function checkSingleTransactionFinality(
   });
 
   if (verified.status === "success") {
+    const nativeSender = tx.type === "send" && tx.steps?.find(step => step.nativeTransferSender)?.nativeTransferSender;
+    if (nativeSender) {
+      const receipt = verified.receipt as { blockHash?: string; transactionHash?: string } | null;
+      if ((targetChain !== "Arc_Mainnet" && targetChain !== "Arc_Testnet") ||
+        !receipt?.blockHash || receipt.transactionHash !== tx.txHash || !tx.recipient ||
+        !await matchesNativeArcTransfer({
+          chain: targetChain, hash: tx.txHash, blockHash: receipt.blockHash, from: nativeSender, to: tx.recipient, amount: tx.amount,
+        })) return { updated: false };
+    }
     const rawMsg = tx.message || "";
-    let cleanMsg = rawMsg
+    let cleanMsg = nativeSender ? "USDC payment confirmed on-chain." : rawMsg
       .replace(/ · [^·]*not confirmed[^·]*/gi, "")
       .replace(/Submitted — finality is still pending.*$/i, "Confirmed on-chain.")
       .trim();

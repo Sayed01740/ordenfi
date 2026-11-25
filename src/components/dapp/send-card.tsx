@@ -89,7 +89,7 @@ export function SendCard({ connected }: { connected: boolean }) {
           spellCheck={false}
         />
         {!recipientValid && (
-          <p className="mt-1 px-1 text-[11px] text-red-300">Not a valid 0x address.</p>
+          <p className="mt-1 px-1 text-xs text-red-300">Not a valid 0x address.</p>
         )}
       </div>
 

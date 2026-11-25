@@ -110,7 +110,7 @@ export function ModalDialog({
         if (backdropPress.current && event.target === event.currentTarget && !busy) onDismiss();
         backdropPress.current = false;
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none items-end justify-center overflow-y-auto overscroll-contain border-0 bg-transparent p-4 text-foreground backdrop:bg-black/70 backdrop:backdrop-blur-sm open:flex sm:items-center [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-offset-2 [&_:focus-visible]:outline-accent"
+      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none items-end justify-center overflow-y-auto overscroll-contain border-0 bg-transparent p-4 text-foreground backdrop:bg-black/70 open:flex sm:items-center [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-offset-2 [&_:focus-visible]:outline-accent"
     >
       {children}
     </dialog>

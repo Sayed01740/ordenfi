@@ -4,7 +4,7 @@ export function Badge({ className, variant = "default", ...props }: React.HTMLAt
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide transition-colors",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-normal transition-colors",
         variant === "default" && "bg-muted text-foreground ring-1 ring-border",
         variant === "success" && "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30",
         variant === "warning" && "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",

@@ -12,7 +12,6 @@ import { formatEther, type Address } from "viem";
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import {
   ARC_CHAIN_ID,
-  ARC_NETWORK_NAME,
   getArcNetworkMeta,
   type ArcNetworkMeta,
 } from "@/lib/arc-chain";
@@ -23,7 +22,6 @@ import {
   getChainId,
   getInjectedProvider,
   getStoredWalletName,
-  switchToArcMainnet as adapterSwitchToArcMainnet,
   switchToArcNetwork,
   type DiscoveredWallet,
   type InjectedProvider,
@@ -65,7 +63,6 @@ type WalletContextValue = {
   signInSiwe: (explicitAddress?: string) => Promise<boolean>;
   error: string | null;
   clearError: () => void;
-  enableAgentMode: () => Promise<void>;
   connectCircleWallet: (circleProvider: InjectedProvider, address: string) => void;
 };
 
@@ -341,63 +338,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     [setAuthenticated, loadServerTransactions, setWallet],
   );
 
-  const enableAgentMode = useCallback(async () => {
-    if (!provider || !walletAddress) {
-      setError("Connect a wallet first before enabling Auto-Agent.");
-      return;
-    }
-    // Circle Email Wallet is already a user-controlled smart wallet.
-    // Do not derive a second local/ZeroDev account from its provider.
-    // The agent must operate on the exact funded Circle wallet address.
-    if (usePilotStore.getState().walletType === "circle") {
-      try {
-        setConnecting(true);
-        const address = walletAddress.toLowerCase();
-        setActiveProvider(provider, {
-          uuid: "circle-pw",
-          name: "Circle Email Wallet",
-          address,
-          smartAccountAddress: address,
-        });
-        usePilotStore.getState().setAuthenticated(true);
-        setError(null);
-        alert("Auto-Agent enabled for your Circle Email Wallet. The agent will use this same smart-wallet address for Swap, Send and Bridge.");
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "Failed to enable Circle Email Wallet agent mode.";
-        setError(msg);
-      } finally {
-        setConnecting(false);
-      }
-      return;
-    }
-    try {
-      setConnecting(true);
-      const { setupAgentSmartWallet } = await import("@/sdk/wallet-adapter");
-      const agentProvider = await setupAgentSmartWallet(provider, walletAddress);
-      
-      setProvider(agentProvider);
-      
-      // Update UI with the new smart account address
-      const accounts = (await agentProvider.request({ method: "eth_accounts" })) as string[];
-      if (accounts?.[0]) {
-        setWallet(accounts[0], ARC_CHAIN_ID);
-        attachListeners(agentProvider, accounts[0]);
-        alert(
-          "Auto-Agent enabled successfully! Your autonomous smart account is ready.\n\n" +
-          "IMPORTANT: Since the agent signs automatically without a wallet prompt, it has its own unique address. " +
-          `You must transfer some USDC on ${ARC_NETWORK_NAME} to this new address before the Agent can swap for you.`
-        );
-      }
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      console.error("[AGFusion] Auto-Agent setup failed:", e);
-      alert("Error enabling Auto-Agent: " + msg);
-      setError(e instanceof Error ? e.message : "Failed to enable agent mode.");
-    } finally {
-      setConnecting(false);
-    }
-  }, [provider, walletAddress, setWallet, attachListeners]);
-
   const connectWith = useCallback(
     async (wallet: DiscoveredWallet) => {
       setConnecting(true);
@@ -570,7 +510,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       signInSiwe,
       error,
       clearError: () => setError(null),
-      enableAgentMode,
       connectCircleWallet,
     }),
     [
@@ -591,7 +530,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       refreshBalance,
       signInSiwe,
       error,
-      enableAgentMode,
       connectCircleWallet,
     ],
   );

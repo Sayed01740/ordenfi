@@ -169,8 +169,8 @@ export async function getInjectedProvider(
   preferredRdns?: string,
 ): Promise<InjectedProvider> {
   // ① Highest priority: in-memory active provider.
-  //    Circle Email Wallet and ZeroDev Agent are stored here via setActiveProvider();
-  //    they never appear in window.ethereum / EIP-6963 discovery.
+  //    Circle Email Wallet is stored here via setActiveProvider();
+  //    it never appears in window.ethereum / EIP-6963 discovery.
   if (!preferredRdns) {
     const activeP = getActiveProvider();
     if (activeP) return activeP;
@@ -241,7 +241,7 @@ const MANUAL_FIX = `Delete the old network in your wallet, then re-add:
    • Chain ID: ${ARC_NETWORK_MANUAL.chainId}  (hex ${ARC_NETWORK_MANUAL.chainIdHex})
    • Currency: ${ARC_NETWORK_MANUAL.currencySymbol}
    • Explorer: ${ARC_NETWORK_MANUAL.explorerUrl}
-3. Click Connect again in AGFusion`;
+3. Click Connect again in Ordenfi`;
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -800,7 +800,7 @@ export async function createAppKitAdapterFromBrowser(opts?: {
                   const raw = await provider.request({ method: "eth_chainId" });
                   const actual = String(raw ?? "").toLowerCase();
                   if (actual !== expectedHex) {
-                    console.log("[AGFusion] Auto-switching wallet to chain", expectedHex, "before tx");
+                    console.log("[Ordenfi] Auto-switching wallet to chain", expectedHex, "before tx");
                     await provider.request({
                       method: "wallet_switchEthereumChain",
                       params: [{ chainId: expectedHex }],
@@ -808,7 +808,7 @@ export async function createAppKitAdapterFromBrowser(opts?: {
                     await new Promise((r) => setTimeout(r, 800));
                   }
                 } catch (e) {
-                  console.warn("[AGFusion] Auto-switch failed, tx may fail", e);
+                  console.warn("[Ordenfi] Auto-switch failed, tx may fail", e);
                 }
               }
             }
@@ -825,7 +825,7 @@ export async function createAppKitAdapterFromBrowser(opts?: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mod as any).createAdapterFromProvider;
     if (!create) {
-      console.warn("[AGFusion] createViemAdapterFromProvider missing");
+      console.warn("[Ordenfi] createViemAdapterFromProvider missing");
       return null;
     }
 
@@ -962,7 +962,7 @@ export async function createAppKitAdapterFromBrowser(opts?: {
       walletName: meta?.name || getStoredWalletName(),
     };
   } catch (e) {
-    console.warn("[AGFusion] App Kit adapter unavailable:", e);
+    console.warn("[Ordenfi] App Kit adapter unavailable:", e);
     if (
       e instanceof Error &&
       (/chain|Arc|5042002|5042|0x4cef52|0x13b2|network switch|bad Arc/i.test(
@@ -976,45 +976,3 @@ export async function createAppKitAdapterFromBrowser(opts?: {
 }
 
 export { ARC_CHAIN_ID, ARC_TESTNET_RPC, ARC_EXPLORER };
-
-/**
- * Integrates ZeroDev Account Abstraction for AI Agent.
- * Wraps the base EOA provider in a Kernel Smart Account so the agent can execute transactions
- * automatically using Session Keys without prompting the user.
- */
-export async function setupAgentSmartWallet(baseProvider: InjectedProvider, eoaAddress: string) {
-  try {
-    // Security guard: the Circle Email Wallet mock provider returns a
-    // deterministic personal_sign response, so an agent key derived from it
-    // would be publicly computable from the wallet address. Refuse to build
-    // an Auto-Agent on Circle wallets.
-    const meta = getActiveWalletMeta();
-    if (meta?.uuid === "circle-pw") {
-      throw new Error(
-        "Auto-Agent is not available for Circle Email Wallets. Connect a browser wallet (Rabby / MetaMask) to enable Auto-Agent.",
-      );
-    }
-    const { createSmartAccountClient, createEIP1193ProviderProxy } = await import("./zerodev-adapter");
-    
-    // Create Kernel Client
-    const smartClient = await createSmartAccountClient(baseProvider, eoaAddress as `0x${string}`);
-    
-    // Wrap it in EIP-1193 Proxy
-    const proxyProvider = createEIP1193ProviderProxy(smartClient, baseProvider);
-    
-    // Update active wallet meta with smart account address
-    const currentMeta = getActiveWalletMeta();
-    if (currentMeta) {
-      setActiveWallet(
-        { uuid: currentMeta.uuid, name: currentMeta.name, provider: proxyProvider },
-        eoaAddress,
-        (smartClient as any)?.account?.address
-      );
-    }
-    
-    return proxyProvider;
-  } catch (e) {
-    console.error("[AGFusion] Failed to setup Agent Smart Wallet:", e);
-    throw e;
-  }
-}

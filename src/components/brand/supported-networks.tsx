@@ -31,18 +31,18 @@ export function SupportedNetworks({ isMainnet = true }: { isMainnet?: boolean })
   return (
     <section aria-label="Supported networks" className="mt-1 border-t border-white/[0.06] pt-4">
       <div className="mb-2.5 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
+        <p className="text-xs font-semibold text-slate-300">
           {isMainnet ? "Live Mainnet Routes" : "Live Testnet Routes"}
         </p>
-        <span className="rounded-full border border-white/[0.08] bg-muted/60 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-slate-300">
-          {networks.length} NETWORKS
+        <span className="rounded-full border border-white/[0.08] bg-muted/60 px-2.5 py-0.5 font-mono text-xs font-medium text-slate-300">
+          {networks.length} networks
         </span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         {networks.map((chain) => (
           <div
             key={chain}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-card/85 px-2.5 py-1.5 transition-colors hover:border-accent/35 hover:bg-card"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03]  px-2.5 py-1.5 transition-colors hover:border-accent/40 hover:bg-white/[0.08]"
           >
             <ChainMark chain={chain} compact size={18} />
             <span className="text-xs font-semibold tracking-tight text-slate-100">

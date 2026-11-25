@@ -5,6 +5,7 @@ import {
   pollPendingTransactionsOnce,
 } from "./tx-watcher";
 import { usePilotStore } from "@/store/pilot-store";
+import * as liveSend from "@/blockchain/live-send";
 import type { TransactionRecord } from "@/types";
 
 const VALID_TX_1 = "0x" + "11".repeat(32);
@@ -32,6 +33,25 @@ describe("tx-watcher", () => {
   });
 
   describe("checkSingleTransactionFinality", () => {
+    it("does not settle a native Arc payment from the receipt status alone", async () => {
+      const sender = "0x" + "1".repeat(40);
+      const recipient = "0x" + "2".repeat(40);
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({
+        result: { status: "0x1", transactionHash: VALID_TX_1, blockHash: VALID_TX_2 },
+      })));
+      const match = vi.spyOn(liveSend, "matchesNativeArcTransfer").mockResolvedValue(false);
+      const tx: TransactionRecord = {
+        id: "native-arc-payment", type: "send", status: "retryable", amount: "1", token: "USDC",
+        fromChain: "Arc_Testnet", toChain: "Arc_Testnet", recipient, txHash: VALID_TX_1,
+        createdAt: new Date().toISOString(),
+        steps: [{ name: "Connect wallet", state: "success", nativeTransferSender: sender }],
+      };
+      expect(await checkSingleTransactionFinality(tx)).toEqual({ updated: false });
+      expect(match).toHaveBeenCalledWith({
+        chain: "Arc_Testnet", from: sender, to: recipient, amount: "1", hash: VALID_TX_1, blockHash: VALID_TX_2,
+      });
+    });
+
     it("ignores completed non-retryable transactions", async () => {
       const tx: TransactionRecord = {
         id: "tx_done",

@@ -236,7 +236,7 @@ export async function verifyDestinationStep(opts: {
   if (outcome.status === "retryable") {
     return {
       status: "retryable",
-      note: "The bridge is not confirmed on the destination yet — no destination mint/receive transaction hash was returned. Retry to check; AGFusion will never re-burn.",
+      note: "The bridge is not confirmed on the destination yet — no destination mint/receive transaction hash was returned. Retry to check; Ordenfi will never re-burn.",
     };
   }
   const destHash = outcome.destHash as string;
@@ -260,14 +260,14 @@ export async function verifyDestinationStep(opts: {
       return {
         status: "retryable",
         destHash,
-        note: `Bridge submitted but the destination transaction is not confirmed yet (${destKey}). Retry to check — AGFusion will never re-burn.`,
+        note: `Bridge submitted but the destination transaction is not confirmed yet (${destKey}). Retry to check — Ordenfi will never re-burn.`,
       };
     }
     return { status: "success", destHash };
   } catch (e) {
     // Verification infra unavailable — keep the SDK status. The hash is real
     // and the explorer/recovery path can confirm later.
-    console.warn("[AGFusion] bridge receipt verification skipped", e);
+    console.warn("[Ordenfi] bridge receipt verification skipped", e);
     return { status: "success", destHash };
   }
 }
@@ -491,10 +491,10 @@ export async function runSwapFlow(params: {
       throw e;
     }
     // Network blip on health — still attempt swap with loaded key
-    console.warn("[AGFusion] kit health check skipped", e);
+    console.warn("[Ordenfi] kit health check skipped", e);
   }
 
-  console.info("[AGFusion] kit key ready", "shape=OK", "len=", kitKey?.length ?? 0);
+  console.info("[Ordenfi] kit key ready", "shape=OK", "len=", kitKey?.length ?? 0);
 
   const kit = await getAppKit();
   if (!kit) {
@@ -535,7 +535,7 @@ export async function runSwapFlow(params: {
   }
 
   console.info(
-    "[AGFusion] swap wallet",
+    "[Ordenfi] swap wallet",
     wired.walletName,
     "chainId=",
     wired.chainId,
@@ -582,7 +582,7 @@ export async function runSwapFlow(params: {
       }
     } catch (estErr) {
       const estMsg = formatKitError(estErr);
-      console.warn("[AGFusion] estimateSwap failed:", estErr);
+      console.warn("[Ordenfi] estimateSwap failed:", estErr);
       if (/kit.?key|invalid.?key|unauthorized|401|403|credential/i.test(estMsg)) {
         throw new Error(
           `Kit key rejected by Circle: ${estMsg}\n\n${KIT_KEY_HELP}`,
@@ -619,7 +619,7 @@ export async function runSwapFlow(params: {
         )
       ) {
         console.warn(
-          "[AGFusion] retrying swap after approve/chain error:",
+          "[Ordenfi] retrying swap after approve/chain error:",
           sMsg.slice(0, 200),
         );
         const { ensureArcChainId } = await import("@/sdk/wallet-adapter");
@@ -678,7 +678,7 @@ export async function runSwapFlow(params: {
           swapNote = `Swap submitted but not confirmed yet (${chainKey}). Check the explorer before retrying.`;
         }
       } catch (e) {
-        console.warn("[AGFusion] swap receipt verification skipped", e);
+        console.warn("[Ordenfi] swap receipt verification skipped", e);
       }
     }
 
@@ -706,7 +706,7 @@ export async function runSwapFlow(params: {
     };
   } catch (e) {
     const msg = formatKitError(e);
-    console.error("[AGFusion] live swap failed:", e);
+    console.error("[Ordenfi] live swap failed:", e);
 
     if (/4001|user rejected|denied|rejected by user|USER_CANCELLED/i.test(msg)) {
       throw new Error("Swap cancelled in wallet.");
@@ -721,15 +721,15 @@ export async function runSwapFlow(params: {
       throw new Error(
         `${msg}\n\n` +
           `Tips:\n` +
-          `• In Rabby, select the **exact account** connected to AGFusion\n` +
+          `• In Rabby, select the **exact account** connected to Ordenfi\n` +
           `• Network must be **${ARC_NETWORK_NAME}** · chain id **${ARC_CHAIN_ID}** · RPC **${ARC_RPC}**\n` +
-          `• If MetaMask + Rabby both installed: Connect → choose **Rabby** in AGFusion\n` +
+          `• If MetaMask + Rabby both installed: Connect → choose **Rabby** in Ordenfi\n` +
           `• Delete a bad Arc network entry and re-add if needed`,
       );
     }
     if (/permit generation failed/i.test(msg)) {
       throw new Error(
-        `Token approval failed (permit). AGFusion uses on-chain approve — confirm the **Approve** popup in Rabby, then swap again.\n\n${msg}`,
+        `Token approval failed (permit). Ordenfi uses on-chain approve — confirm the **Approve** popup in Rabby, then swap again.\n\n${msg}`,
       );
     }
     if (/insufficient|balance/i.test(msg)) {
@@ -782,9 +782,10 @@ export async function runSendFlow(params: {
         recipientLabel: params.recipientLabel,
         onStep: params.onStep,
         fromAddress: params.fromAddress as import("viem").Address | undefined,
+        expectedChainId: params.chain === "Arc_Mainnet" ? 5042 : params.chain === "Arc_Testnet" ? 5042002 : undefined,
       });
     } catch (e) {
-      console.warn("[AGFusion] live send failed:", e);
+      console.warn("[Ordenfi] live send failed:", e);
       throw e instanceof Error ? e : new Error("Live send failed");
     }
   }
@@ -887,12 +888,12 @@ export async function runUnifiedDeposit(params: {
     };
   } catch (e) {
     const msg = formatKitError(e);
-    console.error("[AGFusion] unified deposit failed:", e);
+    console.error("[Ordenfi] unified deposit failed:", e);
     if (/4001|user rejected|denied/i.test(msg)) {
       throw new Error("Deposit cancelled in wallet.");
     }
     // Fallback: CCTP bridge toward Arc when Gateway deposit unsupported on chain
-    console.warn("[AGFusion] falling back to bridge Arc path:", msg);
+    console.warn("[Ordenfi] falling back to bridge Arc path:", msg);
     try {
       return await runBridgeFlow({
         amount: params.amount,
@@ -1007,7 +1008,7 @@ export async function runUnifiedSpend(params: {
       };
     } catch (e) {
       const msg = formatKitError(e);
-      console.warn("[AGFusion] unified spend failed, fallback send:", msg);
+      console.warn("[Ordenfi] unified spend failed, fallback send:", msg);
       if (/4001|user rejected|denied/i.test(msg)) {
         throw new Error("Spend cancelled in wallet.");
       }

@@ -1,4 +1,6 @@
-# AGFusion
+# Ordenfi
+
+Ordenfi is the current public identity of this application. Existing `AGFUSION_*` environment variables, deployed `AGFusion*` contracts, authentication cookies, and browser storage identifiers remain compatible. Set `NEXT_PUBLIC_APP_URL` for a new deployment domain; the existing application URL remains the fallback. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
 
 [![Arc Network](https://img.shields.io/badge/Network-Arc_Mainnet_(5042)-0052FF?style=flat-square)](https://explorer.arc.io)
 [![Circle CCTP](https://img.shields.io/badge/Bridge-Circle_CCTP_v2-2775CA?style=flat-square)](https://developers.circle.com/stablecoins/docs/cctp-getting-started)
@@ -7,7 +9,7 @@
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
 [![License](https://img.shields.io/badge/License-Proprietary-blue?style=flat-square)](#license)
 
-**AGFusion** is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails.
+**Ordenfi** is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails.
 
 * **Live Application:** [https://agfusion.vercel.app](https://agfusion.vercel.app)
 * **Interactive Docs:** [https://agfusion.vercel.app/docs](https://agfusion.vercel.app/docs)

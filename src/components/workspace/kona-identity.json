@@ -1,0 +1,31 @@
+{
+  "name": "Kona",
+  "pronunciation": "KOH-nah",
+  "descriptor": "Ordenfi assistant",
+  "version": "1.0.0",
+  "palette": {
+    "shell": "#353c3a",
+    "visor": "#101614",
+    "signal": "#b9fa0a",
+    "warning": "#e9bd75",
+    "pending": "#97b8d6",
+    "error": "#ee9b98",
+    "stage": "#111315"
+  },
+  "motions": [
+    { "id": "idle", "label": "Idle", "description": "Settles, floats and blinks.", "ms": 4600, "pose": { "mood": "idle" } },
+    { "id": "gaze", "label": "Look around", "description": "Eyes follow a pointer across the visor.", "ms": 900, "pose": { "mood": "idle" } },
+    { "id": "wake", "label": "Wake", "description": "Raises its head and flicks one hand when chat opens.", "ms": 700, "pose": { "mood": "idle", "docked": true } },
+    { "id": "dock", "label": "Dock", "description": "Lowers into its launcher when chat is minimized.", "ms": 450, "pose": { "mood": "idle", "resting": true } },
+    { "id": "guide", "label": "Guide", "description": "Looks left and points toward a form field.", "ms": 540, "pose": { "mood": "idle", "docked": true, "guiding": true } },
+    { "id": "thinking", "label": "Think", "description": "A lime scan crosses the visor while a reply is prepared.", "ms": 3800, "pose": { "mood": "thinking" } },
+    { "id": "reply", "label": "Reply", "description": "Looks up, smiles and gives a small nod.", "ms": 680, "pose": { "mood": "reply" } },
+    { "id": "beacon", "label": "Unread reply", "description": "The antenna flashes once when a reply arrives in the launcher.", "ms": 780, "pose": { "mood": "reply", "unread": true } },
+    { "id": "network", "label": "Network mismatch", "description": "An amber visor and tilted head ask for a network check.", "ms": 760, "pose": { "mood": "idle", "signal": "network" } },
+    { "id": "expired", "label": "Quote expired", "description": "The visor dims and the antenna lowers when a quote expires.", "ms": 760, "pose": { "mood": "idle", "signal": "expired" } },
+    { "id": "pending", "label": "Confirmation pending", "description": "A cool blue scan marks a transaction still in progress.", "ms": 3700, "pose": { "mood": "idle", "signal": "pending" } },
+    { "id": "courier", "label": "QR courier", "description": "Extends a hand toward a payment QR card.", "ms": 740, "pose": { "mood": "idle", "courier": true } },
+    { "id": "receipt", "label": "Receipt ready", "description": "Lifts a receipt when a transaction is confirmed.", "ms": 960, "pose": { "mood": "reply", "receipt": true } },
+    { "id": "error", "label": "Needs attention", "description": "Reacts with a restrained recoil and a rose visor.", "ms": 600, "pose": { "mood": "error" } }
+  ]
+}

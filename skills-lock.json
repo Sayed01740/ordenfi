@@ -1,0 +1,105 @@
+{
+  "version": 2,
+  "skills": {
+    "accept-agent-payments": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "41df988fef551cbb552243c29aa456fb3735e72c5d28ede13146d0c73beffebd"
+    },
+    "agent-wallet-policy": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "aa561eec442211bb01e9d7b88b042969801a10974d2e34cb623055093c33f38a"
+    },
+    "bridge-tokens": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "06cbc3bc8ee4d09d059a765923744c2fb412f84b36097152e0318c16e3cd733f"
+    },
+    "buy-crypto": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "7e332243d28a58aee4b1b2cfd02ac47341e6315fe41fab67f754cb15ce098a8a"
+    },
+    "fund-agent-wallet": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "c6a89f22646836c819a76eefef1941129112d480a1815867278ca33111028e4e"
+    },
+    "pay-via-agent-wallet": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "e0b41371afad320cd016adc411c1a3c81de35a0ea9005d6e862b0b2aa0f4ff45"
+    },
+    "recover-eco-funds": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "aa090a0c95184c8494075b4cade524a9df471d0e1b73443f18b70ea47a4d7cab"
+    },
+    "setup": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "52dd59275b4f91370b238bc99d62621a9793469627185ae47ad925159efd07c8"
+    },
+    "swap-tokens": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "34c93da374e4e0c927f22863b59bb03d46ce40b5cd70c4fdd32291ad103070c7"
+    },
+    "unify-balance": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "4a2f916b6a096d97babeb26364a6624ed0061fcc7185657ea58d1dbccce9175e"
+    },
+    "use-agent-wallet": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "6211a9384785138acb3c36a654394b163ef828c81389022ec0ea63661f305b5c"
+    },
+    "use-arc": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "93d05065a20b868c8dd47dc6207a92c0d60de19dec4e205d237d7144640c8b40"
+    },
+    "use-circle-cli": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "435fc45d56b2edada2fa4967811fb001bb39f49a91015d08a2ef541321c3c1d2"
+    },
+    "use-circle-wallets": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "b65b40491448306e6996a072267fc0144a2dbe5c308b0a823242282686ccfea5"
+    },
+    "use-developer-controlled-wallets": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "35c069c5c7cf5a003ed088e02845f5ebc413e4521384d80a972dfca527d9f89c"
+    },
+    "use-gateway": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "24c72f2e1ffdfac832f53628d06cba64b0d8c69d172dfb1907e587225e99bd31"
+    },
+    "use-modular-wallets": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "3e919f85fce2b16180c8c0ae54c96c4874b3b00f29824b20847cefffb9b89a05"
+    },
+    "use-smart-contract-platform": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "e19b3033f91593516a6f44657d0acd09e060251df2b716b203b55b6426d1c99a"
+    },
+    "use-usdc": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "959f72ce55dd75e65dd73473a7b395df473f2030f778006adbf4763321467aed"
+    },
+    "use-user-controlled-wallets": {
+      "source": "../../../../../Temp/circlefin-skills/skills-master",
+      "sourceType": "local",
+      "computedHash": "051e68920c2e87e1a6953e34dc8401a5018ffac08a4dd6b06ab8d80e767d81e2"
+    }
+  }
+}

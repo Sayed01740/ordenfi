@@ -16,15 +16,15 @@ export function FeeLineItems({
   return (
     <div
       className={cn(
-        "rounded-xl border border-cyan-500/15 bg-cyan-500/[0.04] px-3 py-2.5 space-y-2",
+        "rounded-xl border border-accent/20 bg-accent/5 px-3 py-2.5 space-y-2",
         className,
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] uppercase tracking-wider text-cyan-300/80">
+        <span className="text-xs font-semibold text-accent">
           Fee line item · USDC gas
         </span>
-        <span className="text-sm font-semibold tabular-nums text-cyan-100">
+        <span className="text-sm font-semibold tabular-nums text-foreground">
           {quote.headline}
         </span>
       </div>
@@ -33,24 +33,24 @@ export function FeeLineItems({
           {quote.lineItems.map((line) => (
             <li
               key={line.id}
-              className="flex justify-between gap-2 text-[11px] text-slate-400"
+              className="flex justify-between gap-2 text-xs text-muted-foreground"
             >
               <span>
                 {line.label}
                 {line.note ? (
-                  <span className="block text-[10px] text-slate-600">
+                  <span className="block text-xs text-muted-foreground/80">
                     {line.note}
                   </span>
                 ) : null}
               </span>
-              <span className="tabular-nums text-slate-300 shrink-0">
+              <span className="tabular-nums text-foreground shrink-0">
                 {formatUsdc(line.amountUsdc)}
               </span>
             </li>
           ))}
         </ul>
       )}
-      <p className="text-[10px] text-slate-500 leading-relaxed">{quote.tip}</p>
+      <p className="text-xs text-slate-500 leading-relaxed">{quote.tip}</p>
     </div>
   );
 }

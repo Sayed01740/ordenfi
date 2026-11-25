@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePilotStore } from "@/store/pilot-store";
 import { executeBridgeRecovery } from "@/lib/client-actions";
 import type { TransactionRecord } from "@/types";
+import { CHAINS } from "@/lib/chains";
 
 export function RecoveryPanelBody() {
   const { addTransaction, setActiveTx, setThinking, transactions, activeTxId } =
@@ -16,10 +18,10 @@ export function RecoveryPanelBody() {
   // otherwise the most recent failed/retryable bridge (Phase 11).
   const failedTx: TransactionRecord | null =
     (transactions.find(
-      (t) => t.id === activeTxId && t.type === "bridge" && (t.status === "error" || t.status === "retryable"),
+      (t) => t.id === activeTxId && t.type === "bridge" && (t.status === "error" || t.status === "retryable" || t.retryable),
     ) as TransactionRecord | undefined) ??
     (transactions.find(
-      (t) => t.type === "bridge" && (t.status === "error" || t.status === "retryable"),
+      (t) => t.type === "bridge" && (t.status === "error" || t.status === "retryable" || t.retryable),
     ) as TransactionRecord | undefined) ??
     null;
 
@@ -55,26 +57,31 @@ export function RecoveryPanelBody() {
   if (!failedTx?.fromChain || !failedTx.toChain) return null;
 
   return (
-    <div className="space-y-2">
-      <p className="text-[11px] text-slate-500 leading-relaxed">
-        Resume the failed bridge{" "}
-        <strong className="text-slate-300">
-          {failedTx.amount} USDC {failedTx.fromChain.replace(/_/g, " ")} →{" "}
-          {failedTx.toChain.replace(/_/g, " ")}
-        </strong>
-        . AGFusion resumes from the last confirmed step and will not burn again.
-      </p>
-      {error && <p className="text-xs text-red-300">{error}</p>}
+    <section aria-label="Bridge recovery" className="mt-5 space-y-3 border-t border-border pt-4">
+      <div className="flex items-center gap-2">
+        <History className="size-4 text-muted-foreground" aria-hidden="true" />
+        <h4 className="text-sm font-semibold">Bridge recovery</h4>
+      </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        <span className="wrap-anywhere font-medium tabular-nums">{failedTx.amount} {failedTx.token || "USDC"}</span>
+        <span className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
+          {CHAINS[failedTx.fromChain]?.label ?? failedTx.fromChain}
+          <ArrowRight className="size-3.5" aria-label="to" />
+          {CHAINS[failedTx.toChain]?.label ?? failedTx.toChain}
+        </span>
+      </div>
+      <p className="text-xs text-muted-foreground">Check the original transfer in Activity before starting recovery.</p>
+      {error && <p role="alert" className="wrap-anywhere text-sm text-danger">{error}</p>}
       <Button
         size="sm"
         variant="secondary"
-        className="w-full"
+        data-assistant-recovery
         disabled={busy}
         type="button"
         onClick={() => void run()}
       >
-        {busy ? "Recovering…" : `Resume ${failedTx.amount} USDC bridge`}
+        {busy ? "Recovering…" : "Resume bridge"}
       </Button>
-    </div>
+    </section>
   );
 }

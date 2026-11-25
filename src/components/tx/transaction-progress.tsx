@@ -45,7 +45,7 @@ export function TransactionProgress({ tx, onRetry }: { tx: TransactionRecord; on
           <div className="flex items-center gap-1.5"><Badge variant={tx.executionMode === "live" ? "cyan" : "outline"}>{tx.executionMode === "live" ? "Live" : "Demo"}</Badge><Badge variant={tx.status === "success" ? "success" : tx.status === "error" ? "warning" : "cyan"}>{tx.status}</Badge></div>
         </div>
         {tx.recipientLabel && <p className="text-xs text-muted-foreground">To {tx.recipientLabel}{tx.recipient ? ` (${shortenAddress(tx.recipient)})` : ""}</p>}
-        {tx.message && <p className="mt-0.5 text-[11px] text-slate-500">{tx.message}</p>}
+        {tx.message && <p className="mt-0.5 text-xs text-slate-500">{tx.message}</p>}
       </CardHeader>
       <CardContent className="space-y-3">
         <ol className="space-y-2">
@@ -55,9 +55,9 @@ export function TransactionProgress({ tx, onRetry }: { tx: TransactionRecord; on
               <li key={`${step.name}-${i}`} className="flex items-center gap-3 text-sm">
                 <StepIcon state={step.state} />
                 <span className={cn("flex-1", step.state === "success" && "text-slate-200", step.state === "active" && "text-cyan-300", step.state === "pending" && "text-slate-500", step.state === "error" && "text-red-300")}>
-                  {step.name}{step.message && <span className="block text-[10px] text-slate-500">{step.message}</span>}
+                  {step.name}{step.message && <span className="block text-xs text-slate-500">{step.message}</span>}
                 </span>
-                {step.txHash && stepExplorerUrl ? <a href={stepExplorerUrl} target="_blank" rel="noreferrer" className="max-w-[120px] truncate font-mono text-[10px] text-cyan-400/80 underline hover:text-cyan-300" title={`${step.name} transaction`}>{shortenAddress(step.txHash, 3)}</a> : step.txHash ? <span className="font-mono text-[10px] text-slate-500">{shortenAddress(step.txHash, 3)}</span> : null}
+                {step.txHash && stepExplorerUrl ? <a href={stepExplorerUrl} target="_blank" rel="noreferrer" className="max-w-[120px] truncate font-mono text-xs text-cyan-400/80 underline hover:text-cyan-300" title={`${step.name} transaction`}>{shortenAddress(step.txHash, 3)}</a> : step.txHash ? <span className="font-mono text-xs text-slate-500">{shortenAddress(step.txHash, 3)}</span> : null}
               </li>
             );
           })}

@@ -69,12 +69,12 @@ export function ArcOnboarding() {
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <p className="text-xs text-slate-400 leading-relaxed">
-          <strong className="text-slate-300 font-medium">Step 1 of using AGFusion:</strong>{" "}
+          <strong className="text-slate-300 font-medium">Step 1 of using Ordenfi:</strong>{" "}
           connect a browser wallet (Rabby recommended). This only shares your public
           address. Never share seed phrases or private keys.
         </p>
 
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2.5 text-[11px] text-emerald-100/90 space-y-1">
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2.5 text-xs text-emerald-100/90 space-y-1">
           <div className="flex items-center gap-1.5 font-medium text-emerald-300">
             <ShieldCheck className="h-3.5 w-3.5" />
             Safe connection &amp; sign-in
@@ -176,7 +176,7 @@ export function ArcOnboarding() {
         </div>
 
         {walletAddress && !authenticated && (
-          <p className="text-[10px] text-slate-500 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             When you tap Sign in, your wallet opens a{" "}
             <span className="text-slate-400">personal_sign / SIWE</span> prompt.
             Reject anything that asks to send assets, approve tokens, or
@@ -187,7 +187,7 @@ export function ArcOnboarding() {
         <button
           type="button"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-300"
+          className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300"
         >
           <ChevronDown
             className={`h-3.5 w-3.5 transition ${showAdvanced ? "rotate-180" : ""}`}
@@ -196,7 +196,7 @@ export function ArcOnboarding() {
         </button>
 
         {showAdvanced && (
-          <div className="rounded-xl border border-white/10 bg-slate-950/50 p-3 font-mono text-[11px] text-slate-400 space-y-1">
+          <div className="rounded-xl border border-white/10 bg-slate-950/50 p-3 font-mono text-xs text-slate-400 space-y-1">
             <div>
               Network: <span className="text-slate-300">{ARC_NETWORK_NAME}</span>
             </div>

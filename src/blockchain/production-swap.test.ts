@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
+import { encodeAbiParameters } from "viem";
 import type { ChainId } from "@/types";
 import {
   assertArcMainnetSwapAvailable,
   assertArcTestnetSwapExecution,
+  getArcDexSwapQuote,
   runProductionSwap,
 } from "@/blockchain/production-swap";
 
@@ -60,5 +62,21 @@ describe("Arc Mainnet swap execution release gate", () => {
 
   it("continues to allow the Arc Testnet path", () => {
     expect(() => assertArcMainnetSwapAvailable(false)).not.toThrow();
+  });
+});
+
+describe("Arc Testnet quote", () => {
+  it("returns a minimum in whole token units using the selected slippage", async () => {
+    const amountOut = 371923n;
+    walletMocks.getInjectedProvider.mockResolvedValueOnce({
+      request: async ({ method }: { method: string }) => {
+        if (method === "eth_chainId") return "0x4cef52";
+        if (method === "eth_call") return encodeAbiParameters([{ type: "uint256[]" }], [[500000000000000000n, amountOut]]);
+        throw new Error(`Unexpected wallet request: ${method}`);
+      },
+    });
+    await expect(getArcDexSwapQuote({
+      amount: "0.50", tokenIn: "USDC", tokenOut: "EURC", chain: "Arc_Testnet", slippageBps: 50,
+    })).resolves.toMatchObject({ amountOut: "0.371923", minimumAmountOut: "0.370063", slippageBps: 50 });
   });
 });

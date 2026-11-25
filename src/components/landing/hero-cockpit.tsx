@@ -6,7 +6,6 @@ import {
   Bot, 
   Check, 
   ShieldCheck, 
-  Sparkles, 
   Terminal, 
   Activity, 
   Zap, 
@@ -124,15 +123,14 @@ export function HeroCockpit() {
   };
 
   return (
-    <div className="card-pro p-5 shadow-2xl backdrop-blur-3xl sm:p-7 glow-border transition-all hover:border-accent/40" aria-label="Interactive AI Agent Intent Simulator">
+    <div className="card-pro p-5   sm:p-7 glow-border transition-[border-color,box-shadow] duration-200 hover:border-accent/40" aria-label="Interactive AI Agent Intent Simulator">
       {/* Cockpit Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-5">
         <div className="flex items-center gap-3">
           <div className="relative grid h-10 w-10 place-items-center rounded-xl border border-accent/40 bg-accent/15 text-accent shadow-sm shadow-accent/20">
             <Bot aria-hidden="true" className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
           </div>
           <div>
@@ -147,7 +145,7 @@ export function HeroCockpit() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-muted/60 px-2.5 py-1 text-[11px] font-mono text-muted-foreground">
+          <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-muted/60 px-2.5 py-1 text-xs font-mono text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
             {ARC_NETWORK_NAME}
           </div>
@@ -157,7 +155,7 @@ export function HeroCockpit() {
       {/* Preset Intent Switcher Pills */}
       <div className="mt-5">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+          <p className="text-xs font-medium text-muted-foreground">
             Sample Intents:
           </p>
         </div>
@@ -169,13 +167,13 @@ export function HeroCockpit() {
                 key={scenario.id}
                 type="button"
                 onClick={() => handleSelectScenario(scenario)}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                   isSelected
-                    ? "bg-accent/20 text-accent border border-accent/40 shadow-sm shadow-accent/10 scale-[1.02]"
-                    : "bg-muted/50 text-muted-foreground border border-white/10 hover:bg-muted hover:text-foreground active:scale-[0.98]"
+                    ? "bg-accent/20 text-accent border border-accent/40 shadow-sm shadow-accent/10"
+                    : "bg-muted/50 text-muted-foreground border border-white/10 hover:bg-muted hover:text-foreground"
                 }`}
               >
-                <Sparkles className={`h-3 w-3 ${isSelected ? "text-accent" : "text-muted-foreground"}`} />
+                <Terminal className={`h-3 w-3 ${isSelected ? "text-accent" : "text-muted-foreground"}`} />
                 {scenario.label}
               </button>
             );
@@ -207,12 +205,12 @@ export function HeroCockpit() {
       </form>
 
       {/* Natural Language Prompt Display Bubble */}
-      <div className="my-4 rounded-2xl border border-white/10 bg-muted/80 p-4 shadow-inner relative overflow-hidden">
+      <div className="my-4 rounded-2xl border border-white/10 bg-muted/80 p-4  relative overflow-hidden">
         <div className="flex items-start gap-2.5">
           <Terminal className="h-4 w-4 text-accent shrink-0 mt-0.5" />
           <div className="w-full">
-            <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground mb-1">
-              <span>NATURAL LANGUAGE INTENT</span>
+            <div className="flex items-center justify-between text-xs font-mono text-muted-foreground mb-1">
+              <span>Intent simulation</span>
             </div>
             <p className="text-sm font-medium text-foreground leading-relaxed">
               &ldquo;{activeScenario.prompt}&rdquo;
@@ -222,12 +220,12 @@ export function HeroCockpit() {
       </div>
 
       {/* Generated Deterministic Execution Plan */}
-      <div className={`rounded-2xl border border-white/10 bg-background/90 p-5 shadow-lg backdrop-blur-md transition-opacity duration-200 ${isSimulating ? "opacity-35" : "opacity-100"}`}>
+      <div className={`rounded-2xl border border-white/10 bg-background/90 p-5   transition-opacity duration-200 ${isSimulating ? "opacity-35" : "opacity-100"}`}>
         <div className="flex items-center justify-between border-b border-border/60 pb-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-accent">
             <Check className="h-4 w-4" /> Planned Execution
           </div>
-          <span className="font-mono text-[11px] text-muted-foreground">
+          <span className="font-mono text-xs text-muted-foreground">
             Hash: {activeScenario.hash}
           </span>
         </div>
@@ -235,13 +233,13 @@ export function HeroCockpit() {
         {/* Dynamic Amount / Value */}
         <div className="mt-4 flex items-baseline justify-between">
           <div>
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-mono">Amount</span>
-            <p className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl mt-0.5 text-gradient-pro">
+            <span className="text-xs text-muted-foreground font-mono">Amount</span>
+            <p className="font-display text-2xl font-medium tracking-tight text-foreground sm:text-3xl mt-0.5">
               {activeScenario.amount}
             </p>
           </div>
           <div className="text-right">
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-mono">Est. Gas</span>
+            <span className="text-xs text-muted-foreground font-mono">Est. gas</span>
             <p className="font-mono text-xs font-semibold text-emerald-400 mt-1">
               {activeScenario.estGas}
             </p>
@@ -251,15 +249,15 @@ export function HeroCockpit() {
         {/* Telemetry Parameter Table */}
         <dl className="mt-4 grid grid-cols-2 gap-3 rounded-xl border border-white/5 bg-card/60 p-3 text-xs">
           <div>
-            <dt className="text-muted-foreground text-[11px]">Network</dt>
+            <dt className="text-muted-foreground text-xs">Network</dt>
             <dd className="font-medium text-foreground mt-0.5">{activeScenario.network}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground text-[11px]">Destination</dt>
+            <dt className="text-muted-foreground text-xs">Destination</dt>
             <dd className="font-medium text-accent mt-0.5">{activeScenario.targetChain}</dd>
           </div>
           <div className="col-span-2 pt-2 border-t border-border/40">
-            <dt className="text-muted-foreground text-[11px]">Execution Method</dt>
+            <dt className="text-muted-foreground text-xs">Execution method</dt>
             <dd className="font-medium text-foreground flex items-center gap-1.5 mt-0.5">
               <ShieldCheck className="h-3.5 w-3.5 text-accent" />
               {activeScenario.executionMode}
@@ -269,10 +267,10 @@ export function HeroCockpit() {
 
         {/* Multi-step execution roadmap */}
         <div className="mt-4 space-y-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Execution Steps</p>
+          <p className="text-xs font-medium text-muted-foreground">Execution steps</p>
           {activeScenario.steps.map((step, idx) => (
             <div key={idx} className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/15 text-[10px] font-mono font-bold text-accent">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/15 text-xs font-mono font-medium text-accent">
                 {idx + 1}
               </span>
               <span>{step}</span>

@@ -1,29 +1,19 @@
 /**
- * Live USDC send on Arc Testnet via the active injected wallet.
- * Uses the wallet the user selected (Rabby / MetaMask / …) — never random window.ethereum.
- *
- * Arc-specific note:
- * USDC is the native gas asset on Arc, but user transfers should use the
- * canonical ERC-20 USDC interface. Arc's RPC has known gas-estimation/simulation
- * limitations for USDC write transactions, so this path supplies an explicit
- * gas limit instead of relying on eth_estimateGas inside the wallet.
+ * Native USDC transfer on Arc through the selected wallet.
  */
 
 import {
   createPublicClient,
   formatUnits,
   http,
-  encodeFunctionData,
   parseUnits,
   type Address,
 } from "viem";
 import {
-  arcChain,
   arcMainnetChain,
   arcTestnetChain,
   getArcNetworkMeta,
   explorerTxUrl,
-  ARC_NETWORK_NAME,
   IS_ARC_MAINNET,
   ARC_CHAIN_ID,
 } from "@/lib/arc-chain";
@@ -36,26 +26,7 @@ import {
 } from "@/sdk/wallet-adapter";
 import type { TransactionRecord, TxStep } from "@/types";
 import { uid } from "@/lib/utils";
-
-const ARC_USDC = "0x3600000000000000000000000000000000000000" as Address;
-const USDC_DECIMALS = 6;
-// Arc Testnet's RPC has documented eth_estimateGas/simulation issues for USDC
-// writes. 100k is deliberately conservative for a plain ERC-20 transfer while
-// remaining far below the network RPC gas cap.
-const ARC_USDC_TRANSFER_GAS = 100_000n;
-
-const ERC20_TRANSFER_ABI = [
-  {
-    type: "function",
-    name: "transfer",
-    stateMutability: "nonpayable",
-    inputs: [
-      { name: "to", type: "address" },
-      { name: "amount", type: "uint256" },
-    ],
-    outputs: [{ name: "", type: "bool" }],
-  },
-] as const;
+import { isValidTxHash } from "@/lib/tx-verify";
 
 export async function getLiveWalletContext(): Promise<{
   address: Address;
@@ -117,6 +88,31 @@ export async function fetchArcNativeBalance(address: Address, isMainnet?: boolea
   return formatArcNativeUsdcBalance(await readArcNativeBalanceRaw(address, isMainnet));
 }
 
+export async function matchesNativeArcTransfer(payment: {
+  chain: "Arc_Testnet" | "Arc_Mainnet";
+  hash: string;
+  blockHash: string;
+  from: string;
+  to: string;
+  amount: string;
+}): Promise<boolean> {
+  if (!isValidTxHash(payment.hash) || !isValidTxHash(payment.blockHash)) return false;
+  const isMainnet = payment.chain === "Arc_Mainnet";
+  const client = createPublicClient({
+    chain: isMainnet ? arcMainnetChain : arcTestnetChain,
+    transport: http(arcRpcUrl(isMainnet)),
+  });
+  try {
+    const mined = await client.getTransaction({ hash: payment.hash as `0x${string}` });
+    return mined.hash === payment.hash && mined.blockHash === payment.blockHash &&
+      mined.from.toLowerCase() === payment.from.toLowerCase() &&
+      mined.to?.toLowerCase() === payment.to.toLowerCase() &&
+      mined.value === parseUnits(payment.amount, ARC_NATIVE_DECIMALS) && mined.input === "0x";
+  } catch {
+    return false;
+  }
+}
+
 export async function liveSendUsdcOnArc(params: {
   amount: string;
   recipient: string;
@@ -124,6 +120,8 @@ export async function liveSendUsdcOnArc(params: {
   onStep?: (steps: TxStep[]) => void;
   /** Optional explicit provider (preferred when caller already has Rabby) */
   provider?: InjectedProvider;
+  /** Bind the wallet operation to the network reviewed by the caller. */
+  expectedChainId?: 5042 | 5042002;
   /**
    * Pin the sender address (e.g. from the app's wallet store).
    * When provided, the balance check and the `from` field in the transaction
@@ -142,9 +140,10 @@ export async function liveSendUsdcOnArc(params: {
   const id = uid("tx");
   const provider = params.provider || (await getInjectedProvider());
   const detectedChainId = await getChainId(provider).catch(() => ARC_CHAIN_ID);
-  const meta = getArcNetworkMeta(detectedChainId);
+  const meta = getArcNetworkMeta(params.expectedChainId ?? detectedChainId);
   const networkName = meta.name;
   const activeChain = meta.isMainnet ? arcMainnetChain : arcTestnetChain;
+  const paymentChain = meta.isMainnet ? "Arc_Mainnet" : "Arc_Testnet";
 
   const steps: TxStep[] = [
     { name: "Connect wallet", state: "active" },
@@ -165,6 +164,7 @@ export async function liveSendUsdcOnArc(params: {
   if (!from) throw new Error("No wallet account — connect Rabby or MetaMask first");
 
   steps[0].state = "success";
+  steps[0].nativeTransferSender = from;
   steps[1].state = "active";
   emit();
 
@@ -209,6 +209,15 @@ export async function liveSendUsdcOnArc(params: {
   const nativeWei = parseUnits(params.amount.trim(), 18);
 
   let hash: `0x${string}`;
+  if (params.fromAddress) {
+    const activeAccounts = await provider.request({ method: "eth_accounts" }) as string[];
+    if (activeAccounts?.[0]?.toLowerCase() !== from.toLowerCase()) {
+      throw new Error("Wallet account changed. Review the payment again before signing.");
+    }
+  }
+  if (await getChainId(provider) !== meta.chainId) {
+    throw new Error("Wallet network changed. Review the payment again before signing.");
+  }
   try {
     hash = String(
       await provider.request({
@@ -217,6 +226,7 @@ export async function liveSendUsdcOnArc(params: {
           {
             from,
             to,
+            chainId: meta.chainIdHex,
             gas: "0x5208", // 21,000 standard transfer gas
             value: `0x${nativeWei.toString(16)}`,
           },
@@ -230,6 +240,7 @@ export async function liveSendUsdcOnArc(params: {
     }
     throw new Error(message || "Arc USDC transfer failed.");
   }
+  if (!isValidTxHash(hash)) throw new Error("The wallet did not return a valid transaction hash. Check wallet activity.");
 
   steps[2].state = "success";
   steps[2].txHash = hash;
@@ -248,19 +259,32 @@ export async function liveSendUsdcOnArc(params: {
       hash,
       timeout: 60_000,
     });
+    // A wallet can replace a submitted transaction. Verify the mined payment.
+    if (!isValidTxHash(receipt.transactionHash)) throw new Error("The receipt has no valid transaction hash.");
+    hash = receipt.transactionHash;
+    steps[2].txHash = hash;
     if (receipt.status !== "success") {
       status = "error";
       finalityMessage = `Transaction reverted on ${networkName}`;
       steps[3].state = "error";
       steps[3].message = finalityMessage;
     } else {
-      steps[3].state = "success";
+      if (await matchesNativeArcTransfer({
+        chain: paymentChain, hash, blockHash: receipt.blockHash, from, to, amount: params.amount.trim(),
+      })) {
+        steps[3].state = "success";
+      } else {
+        status = "retryable";
+        finalityMessage = "Could not verify the reviewed payment. Check wallet activity and the explorer before retrying.";
+        steps[3].state = "pending";
+        steps[3].message = finalityMessage;
+      }
     }
   } catch {
     // A timeout/network failure is not proof of success. Keep the hash and mark
     // the transaction retryable so the UI never lies about on-chain finality.
     status = "retryable";
-    finalityMessage = "Submitted — finality is still pending. Verify the explorer before retrying.";
+    finalityMessage = "Submitted. Check the explorer before retrying while payment verification is pending.";
     steps[3].state = "pending";
     steps[3].message = finalityMessage;
   }
@@ -274,8 +298,8 @@ export async function liveSendUsdcOnArc(params: {
     retryable: status === "retryable",
     amount: params.amount,
     token: "USDC",
-    fromChain: meta.isMainnet ? "Arc_Mainnet" : "Arc_Testnet",
-    toChain: meta.isMainnet ? "Arc_Mainnet" : "Arc_Testnet",
+    fromChain: paymentChain,
+    toChain: paymentChain,
     recipient: params.recipient,
     recipientLabel: params.recipientLabel,
     feeUsd: 0.04,

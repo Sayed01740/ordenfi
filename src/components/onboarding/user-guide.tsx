@@ -152,7 +152,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
         <CardContent id="guide-content" role="region" hidden={!open} aria-labelledby="guide" className="space-y-4 text-sm text-muted-foreground">
           <div className="rounded-xl border border-border bg-muted p-3 space-y-2">
             <p className="text-sm text-foreground font-medium leading-snug">
-              AGFusion helps you <span className="text-accent">send</span>,{" "}
+              Ordenfi helps you <span className="text-accent">send</span>,{" "}
               <span className="text-accent">swap</span>, and{" "}
               <span className="text-accent">move</span> digital dollars (USDC)
               on Arc — with an AI helper that explains the plan first.
@@ -166,12 +166,12 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
 
           <div>
-            <div className="text-xs uppercase tracking-wider text-accent mb-2 font-medium">
+            <div className="text-xs font-semibold text-accent mb-2">
               3 steps to try it (test money)
             </div>
             <ol className="space-y-2 text-foreground">
               <li className="flex gap-2">
-                <Badge variant="outline" className="h-5 shrink-0 font-mono text-[10px]">
+                <Badge variant="outline" className="h-5 shrink-0 font-mono text-xs">
                   1
                 </Badge>
                 <span>
@@ -180,7 +180,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
                 </span>
               </li>
               <li className="flex gap-2">
-                <Badge variant="outline" className="h-5 shrink-0 font-mono text-[10px]">
+                <Badge variant="outline" className="h-5 shrink-0 font-mono text-xs">
                   2
                 </Badge>
                 <span>
@@ -197,7 +197,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
                 </span>
               </li>
               <li className="flex gap-2">
-                <Badge variant="outline" className="h-5 shrink-0 font-mono text-[10px]">
+                <Badge variant="outline" className="h-5 shrink-0 font-mono text-xs">
                   3
                 </Badge>
                 <span>
@@ -210,7 +210,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
 
           <div>
-            <div className="text-xs uppercase tracking-wider text-accent mb-2 font-medium">
+            <div className="text-xs font-semibold text-accent mb-2">
               What can I use it for?
             </div>
             <div className="space-y-2">
@@ -235,7 +235,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
 
           <div>
-            <div className="text-xs uppercase tracking-wider text-accent mb-2 font-medium">
+            <div className="text-xs font-semibold text-accent mb-2">
               What is each part of the screen?
             </div>
             <ul className="space-y-2">
@@ -264,7 +264,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
 
           <div className="rounded-xl border border-border bg-muted p-3 space-y-2">
-            <div className="text-xs uppercase tracking-wider text-accent font-medium">
+            <div className="text-xs font-semibold text-accent">
               Ask AI help
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -294,7 +294,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
                 aria-describedby={helpErr ? "guide-help-error" : undefined}
                 value={helpQ}
                 onChange={(e) => setHelpQ(e.target.value)}
-                placeholder="Ask anything about using AGFusion…"
+                placeholder="Ask anything about using Ordenfi…"
                 disabled={helpBusy}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") void askHelp();

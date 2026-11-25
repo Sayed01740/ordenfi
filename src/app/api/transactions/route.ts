@@ -22,6 +22,7 @@ const transactionStepsSchema = z.array(z.object({
   state: z.enum(["pending", "active", "success", "error", "noop"]),
   txHash: z.string().min(1).max(128).optional(),
   message: z.string().max(500).optional(),
+  nativeTransferSender: z.string().regex(/^0x[a-fA-F0-9]{40}$/).optional(),
 })).max(100);
 
 /**

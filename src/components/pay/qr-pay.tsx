@@ -1,217 +1,84 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { QrCode, Copy, Check, Wallet } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
+import { Copy, Check, Download, QrCode } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FeeLineItems } from "@/components/ui/fee-line-items";
-import { quoteSendFee } from "@/lib/fees";
 import { usePilotStore } from "@/store/pilot-store";
-import { executeSend } from "@/lib/client-actions";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { createPaymentLink, paymentChain } from "@/lib/payment-tools";
+import { AssistantRobot } from "@/components/workspace/assistant-robot";
+import { CHAINS } from "@/lib/chains";
 
-/**
- * Live USDC payment request + pay on Arc Testnet.
- */
+/** Receiving requests only; signing and payment happen in the payer's workspace. */
 export function QrPayCard({ embedded = false }: { embedded?: boolean }) {
-  const {
-    walletAddress,
-    addTransaction,
-    setActiveTx,
-    setThinking,
-    executionMode,
-  } = usePilotStore();
+  const { walletAddress, walletChainId, networkMode } = usePilotStore();
   const [amount, setAmount] = useState("10");
-  const [memo, setMemo] = useState("AGFusion pay");
-  const [payTo, setPayTo] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [confirm, setConfirm] = useState(false);
+  const [memo, setMemo] = useState("");
+  const [address, setAddress] = useState("");
+  const [copiedLink, setCopiedLink] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const fee = quoteSendFee(amount);
-  const mode = executionMode();
-
-  const recipient = (payTo.trim() || walletAddress || "").trim();
-
-  const payUri = useMemo(() => {
-    const base =
-      typeof window !== "undefined"
-        ? window.location.origin
-        : "https://agfusion.vercel.app";
-    const q = new URLSearchParams({
-      amount,
-      token: "USDC",
-      chain: "Arc_Testnet",
-      memo,
-    });
-    if (walletAddress) q.set("to", walletAddress);
-    return `${base}/dashboard?pay=${encodeURIComponent(q.toString())}`;
-  }, [amount, memo, walletAddress]);
-
-  const qrImg = useMemo(() => {
-    const data = encodeURIComponent(payUri);
-    return `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${data}`;
-  }, [payUri]);
+  const [origin, setOrigin] = useState("");
+  const qrRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { setOrigin(window.location.origin); }, []);
+  const chain = paymentChain(walletChainId, networkMode);
+  const recipient = address.trim() || walletAddress || "";
+  let payUri = "";
+  let validation = "";
+  try {
+    if (origin) payUri = createPaymentLink(origin, { amount, to: recipient, memo, chain });
+  } catch (error) { validation = error instanceof Error ? error.message : "Check the payment details."; }
+  const copied = Boolean(payUri) && copiedLink === payUri;
 
   async function copyUri() {
-    await navigator.clipboard.writeText(payUri);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    try { await navigator.clipboard.writeText(payUri); setCopiedLink(payUri); setError(null); }
+    catch { setError("Could not copy. Select and copy the link below."); }
   }
 
-  async function payNow() {
-    setError(null);
-    if (!walletAddress) {
-      setError("Connect Rabby first.");
-      return;
-    }
-    if (!recipient || !/^0x[a-fA-F0-9]{40}$/.test(recipient)) {
-      setError("Enter a valid 0x recipient (or leave empty to pay yourself).");
-      return;
-    }
-    setBusy(true);
-    setThinking(true);
-    setConfirm(false);
-    try {
-      const tx = await executeSend({
-        amount,
-        token: "USDC",
-        chain: "Arc_Testnet",
-        recipient,
-        recipientLabel: memo || "QR pay",
-        preferLive: true,
-      });
-      addTransaction(tx);
-      setActiveTx(tx.id);
-      if (tx.status === "success") {
-        setAmount("0");
-      } else {
-        setError(tx.message || "Payment was submitted but is not confirmed yet.");
-      }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Payment failed");
-    } finally {
-      setBusy(false);
-      setThinking(false);
-    }
+  function downloadQr() {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+    const data = new XMLSerializer().serializeToString(svg);
+    const url = URL.createObjectURL(new Blob([data], { type: "image/svg+xml" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ordenfi-payment-qr.svg";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-
-  const body = (
-        <div className="space-y-3">
-          {!embedded && (
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Create a USDC payment link or QR code.
-          </p>
-          )}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="text-[10px] text-muted-foreground uppercase font-medium">
-                Amount
-              </label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-[10px] text-muted-foreground uppercase font-medium">Memo</label>
-              <Input value={memo} onChange={(e) => setMemo(e.target.value)} />
-            </div>
+  const body = <div className="space-y-4">
+    <p className="text-sm text-muted-foreground">Request USDC on {chain === "Arc_Mainnet" ? "Arc Mainnet" : "Arc Testnet"}. The payer reviews and signs the transfer.</p>
+    <div>
+      <label htmlFor="qr-recipient" className="mb-1.5 block text-xs text-muted-foreground">Receiving address</label>
+      <Input id="qr-recipient" className="font-mono text-xs" placeholder={walletAddress || "Connect your wallet or paste 0x…"} value={address} onChange={e => setAddress(e.target.value)} />
+      {walletAddress && !address && <p className="mt-1 text-xs text-muted-foreground">Using your connected wallet.</p>}
+    </div>
+    <div className="grid grid-cols-2 gap-3">
+      <div><label htmlFor="qr-amount" className="mb-1.5 block text-xs text-muted-foreground">Amount (USDC)</label><Input id="qr-amount" type="number" min="0.000001" step="0.000001" value={amount} onChange={e => setAmount(e.target.value)} /></div>
+      <div><label htmlFor="qr-memo" className="mb-1.5 block text-xs text-muted-foreground">Memo (optional)</label><Input id="qr-memo" maxLength={200} value={memo} onChange={e => setMemo(e.target.value)} /></div>
+    </div>
+    {payUri ? <>
+      <section aria-label="Payment QR card" className="space-y-3 rounded-xl border border-border bg-background px-3 py-4">
+        <div className="flex items-end justify-center">
+          <AssistantRobot mood={copied ? "reply" : "idle"} courier />
+          <div ref={qrRef} className="min-w-0 max-w-48">
+            <QRCodeSVG value={payUri} size={192} marginSize={4} title="USDC payment request QR code" className="block h-auto w-full rounded-lg" />
           </div>
-          <div>
-            <label className="text-[10px] text-muted-foreground uppercase font-medium">
-              Recipient Address (blank = yourself)
-            </label>
-            <Input
-              className="font-mono text-xs"
-              placeholder={walletAddress || "0x…"}
-              value={payTo}
-              onChange={(e) => setPayTo(e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-center py-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={qrImg}
-              alt="Payment QR"
-              width={160}
-              height={160}
-              className="rounded-xl border border-white/10 bg-white p-2"
-            />
-          </div>
-
-          <p className="text-[10px] font-mono text-slate-500 break-all line-clamp-2">
-            {payUri}
-          </p>
-
-          <FeeLineItems quote={fee} compact />
-
-          {error && (
-            <p className="text-[11px] text-red-300/90 leading-relaxed">{error}</p>
-          )}
-
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="flex-1"
-              onClick={() => void copyUri()}
-            >
-              {copied ? (
-                <Check className="h-3.5 w-3.5" />
-              ) : (
-                <Copy className="h-3.5 w-3.5" />
-              )}
-              {copied ? "Copied" : "Copy link"}
-            </Button>
-            <Button
-              size="sm"
-              className="flex-1 font-semibold"
-              disabled={!walletAddress || busy}
-              onClick={() => setConfirm(true)}
-            >
-              <Wallet className="h-3.5 w-3.5" />
-              {busy ? "Opening wallet…" : "Pay"}
-            </Button>
-          </div>
-          {!walletAddress && (
-            <p className="text-[10px] text-amber-200/80">
-              Connect wallet to pay.
-            </p>
-          )}
         </div>
-  );
-
-  return (
-    <>
-      {embedded ? (
-        body
-      ) : (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <QrCode className="h-4 w-4 text-cyan-400" />
-              Payment Request & QR
-            </CardTitle>
-          </CardHeader>
-          <CardContent>{body}</CardContent>
-        </Card>
-      )}
-      <ConfirmDialog
-        open={confirm}
-        title="Confirm Payment"
-        summary={`Send ${amount} USDC to ${recipient.slice(0, 10)}… (${memo})`}
-        feeQuote={fee}
-        mode={mode}
-        busy={busy}
-        onCancel={() => setConfirm(false)}
-        onConfirm={() => void payNow()}
-      />
-    </>
-  );
+        <div className="text-center">
+          <p className="text-sm font-semibold tabular-nums">{amount} USDC <span className="font-normal text-muted-foreground">· {CHAINS[chain].label}</span></p>
+          <p className="mt-1 break-all font-mono text-xs text-muted-foreground">{recipient}</p>
+          <p role="status" className="mt-1 text-xs text-accent">{copied ? "Payment link copied" : "Ready to scan"}</p>
+        </div>
+      </section>
+      <textarea aria-label="Payment link" readOnly value={payUri} className="w-full resize-none rounded-lg border border-border bg-background p-3 font-mono text-xs text-muted-foreground" rows={3} />
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" className="min-h-11 flex-1" onClick={() => void copyUri()}>{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copied ? "Copied" : "Copy payment link"}</Button>
+        <Button type="button" variant="outline" className="min-h-11 flex-1" onClick={downloadQr}><Download aria-hidden="true" className="h-4 w-4" /> Download QR</Button>
+      </div>
+    </> : <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground"><QrCode className="mx-auto mb-3 h-8 w-8" />{validation || "Enter payment details to generate your QR code."}</div>}
+    {error && <p role="alert" className="text-xs text-red-300">{error}</p>}
+  </div>;
+  return embedded ? body : <Card><CardHeader><CardTitle>Receive USDC</CardTitle></CardHeader><CardContent>{body}</CardContent></Card>;
 }

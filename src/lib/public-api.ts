@@ -65,7 +65,7 @@ export function redactTransactionForClient(tx: Record<string, unknown>) {
     explorerUrl?: string;
     executionMode?: string;
     message?: string;
-    steps?: Array<{ name: string; state: string }>;
+    steps?: Array<{ name: string; state: string; nativeTransferSender?: string }>;
     createdAt?: string;
   };
 
@@ -88,7 +88,7 @@ export function redactTransactionForClient(tx: Record<string, unknown>) {
       ? message
       : undefined,
     steps: Array.isArray(steps)
-      ? steps.map((s) => ({ name: s.name, state: s.state }))
+      ? steps.map((s) => ({ name: s.name, state: s.state, nativeTransferSender: s.nativeTransferSender }))
       : [],
     createdAt,
   };

@@ -45,18 +45,18 @@ export function ArcGasSavingsBanner() {
     100
   ).toFixed(1);
 
-  // User's cumulative savings across transactions in AGFusion
+  // User's cumulative savings across transactions in Ordenfi
   const txCount = transactions.filter((t) => t.status === "success").length;
   const totalUserSavings = (Math.max(1, txCount) * ethAvgFeeUsd).toFixed(2);
 
   return (
     <div className="w-full mb-3">
-      <div className="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/30 via-slate-900/60 to-cyan-950/30 p-2.5 sm:px-3.5 sm:py-2.5 backdrop-blur-md transition-all hover:border-emerald-500/40">
+      <div className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-card p-2.5 sm:px-3.5 sm:py-2.5  shadow-md transition-[border-color] duration-150 hover:border-accent/30">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Left: Gas Ticker */}
           <div className="flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400">
-              <Fuel className="h-3.5 w-3.5 animate-pulse" />
+              <Fuel className="h-3.5 w-3.5 animate-pulse motion-reduce:animate-none" />
             </span>
             <div className="text-[12px] leading-tight">
               <span className="font-semibold text-emerald-300">
@@ -66,7 +66,7 @@ export function ArcGasSavingsBanner() {
                 ~${arcGasFeeUsdc} USDC
               </span>
               <span className="mx-1.5 text-slate-600">·</span>
-              <span className="font-mono text-[11px] text-slate-400">
+              <span className="font-mono text-xs text-slate-400">
                 {gasPriceGwei} Gwei
               </span>
             </div>
@@ -76,7 +76,7 @@ export function ArcGasSavingsBanner() {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Badge
               variant="outline"
-              className="border-emerald-500/30 bg-emerald-500/10 text-[11px] text-emerald-300"
+              className="border-emerald-500/30 bg-emerald-500/10 text-xs text-emerald-300"
             >
               <TrendingDown className="mr-1 h-3 w-3 inline" />
               {savingsPercent}% vs ETH L1
@@ -85,7 +85,7 @@ export function ArcGasSavingsBanner() {
             <button
               type="button"
               onClick={() => setShowDetails(!showDetails)}
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-200 transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors"
               title="Arc Gas Advantages"
             >
               <Info className="h-3.5 w-3.5" />
@@ -99,44 +99,44 @@ export function ArcGasSavingsBanner() {
           <div className="mt-3 pt-3 border-t border-white/[0.06] text-[12px] text-slate-300 space-y-2">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="rounded-xl bg-black/40 p-2 border border-white/[0.04]">
-                <div className="text-[11px] text-slate-400">Arc Gas Token</div>
+                <div className="text-xs text-slate-400">Arc Gas Token</div>
                 <div className="font-semibold text-emerald-400 font-mono">
                   USDC (18 dec)
                 </div>
-                <div className="text-[10px] text-slate-500">
+                <div className="text-xs text-slate-500">
                   Zero volatile ETH needed
                 </div>
               </div>
               <div className="rounded-xl bg-black/40 p-2 border border-white/[0.04]">
-                <div className="text-[11px] text-slate-400">Cost per Send</div>
+                <div className="text-xs text-slate-400">Cost per Send</div>
                 <div className="font-semibold text-slate-200 font-mono">
                   ${arcGasFeeUsdc} USDC
                 </div>
-                <div className="text-[10px] text-slate-500">
+                <div className="text-xs text-slate-500">
                   vs ~$2.80 on Ethereum L1
                 </div>
               </div>
               <div className="rounded-xl bg-black/40 p-2 border border-white/[0.04]">
-                <div className="text-[11px] text-slate-400">
+                <div className="text-xs text-slate-400">
                   Your Estimated Savings
                 </div>
                 <div className="font-semibold text-cyan-400 font-mono">
                   ${totalUserSavings} USD
                 </div>
-                <div className="text-[10px] text-slate-500">
+                <div className="text-xs text-slate-500">
                   Based on completed actions
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+            <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
                 Gas fee is settled directly in USDC on Arc Testnet (Chain ID: 5042002)
               </span>
               <button
                 onClick={() => setShowDetails(false)}
-                className="text-slate-500 hover:text-slate-300 text-[10px] uppercase font-mono"
+                className="text-slate-500 hover:text-slate-300 text-xs  font-mono"
               >
                 Close
               </button>

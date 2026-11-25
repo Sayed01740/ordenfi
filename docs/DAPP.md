@@ -1,16 +1,18 @@
-# AGFusion dApp — Unified Swap / Send / Bridge / Batch
+# Ordenfi stablecoin workspace
 
-A dark, Uniswap-style trading surface that is now the **landing page** (`/`) of AGFusion.
-It unifies four money actions on **Arc Testnet** into one card:
+The homepage (`/`) opens one unified workspace: Swap, Send, Bridge, Receive, Batch Payments, and More on the left, with the transaction assistant on the right and activity below. Swap opens by default. Mobile stacks actions before the assistant. `/dashboard` renders the same shared component for existing bookmarks and payment links. Network availability follows the current wallet and application configuration.
+
+Receive generates QR codes locally and binds payment links to the receiving address and Arc network. Batch Payments sends sequentially with one signature per recipient, stops on unconfirmed or failed transfers, and retains the attempted batch while navigating actions. It does not use the optional disperse contract described below. Recovery appears inside Bridge when an eligible failed transfer exists. More contains Onramp, a local heuristic risk estimate (paid access disabled), and Unified Balance.
 
 | Tab | What it does | Underlying path |
 |-----|--------------|-----------------|
 | **Swap** | Quote + swap between stablecoins | Live Arc Uniswap-V2 router (`getArcDexSwapQuote` → `executeSwap`) |
 | **Send** | Single ERC-20 transfer | `sendArcToken` (canonical `transfer`, explicit gas) |
 | **Bridge** | Cross-chain USDC (Arc ↔ Base Sepolia) | Circle CCTP (`executeBridge`) |
-| **Batch** | Pay many recipients | `AGFusionDisperse.disperseToken` — **one signature** |
+| **Receive** | Create a USDC request | Local SVG QR + validated network-bound payment link |
+| **Batch Payments** | Pay many recipients | `executeSend` sequentially; one signature per recipient |
 
-The previous marketing page moved to **`/welcome`** (linked from the card footer and the mobile nav).
+`/welcome` is a compatibility alias for the homepage. The former `AGFusionDapp` and `StreamlinedHero` components are retained as unused source; the current page renders `OperationsWorkspace`.
 
 ---
 
@@ -51,8 +53,11 @@ components/dapp/send-card.tsx  # single send
 components/dapp/bridge-card.tsx# route picker + CCTP bridge
 components/dapp/batch-card.tsx # recipient rows + single-signature disperse (sequential fallback)
 components/dapp/agfusion-dapp.tsx # container: tabs + wallet header + wrong-network switch
-app/page.tsx                   # renders <AGFusionDapp /> (the new landing page)
-app/welcome/page.tsx           # the former marketing landing page
+components/workspace/operations-workspace.tsx # shared actions, balances, payments, and activity
+components/workspace/workspace-assistant.tsx # assistant with draft-preserving disclosure
+app/page.tsx                   # renders <OperationsWorkspace />
+app/dashboard/page.tsx         # backward-compatible entry to the same workspace
+app/welcome/page.tsx           # compatibility alias for the homepage
 ```
 
 Everything reuses the existing wallet stack (`src/providers/wallet-provider.tsx` → `useWallet()`,

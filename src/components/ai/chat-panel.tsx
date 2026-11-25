@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUp,
   Bot,
-  CheckCircle2,
   Loader2,
   Terminal,
-  Wrench,
-  XCircle,
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { usePilotStore } from "@/store/pilot-store";
 import { uid } from "@/lib/utils";
 import type { ActionPreview, ChatMessage, TransactionRecord } from "@/types";
@@ -29,6 +25,9 @@ import { requireSafeRecipient } from "@/lib/balances-empty";
 import { sanitizeAgentText } from "@/lib/sanitize";
 import { publishSwapHandoff } from "@/lib/swap-handoff";
 import { runMainnetUniswapSwap } from "@/blockchain/uniswap-mainnet-flow";
+import type { AssistantMood } from "@/components/workspace/assistant-robot";
+import type { AssistantPlan } from "@/lib/assistant-plan";
+import type { AssistantGuide } from "@/lib/assistant-tools";
 
 const SUGGESTIONS = [
   "What can you do?",
@@ -51,7 +50,7 @@ function renderMarkdownish(text: string) {
         '<code class="rounded bg-muted border border-border/60 px-1.5 py-0.5 text-[12px] font-mono text-accent">$1</code>',
       );
     if (line.startsWith("• ") || line.startsWith("- ")) {
-      html = `<span class="text-accent font-bold mr-1.5">•</span>${html.slice(2)}`;
+      html = `<span class="text-accent font-medium mr-1.5">•</span>${html.slice(2)}`;
     }
     return (
       <p
@@ -64,7 +63,16 @@ function renderMarkdownish(text: string) {
 }
 
 
-export function ChatPanel() {
+export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, onAssistantMoodChange, onReviewPlan, onGuide, revealReply = false, visible = true }: {
+  avatar?: ReactNode;
+  assistantName?: string;
+  tools?: ReactNode;
+  onAssistantMoodChange?: (mood: AssistantMood) => void;
+  onReviewPlan?: (plan: AssistantPlan) => void;
+  onGuide?: (guide: AssistantGuide) => void;
+  revealReply?: boolean;
+  visible?: boolean;
+}) {
   const {
     messages,
     isThinking,
@@ -82,16 +90,31 @@ export function ChatPanel() {
   const [input, setInput] = useState("");
   const [statusLine, setStatusLine] = useState<string | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
+  const [replyId, setReplyId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const [liveTrace, setLiveTrace] = useState<
     Array<{ name: string; summary: string; ok: boolean }>
   >([]);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const conversationRef = useRef<HTMLDivElement>(null);
+  const replyRef = useRef<HTMLDivElement>(null);
+  const wasVisible = useRef(visible);
   const sendingRef = useRef(false);
+  const mood = chatError ? "error" : statusLine !== null ? "thinking" : replyId ? "reply" : "idle";
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-  }, [messages, isThinking, statusLine, liveTrace]);
+    onAssistantMoodChange?.(mood);
+  }, [mood, onAssistantMoodChange]);
+
+  useEffect(() => {
+    const opened = visible && !wasVisible.current;
+    wasVisible.current = visible;
+    if (!visible) return;
+    const conversation = conversationRef.current;
+    if (!conversation) return;
+    const reply = opened && revealReply ? replyRef.current : null;
+    const top = reply ? conversation.scrollTop + reply.getBoundingClientRect().top - conversation.getBoundingClientRect().top - 16 : conversation.scrollHeight;
+    conversation.scrollTo({ top, behavior: opened || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  }, [messages, isThinking, statusLine, liveTrace, visible, revealReply]);
 
   async function send(text: string, execute = false) {
     const content = text.trim();
@@ -99,6 +122,7 @@ export function ChatPanel() {
 
     sendingRef.current = true;
     setChatError(null);
+    setReplyId(null);
     const userMsg: ChatMessage = {
       id: uid("msg"),
       role: "user",
@@ -195,9 +219,13 @@ export function ChatPanel() {
 
       if (finalMsg) {
         addMessage(finalMsg);
+        if (!sawError) setReplyId(finalMsg.id);
       } else if (!sawError) {
+        const id = uid("msg");
+        if (lastContent) setReplyId(id);
+        if (!lastContent) setChatError("The assistant could not complete that request. Try asking again.");
         addMessage({
-          id: uid("msg"),
+          id,
           role: "assistant",
           content:
             lastContent ||
@@ -232,6 +260,7 @@ export function ChatPanel() {
       return;
 
     setChatError(null);
+    setReplyId(null);
     const activeMeta = (await import("@/sdk/active-wallet")).getActiveWalletMeta();
     const effectiveAddress = walletAddress || activeMeta?.address;
     const isMainnetActive =
@@ -426,51 +455,30 @@ export function ChatPanel() {
 
   return (
     <div
-      className={`flex h-[65vh] min-h-[300px] sm:h-full sm:min-h-[520px] sm:max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl sm:rounded-3xl glass-cockpit transition-colors duration-200 motion-reduce:transition-none ${
-        isThinking
-          ? "ring-1 ring-accent/60 shadow-[0_0_24px_-6px_rgba(5,242,155,0.2)]"
-          : "border border-border/80 shadow-xl sm:shadow-2xl"
-      }`}
+      className="ordenfi-chat flex h-full min-h-0 flex-col overflow-hidden"
     >
 
       <p role="status" aria-atomic="true" className="sr-only">
         {isThinking ? "Agent working. Please wait." : !chatError && messages.at(-1)?.role === "assistant" ? `Agent message ${messages.length} is available in the conversation.` : ""}
       </p>
       <p role="alert" aria-atomic="true" className="sr-only">{chatError}</p>
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 sm:px-5 sm:py-3.5 relative z-10 shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-accent/15 ring-1 ring-accent/30">
-            <Bot className="h-4 w-4 text-accent" />
-            {isThinking && (
-              <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center">
-                <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
-              </span>
-            )}
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold tracking-wide text-foreground">
-              AGFusion Agent
-            </h2>
-            <p className="text-[11px] font-medium text-muted-foreground">
-              AI Transaction Assistant
-            </p>
-          </div>
+      <div className="ordenfi-chat-header flex items-center gap-3">
+        {avatar}
+        <div>
+          <h2>{!avatar && <Bot aria-hidden="true" className="h-4 w-4" />} {assistantName}</h2>
+          <p>{mood === "thinking" ? "Working on your request…" : "Plan first. Confirm in your wallet."}</p>
         </div>
-        <Badge variant="outline" className="gap-1 border-accent/30 bg-accent/10 text-[10px] text-accent">
-          <Zap className="h-3 w-3" />
-          Live
-        </Badge>
       </div>
 
-      <div role="region" aria-label="Agent conversation" tabIndex={0} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin p-4 space-y-4 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset">
+      {tools}
+
+      <div ref={conversationRef} role="region" aria-label="Agent conversation" tabIndex={0} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin p-4 space-y-4 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-3.5 px-4 py-12 animate-fade-in">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 ring-1 ring-accent/30 shadow-lg shadow-accent/10">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 ring-1 ring-accent/30  shadow-accent/10">
               <Zap className="h-6 w-6 text-accent" />
             </div>
-            
+
             <div className="space-y-1 max-w-sm">
               <h3 className="text-base font-semibold text-foreground tracking-tight">AI Financial Operator</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -484,11 +492,11 @@ export function ChatPanel() {
           {messages.map((m) => (
             <motion.div
               key={m.id}
+              ref={m.id === replyId ? replyRef : undefined}
               initial={reduceMotion ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex w-full min-w-0 ${
-                m.role === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex w-full min-w-0 ${m.role === "user" ? "justify-end" : "justify-start"
+                }`}
             >
               <div
                 className={
@@ -500,23 +508,22 @@ export function ChatPanel() {
                 <div className="text-foreground break-words [overflow-wrap:anywhere]">{renderMarkdownish(m.content)}</div>
 
                 {m.toolTrace && m.toolTrace.length > 0 && (
-                  <div className="rounded-xl border border-border bg-background p-3 space-y-1.5 shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)]">
-                    <div className="text-[10px] uppercase tracking-wider text-accent flex items-center gap-1 mb-2 font-mono">
+                  <div className="rounded-xl border border-border bg-background p-3 space-y-1.5 ">
+                    <div className="text-xs font-semibold text-accent flex items-center gap-1.5 mb-2 font-mono">
                       <Terminal className="h-3 w-3" />
                       Execution Steps ({m.toolTrace.length})
                     </div>
                     {m.toolTrace.slice(0, 8).map((t, i) => (
                       <div
                         key={`${t.name}-${i}`}
-                        className={`text-[11px] font-mono flex gap-2 ${
-                          t.ok ? "text-accent" : "text-red-400"
-                        }`}
+                        className={`text-xs font-mono flex gap-2 ${t.ok ? "text-accent" : "text-red-400"
+                          }`}
                       >
                         <span>{t.ok ? "❯" : "✖"}</span>
                         <div className="flex flex-col">
                           <span className="font-semibold">{t.name}</span>
                           {t.summary && (
-                            <span className="text-muted-foreground text-[10px] opacity-80 leading-tight">
+                            <span className="text-muted-foreground text-xs opacity-80 leading-tight">
                               {t.summary}
                             </span>
                           )}
@@ -531,9 +538,9 @@ export function ChatPanel() {
                     key={i}
                     className="overflow-hidden rounded-xl border border-border bg-background"
                   >
-                    <div className="flex items-center justify-between border-b border-border px-3 py-1.5 text-[11px] text-muted-foreground">
+                    <div className="flex items-center justify-between border-b border-border px-3 py-1.5 text-xs text-muted-foreground">
                       <span>{block.filename || block.language}</span>
-                      <span className="uppercase tracking-wider font-mono">
+                      <span className="text-xs font-mono lowercase">
                         {block.language}
                       </span>
                     </div>
@@ -547,6 +554,8 @@ export function ChatPanel() {
                   <ActionPreviewCard
                     preview={m.actionPreview}
                     busy={isThinking}
+                    onReviewPlan={onReviewPlan}
+                    onGuide={onGuide}
                     onExecute={() => executePreview(m.id, m.actionPreview!)}
                   />
                 )}
@@ -566,8 +575,8 @@ export function ChatPanel() {
               {statusLine || "Agent reasoning…"}
             </div>
             {liveTrace.length > 0 && (
-              <div className="rounded-xl border border-accent/30 bg-background p-3 text-[11px] text-accent font-mono shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)]">
-                <div className="flex items-center gap-2 mb-2 text-[10px] text-accent uppercase">
+              <div className="rounded-xl border border-accent/30 bg-background p-3 text-xs text-accent font-mono ">
+                <div className="flex items-center gap-2 mb-2 text-xs text-accent ">
                   <Terminal className="h-3 w-3" /> Live Execution
                 </div>
                 <div className="space-y-1">
@@ -586,7 +595,6 @@ export function ChatPanel() {
             )}
           </motion.div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       <div className="border-t border-border bg-card/60 p-2.5 sm:p-4 space-y-2.5 sm:space-y-3 shrink-0">
@@ -597,7 +605,7 @@ export function ChatPanel() {
               type="button"
               disabled={isThinking}
               onClick={() => send(s)}
-              className="shrink-0 rounded-full border border-border bg-muted/80 px-3 py-1.5 min-h-9 flex items-center justify-center text-xs text-foreground hover:text-accent hover:border-accent/40 transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset disabled:opacity-50"
+              className="shrink-0 rounded-md border border-border bg-muted/40 px-3 py-1.5 min-h-9 flex items-center justify-center text-xs text-foreground hover:text-accent hover:border-accent/40 transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset disabled:opacity-50"
             >
               {s}
             </button>
@@ -625,8 +633,8 @@ export function ChatPanel() {
               }}
               rows={2}
               disabled={isThinking}
-              placeholder='Try: "Swap 1 USDC to EURC", "Show my balances"…'
-              className="w-full resize-none rounded-2xl border border-border bg-muted px-4 py-3.5 text-base sm:text-sm leading-relaxed text-foreground shadow-inner placeholder:text-muted-foreground focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent disabled:opacity-60"
+              placeholder="Ask Ordenfi to plan a move…"
+              className="w-full resize-none rounded-2xl border border-border bg-muted px-4 py-3.5 text-base sm:text-sm leading-relaxed text-foreground  placeholder:text-muted-foreground focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent disabled:opacity-60"
             />
           </div>
           <Button
@@ -644,7 +652,7 @@ export function ChatPanel() {
           </Button>
         </form>
         <p id="agent-message-hint" className="sr-only">Enter to send. Shift+Enter for a new line.</p>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground px-1">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground px-1">
           <Zap className="h-3 w-3 text-accent" />
           Requires wallet confirmation before execution
         </div>

@@ -55,7 +55,7 @@ export function getAppConfigPublic() {
   }
 
   return {
-    product: "AGFusion",
+    product: "Ordenfi",
     network: ARC_NETWORK_NAME,
     chainId: ARC_CHAIN_ID,
     liveOnly: true,

@@ -154,7 +154,7 @@ export function quotePayrollBatchFee(recipientCount: number): FeeQuote {
       },
     ],
     headline: formatUsdc(gas),
-    tip: "Scheduled / multi-send payroll — each leg settles in USDC gas.",
+    tip: "Estimated USDC gas for the full batch. Your wallet shows the fee for each transfer.",
   };
 }
 

@@ -11,27 +11,23 @@ import {
   AlertTriangle,
   ChevronRight,
   Power,
-  Bot,
 } from "lucide-react";
 import { useWallet } from "@/providers/wallet-provider";
 import { usePilotStore } from "@/store/pilot-store";
-import { ARC_CHAIN_ID, ARC_NETWORK_NAME, getArcNetworkMeta } from "@/lib/arc-chain";
+import { getArcNetworkMeta } from "@/lib/arc-chain";
 import { SwapCard } from "@/components/dapp/swap-card";
 import { SendCard } from "@/components/dapp/send-card";
 import { BridgeCard } from "@/components/dapp/bridge-card";
 import { BatchCard } from "@/components/dapp/batch-card";
 import { ArcGasSavingsBanner } from "@/components/dapp/arc-gas-savings";
-import { SessionKeyManager } from "@/components/dapp/session-key-manager";
-import { X402Showcase } from "@/components/dapp/x402-showcase";
 
-type Tab = "swap" | "send" | "bridge" | "batch" | "agents";
+type Tab = "swap" | "send" | "bridge" | "batch";
 
 const TABS: { id: Tab; label: string; icon: typeof Send }[] = [
   { id: "swap", label: "Swap", icon: ArrowLeftRight },
   { id: "send", label: "Send", icon: Send },
   { id: "bridge", label: "Bridge", icon: Route },
   { id: "batch", label: "Batch", icon: Users },
-  { id: "agents", label: "Agent OS", icon: Bot },
 ];
 
 function shortAddr(a: string) {
@@ -49,17 +45,17 @@ export function AGFusionDapp() {
   const onArc = walletChainId === 5042 || walletChainId === 5042002;
 
   return (
-    <section className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-10 sm:py-14">
-      {/* Ambient Arc Mint & Cyan Glow behind the card */}
-      <div className="pointer-events-none absolute left-1/2 top-20 h-80 w-[38rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(5,242,155,0.18),rgba(6,182,212,0.12),transparent_70%)] blur-3xl" />
-
-      <div className="relative mb-5 text-center">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-[1.85rem]">
+    <section className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col items-center justify-center px-4 py-8 sm:py-12">
+      <div className="relative mb-4 text-center">
+        <div className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-3.5 py-1 text-xs font-medium text-foreground  shadow-sm">
+          <span className="h-2 w-2 rounded-full bg-accent animate-pulse motion-reduce:animate-none" />
+          <span>Uniswap DEX on Arc · Native USDC Gas</span>
+        </div>
+        <h1 className="font-display text-2xl font-medium tracking-tight text-white sm:text-3xl">
           Trade, send &amp; bridge on Arc
         </h1>
-        <p className="mx-auto mt-1.5 max-w-sm text-[13px] leading-5 text-slate-300">
-          Swap stablecoins, send tokens, bridge across chains, and pay many
-          recipients in one signature — all on {meta.name}.
+        <p className="mx-auto mt-1.5 max-w-sm text-xs sm:text-[13px] leading-5 text-muted-foreground">
+          Swap stablecoins, bridge tokens, and execute multi-signature transactions with sub-second finality.
         </p>
       </div>
 
@@ -67,19 +63,19 @@ export function AGFusionDapp() {
       <ArcGasSavingsBanner />
 
       {/* The card */}
-      <div className="relative w-full rounded-[2rem] border border-white/[0.1] bg-[#0c1219]/90 p-3.5 shadow-[0_30px_90px_-20px_rgba(0,0,0,0.8),inset_0_1px_0_0_rgba(255,255,255,0.12)] backdrop-blur-2xl sm:p-4.5">
+      <div className="relative w-full rounded-[2rem] border border-white/[0.1] bg-card p-3.5   sm:p-5">
         {/* Header: tabs + wallet */}
         <div className="mb-3.5 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1 rounded-2xl bg-black/40 border border-white/[0.04] p-1 shadow-inner">
+          <div className="flex items-center gap-1 rounded-2xl bg-black/40 border border-white/[0.06] p-1  ">
             {TABS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setTab(id)}
-                className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[12px] sm:text-[13px] font-semibold transition-all ${
+                className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[12px] sm:text-[13px] font-semibold transition-colors ${
                   tab === id
-                    ? "bg-gradient-to-r from-white/[0.12] to-white/[0.08] text-white shadow-sm border border-white/[0.08]"
-                    : "text-slate-400 hover:text-slate-100 hover:bg-white/[0.04]"
+                    ? "bg-white/[0.12] text-white shadow-sm border border-white/[0.1]"
+                    : "text-muted-foreground hover:text-white hover:bg-white/[0.04]"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -93,9 +89,9 @@ export function AGFusionDapp() {
               type="button"
               onClick={disconnect}
               title="Disconnect"
-              className="group inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-white/[0.12] bg-white/[0.05] px-3 py-2 text-[12px] font-semibold text-slate-100 transition-all hover:border-white/25 hover:bg-white/[0.09]"
+              className="group inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-white/[0.12] bg-white/[0.06] px-3 py-2 text-[12px] font-semibold text-slate-100 transition-colors hover:border-white/25 hover:bg-white/[0.1] "
             >
-              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
               <span className="font-mono">{shortAddr(walletAddress!)}</span>
               <Power className="h-3 w-3 text-slate-400 group-hover:text-red-300 transition-colors" />
             </button>
@@ -104,7 +100,7 @@ export function AGFusionDapp() {
               type="button"
               onClick={openConnectModal}
               disabled={connecting}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 px-3.5 py-2 text-[12px] font-bold text-slate-950 shadow-[0_4px_20px_rgba(5,242,155,0.35)] transition-all hover:scale-[1.02] hover:brightness-110 disabled:opacity-60"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-accent px-3.5 py-2 text-xs font-semibold text-accent-foreground  transition-colors hover:bg-accent/90 disabled:opacity-60"
             >
               <Wallet className="h-3.5 w-3.5" />
               {connecting ? "Connecting…" : "Connect"}
@@ -117,7 +113,7 @@ export function AGFusionDapp() {
           <button
             type="button"
             onClick={() => void switchToArc()}
-            className="mb-3 flex w-full items-center justify-between gap-2 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-3.5 py-2.5 text-left text-[12px] text-amber-100 transition-colors hover:bg-amber-400/15"
+            className="mb-3 flex w-full items-center justify-between gap-2 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-3.5 py-2.5 text-left text-[12px] text-amber-100 transition-colors hover:bg-amber-400/15 "
           >
             <span className="flex items-center gap-2">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -130,24 +126,19 @@ export function AGFusionDapp() {
         )}
 
         {/* Active card */}
-        <div className="rounded-3xl bg-[#0a0f16]/60 p-2.5 sm:p-3">
+        <div className="space-y-2">
           {tab === "swap" && <SwapCard connected={connected} />}
           {tab === "send" && <SendCard connected={connected} />}
           {tab === "bridge" && <BridgeCard connected={connected} />}
           {tab === "batch" && <BatchCard connected={connected} />}
-          {tab === "agents" && (
-            <div className="space-y-3">
-              <SessionKeyManager />
-              <X402Showcase />
-            </div>
-          )}
+
         </div>
       </div>
 
       {/* Footer links */}
       <div className="relative mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[12px] text-slate-500">
         <Link href="/welcome" className="transition-colors hover:text-slate-300">
-          About AGFusion
+          About Ordenfi
         </Link>
         <span className="text-slate-700">·</span>
         <Link href="/docs" className="transition-colors hover:text-emerald-400 font-semibold">

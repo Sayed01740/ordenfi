@@ -71,6 +71,18 @@ export function prettyAmount(value?: string): string {
   return n.toLocaleString(undefined, { maximumFractionDigits: 8 });
 }
 
+export function formatSwapRate(amountIn: string, amountOut?: string): string | null {
+  const input = Number(amountIn);
+  const output = Number(amountOut);
+  if (input <= 0 || output <= 0) return null;
+  const rate = output / input;
+  if (!Number.isFinite(rate) || rate <= 0) return null;
+  return rate.toLocaleString(undefined, {
+    maximumSignificantDigits: 6,
+    notation: rate < 0.000001 || rate >= 1e9 ? "scientific" : "standard",
+  });
+}
+
 export function parseSlippageBps(value: string): number {
   return normalizeSlippageBps(Number(value) * 100);
 }

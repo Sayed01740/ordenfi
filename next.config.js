@@ -18,6 +18,11 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "recharts"],
   },
+  async redirects() {
+    return [
+      { source: "/", has: [{ type: "query", key: "pay" }], destination: "/app", permanent: false },
+    ];
+  },
   async headers() {
     const cspHeader = `
       default-src 'self';

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useId } from "react";
 import { cn } from "@/lib/utils";
 
@@ -62,29 +63,14 @@ const marks: Record<SupportedChainMark, { name: string; short: string; family: C
   Linea_Sepolia: { name: "Linea Sepolia", short: "LINEA", family: "linea" },
 };
 
-function ChainSvg({ family, size }: { family: ChainFamily; size: number }) {
+function ChainIcon({ family, size }: { family: ChainFamily; size: number }) {
   const uid = useId().replace(/:/g, "");
-  const arcGradId = `arc-grad-${uid}`;
   const solGradId = `sol-grad-${uid}`;
 
   switch (family) {
     case "arc":
       return (
-        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
-          <defs>
-            <linearGradient id={arcGradId} x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#3B4CCA" />
-              <stop offset="55%" stopColor="#8B2D6D" />
-              <stop offset="100%" stopColor="#D63A6F" />
-            </linearGradient>
-          </defs>
-          <circle cx="16" cy="16" r="15" fill="#0F172A" stroke={`url(#${arcGradId})`} strokeWidth="1.5" />
-          <path
-            d="M8.8 23.5c1-9.3 3.6-15.4 7.2-15.4s6.2 6.1 7.2 15.4h-3.1c-.6-3.7-1.6-8.7-4.1-8.7-2.4 0-3.4 4.8-4 8.7H8.8Z"
-            fill={`url(#${arcGradId})`}
-          />
-          <path d="M12 19.6c2.6-.8 5.4-.4 7.9 1.2l-.8 2.4c-2.1-1.2-4.5-1.6-7.1-1.1v-2.5Z" fill="#F8FAFC" />
-        </svg>
+        <Image src="/brand/arc-logo.png" alt="" width={size} height={size} className="block shrink-0 rounded-full" />
       );
     case "base":
       return (
@@ -221,15 +207,15 @@ export function ChainMark({
   return (
     <span className={cn("inline-flex items-center justify-center shrink-0", compact ? "gap-1.5" : "gap-2", className)} title={mark.name}>
       {compact ? (
-        <ChainSvg family={mark.family} size={size} />
+        <ChainIcon family={mark.family} size={size} />
       ) : (
         <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.04]">
-          <ChainSvg family={mark.family} size={size} />
+          <ChainIcon family={mark.family} size={size} />
         </span>
       )}
       {!compact && (
         <span className="min-w-0">
-          <span className="block truncate text-[11px] font-medium text-slate-200">{mark.name}</span>
+          <span className="block truncate text-xs font-medium text-slate-200">{mark.name}</span>
           <span className="block text-[9px] tracking-[0.08em] text-slate-400">{mark.short}</span>
         </span>
       )}

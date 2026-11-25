@@ -93,6 +93,10 @@ export function normalizeSlippageBps(value: number): number {
   return bps;
 }
 
+function minimumOutAfterSlippage(amountOut: bigint, slippageBps: number): bigint {
+  return (amountOut * BigInt(10_000 - slippageBps)) / 10_000n;
+}
+
 function normalizeAmount(amount: string, token: ArcSwapToken): bigint {
   const n = Number(amount);
   if (!amount || !Number.isFinite(n) || n <= 0) throw new Error("Enter a valid swap amount.");
@@ -385,11 +389,14 @@ export async function getArcDexSwapQuote(params: {
 
   candidates.sort((x, y) => (x.out > y.out ? -1 : x.out < y.out ? 1 : 0));
   const best = candidates[0];
+  const slippageBps = normalizeSlippageBps(params.slippageBps ?? DEFAULT_SLIPPAGE_BPS);
+  const decimalsOut = effectiveDecimals(tokenOut);
 
   return {
-    amountOut: formatUnits(best.out, effectiveDecimals(tokenOut)),
+    amountOut: formatUnits(best.out, decimalsOut),
+    minimumAmountOut: formatUnits(minimumOutAfterSlippage(best.out, slippageBps), decimalsOut),
     route: best.path.length === 2 ? "ApexiSwap Direct Pool" : "ApexiSwap via WUSDC",
-    slippageBps: DEFAULT_SLIPPAGE_BPS,
+    slippageBps,
     path: best.path,
   };
 }
@@ -506,7 +513,7 @@ export async function runProductionSwap(params: {
   const quote = await getArcDexSwapQuote({ ...params, chain: targetChain });
 
   const quotedOut = parseUnits(quote.amountOut, effectiveDecimals(tokenOut));
-  const minOut = (quotedOut * BigInt(10_000 - slippageBps)) / 10_000n;
+  const minOut = minimumOutAfterSlippage(quotedOut, slippageBps);
   const deadline = (await blockTimestamp(provider)) + 300n;
 
   const steps: TxStep[] = [

@@ -1,5 +1,5 @@
 {
-  "name": "agfusion",
+  "name": "ordenfi",
   "version": "1.0.0",
   "private": true,
   "description": "AI-native crosschain stablecoin operating system on Arc Network",
@@ -32,15 +32,14 @@
     "@circle-fin/w3s-pw-web-sdk": "^1.1.11",
     "@prisma/client": "^6.10.1",
     "@radix-ui/react-slot": "^1.2.3",
-    "@zerodev/ecdsa-validator": "^5.4.9",
-    "@zerodev/permissions": "^5.6.3",
-    "@zerodev/sdk": "^5.5.10",
+    "@uniswap/universal-router-sdk": "5.16.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.18.1",
+    "gsap": "^3.15.1",
     "lucide-react": "^0.515.0",
     "next": "^15.5.28",
-    "permissionless": "^0.3.7",
+    "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "recharts": "^2.15.3",
@@ -48,12 +47,12 @@
     "tailwindcss": "^4.1.10",
     "viem": "^2.31.0",
     "zod": "4.6.7",
-    "zustand": "^5.0.5",
-    "@uniswap/universal-router-sdk": "5.16.2"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@next/eslint-plugin-next": "^15.5.28",
+    "@opennextjs/cloudflare": "1.20.16",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/node": "^22.15.30",
     "@types/react": "^19.1.6",
@@ -66,7 +65,6 @@
     "prisma": "^6.10.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.10",
-    "@opennextjs/cloudflare": "1.20.16",
     "wrangler": "4.158.0"
   },
   "optionalDependencies": {

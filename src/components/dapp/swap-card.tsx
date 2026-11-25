@@ -1,48 +1,62 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AmountField, ResultBanner, ErrorNote, useArcBalance } from "@/components/dapp/shared";
 import { ARC_TOKENS, SWAP_SYMBOLS, getArcTokens, type ArcToken } from "@/lib/dapp/tokens";
-import { getArcDexSwapQuote } from "@/blockchain/production-swap";
+import { getArcDexSwapQuote, type QuoteResult } from "@/blockchain/production-swap";
 import { executeSwap } from "@/lib/client-actions";
 import { usePilotStore } from "@/store/pilot-store";
+import { useWallet } from "@/providers/wallet-provider";
 import { getArcNetworkMeta } from "@/lib/arc-chain";
 import { ProductionSwapPanel } from "@/components/panels/production-swap-panel";
+import { formatSwapRate } from "@/components/panels/swap-helpers";
 import type { TransactionRecord } from "@/types";
+import type { AssistantSwapPlan } from "@/lib/assistant-plan";
 
 const SLIPPAGE_PRESETS = [50, 100, 300];
+type QuoteResponse = { key: string; quote: QuoteResult } | { key: string; error: string };
 
-export function SwapCard({ connected }: { connected: boolean }) {
+export function SwapCard({ connected, initialPlan, onDraftSubmitted }: {
+  connected: boolean;
+  initialPlan?: AssistantSwapPlan;
+  onDraftSubmitted?: () => void;
+}) {
+  const { openConnectModal } = useWallet();
   const addTransaction = usePilotStore((s) => s.addTransaction);
   const refreshBalances = usePilotStore((s) => s.refreshBalances);
   const walletChainId = usePilotStore((s) => s.walletChainId);
-  const meta = getArcNetworkMeta(walletChainId);
+  const draftChainId = initialPlan ? (initialPlan.chain === "Arc_Mainnet" ? 5042 : 5042002) : null;
+  const meta = getArcNetworkMeta(draftChainId ?? walletChainId);
 
   const currentTokens = getArcTokens(meta.isMainnet);
   const swapTokensList: ArcToken[] = SWAP_SYMBOLS.map((s) => currentTokens[s] || ARC_TOKENS[s]);
 
-  const [tokenIn, setTokenIn] = useState<ArcToken>(currentTokens.USDC || ARC_TOKENS.USDC);
-  const [tokenOut, setTokenOut] = useState<ArcToken>(currentTokens.EURC || ARC_TOKENS.EURC);
-  const [amountIn, setAmountIn] = useState("");
-  const [amountOut, setAmountOut] = useState("");
-  const [minimumAmountOut, setMinimumAmountOut] = useState("");
-  const [route, setRoute] = useState<string | null>(null);
-  const [quoting, setQuoting] = useState(false);
+  const [tokenIn, setTokenIn] = useState<ArcToken>(currentTokens[initialPlan?.tokenIn ?? "USDC"] || ARC_TOKENS.USDC);
+  const [tokenOut, setTokenOut] = useState<ArcToken>(currentTokens[initialPlan?.tokenOut ?? "EURC"] || ARC_TOKENS.EURC);
+  const [amountIn, setAmountIn] = useState(initialPlan?.amount ?? "");
+  const [quoteResponse, setQuoteResponse] = useState<QuoteResponse | null>(null);
   const [slippageBps, setSlippageBps] = useState(100);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<TransactionRecord | null>(null);
 
   const inBal = useArcBalance(tokenIn);
-  const quoteSeq = useRef(0);
+  const paySymbol = tokenIn.symbol;
+  const receiveSymbol = tokenOut.symbol;
+  const input = Number(amountIn);
+  const canQuote = !meta.isMainnet && connected && Number.isFinite(input) && input > 0 && paySymbol !== receiveSymbol;
+  const quoteKey = canQuote ? JSON.stringify([amountIn, paySymbol, receiveSymbol, slippageBps]) : null;
+  const currentResponse = quoteResponse?.key === quoteKey ? quoteResponse : null;
+  const quote = currentResponse && "quote" in currentResponse ? currentResponse.quote : null;
+  const quoteError = currentResponse && "error" in currentResponse ? currentResponse.error : null;
+  const quoting = canQuote && !currentResponse;
 
   function flip() {
     setTokenIn(tokenOut);
     setTokenOut(tokenIn);
-    setAmountIn(amountOut && amountOut !== "0" ? "" : amountIn);
-    setAmountOut("");
+    if (quote) setAmountIn("");
   }
 
   function pickIn(t: ArcToken) {
@@ -57,53 +71,32 @@ export function SwapCard({ connected }: { connected: boolean }) {
   // Debounced live quote (requires a connected wallet).
   useEffect(() => {
     setResult(null);
-    if (meta.isMainnet) {
-      setAmountOut("");
-      setMinimumAmountOut("");
-      setRoute(null);
-      setError(null);
-      setQuoting(false);
-      return;
-    }
-    const n = Number(amountIn);
-    if (!connected || !amountIn || !Number.isFinite(n) || n <= 0 || tokenIn.symbol === tokenOut.symbol) {
-      setAmountOut("");
-      setMinimumAmountOut("");
-      setRoute(null);
-      setError(null);
-      return;
-    }
-    const seq = ++quoteSeq.current;
-    setQuoting(true);
     setError(null);
+    setQuoteResponse(null);
+    if (!quoteKey) return;
+    let active = true;
     const timer = setTimeout(async () => {
       try {
-        const q = await getArcDexSwapQuote({
+        const nextQuote = await getArcDexSwapQuote({
           amount: amountIn,
-          tokenIn: tokenIn.symbol,
-          tokenOut: tokenOut.symbol,
-          chain: meta.isMainnet ? "Arc_Mainnet" : "Arc_Testnet",
+          tokenIn: paySymbol,
+          tokenOut: receiveSymbol,
+          chain: "Arc_Testnet",
           slippageBps,
         });
-        if (quoteSeq.current !== seq) return;
-        setAmountOut(q.amountOut);
-        setMinimumAmountOut(q.minimumAmountOut || "");
-        setRoute(q.route);
-        setError(null);
-      } catch (e) {
-        if (quoteSeq.current !== seq) return;
-        setAmountOut("");
-        setMinimumAmountOut("");
-        setRoute(null);
-        setError(e instanceof Error ? e.message : "No quote available.");
-      } finally {
-        if (quoteSeq.current === seq) setQuoting(false);
+        if (active) setQuoteResponse({ key: quoteKey, quote: nextQuote });
+      } catch (error) {
+        if (active) setQuoteResponse({ key: quoteKey, error: error instanceof Error ? error.message : "No quote available." });
       }
     }, 500);
-    return () => clearTimeout(timer);
-  }, [amountIn, tokenIn, tokenOut, connected, meta.isMainnet, slippageBps]);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [quoteKey, amountIn, paySymbol, receiveSymbol, slippageBps]);
 
   async function onSwap() {
+    if (!quote || busy) return;
     setBusy(true);
     setError(null);
     setResult(null);
@@ -117,11 +110,9 @@ export function SwapCard({ connected }: { connected: boolean }) {
         slippageBps,
       });
       addTransaction(tx);
+      if (tx.txHash || tx.status === "success") onDraftSubmitted?.();
       setResult(tx);
-      if (tx.status === "success") {
-        setAmountIn("");
-        setAmountOut("");
-      }
+      if (tx.status === "success") setAmountIn("");
       refreshBalances();
       void inBal.refresh();
     } catch (e) {
@@ -131,18 +122,19 @@ export function SwapCard({ connected }: { connected: boolean }) {
     }
   }
 
-  if (meta.isMainnet) return <ProductionSwapPanel />;
+  if (meta.isMainnet) return <ProductionSwapPanel embedded initialPlan={initialPlan} onDraftSubmitted={onDraftSubmitted} />;
 
-  const disabled = busy || !connected || !amountIn || Number(amountIn) <= 0 || tokenIn.symbol === tokenOut.symbol || !amountOut;
-  const minReceived =
-    minimumAmountOut && Number(minimumAmountOut) > 0
-      ? minimumAmountOut
-      : amountOut && Number(amountOut) > 0
-        ? (Number(amountOut) * (1 - slippageBps / 10_000)).toLocaleString(undefined, { maximumFractionDigits: 6 })
-        : null;
+  const rate = formatSwapRate(amountIn, quote?.amountOut);
+  const receiveStatus = rate ? `1 ${paySymbol} ≈ ${rate} ${receiveSymbol}`
+    : quoting ? "Getting quote…"
+    : quoteError ? "Quote unavailable"
+    : connected ? "Enter an amount to get a quote"
+    : "Connect wallet to get a quote";
+  const errorMessage = error ?? quoteError;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
+      {initialPlan && <p className="text-xs text-muted-foreground">Assistant draft · {meta.name}. Review the token pair and quote.</p>}
       <AmountField
         label="You pay"
         amount={amountIn}
@@ -154,11 +146,11 @@ export function SwapCard({ connected }: { connected: boolean }) {
         onMax={connected ? () => setAmountIn(inBal.balance) : undefined}
       />
 
-      <div className="relative flex justify-center">
+      <div className="relative -my-2.5 z-10 flex justify-center">
         <button
           type="button"
           onClick={flip}
-          className="absolute -top-3.5 z-10 grid h-8 w-8 place-items-center rounded-xl border border-white/10 bg-[#0c1219] text-slate-300 transition-colors hover:border-white/25 hover:text-white"
+          className="grid h-9 w-9 place-items-center rounded-2xl border border-white/[0.12] bg-card text-muted-foreground   transition-colors hover:border-accent/50 hover:bg-card hover:text-accent"
           aria-label="Switch direction"
         >
           <ArrowDown className="h-4 w-4" />
@@ -167,16 +159,16 @@ export function SwapCard({ connected }: { connected: boolean }) {
 
       <AmountField
         label="You receive"
-        amount={amountOut}
+        amount={quote?.amountOut ?? ""}
         token={tokenOut}
         tokenOptions={swapTokensList}
         onTokenChange={pickOut}
         readOnly
         loading={quoting}
-        secondary={route ? `Route: ${route}` : undefined}
+        secondary={receiveStatus}
       />
 
-      <div className="flex items-center justify-between px-1 pt-2 text-[12px] text-slate-500">
+      <div className="flex items-center justify-between px-1 pt-1.5 text-xs text-muted-foreground">
         <span>Max slippage</span>
         <div className="flex items-center gap-1">
           {SLIPPAGE_PRESETS.map((bps) => (
@@ -184,8 +176,8 @@ export function SwapCard({ connected }: { connected: boolean }) {
               key={bps}
               type="button"
               onClick={() => setSlippageBps(bps)}
-              className={`rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors ${
-                slippageBps === bps ? "bg-white/10 text-slate-100" : "text-slate-400 hover:bg-white/5"
+              className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors ${
+                slippageBps === bps ? "bg-accent/15 text-accent border border-accent/40 shadow-xs" : "text-muted-foreground hover:bg-white/[0.06] hover:text-foreground border border-transparent"
               }`}
             >
               {(bps / 100).toString()}%
@@ -193,31 +185,34 @@ export function SwapCard({ connected }: { connected: boolean }) {
           ))}
         </div>
       </div>
-      {minReceived && (
-        <div className="flex items-center justify-between px-1 text-[12px] text-slate-500">
+      {quote?.minimumAmountOut && (
+        <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
           <span>Minimum received</span>
-          <span className="text-slate-300">
-            {minReceived} {tokenOut.symbol}
+          <span className="text-foreground font-mono">
+            {quote.minimumAmountOut} {receiveSymbol}
           </span>
         </div>
       )}
 
-      {error && <ErrorNote message={error} />}
+      {quote && <p className="px-1 text-xs text-muted-foreground">Route: {quote.route}</p>}
+      {errorMessage && <ErrorNote message={errorMessage} />}
       {result && <ResultBanner record={result} />}
 
-      <Button size="lg" className="mt-1 w-full" disabled={disabled} onClick={onSwap}>
+      <Button size="lg" data-wallet-connect={!connected || undefined} className="mt-2 w-full h-12 rounded-xl font-medium text-base" disabled={connected && (busy || !quote)} onClick={connected ? onSwap : openConnectModal}>
         {busy ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" /> Swapping…
           </>
         ) : !connected ? (
-          "Connect wallet to swap"
+          "Connect wallet"
         ) : tokenIn.symbol === tokenOut.symbol ? (
           "Select different tokens"
-        ) : !amountIn ? (
+        ) : !canQuote ? (
           "Enter an amount"
-        ) : !amountOut && !quoting ? (
-          "No route available"
+        ) : quoting ? (
+          "Getting quote…"
+        ) : !quote ? (
+          "Quote unavailable"
         ) : (
           `Swap ${tokenIn.symbol} for ${tokenOut.symbol}`
         )}

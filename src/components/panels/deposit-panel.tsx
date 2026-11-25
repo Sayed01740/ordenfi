@@ -84,7 +84,7 @@ export function UnifiedBalancePanelBody() {
             </select>
           </div>
         </Field>
-        <p className="text-[11px] text-slate-500 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           Deposit USDC from <strong className="text-slate-300">{from.replace(/_/g, " ")}</strong> into your Unified Balance.
           This abstracts away the underlying chain so it can be spent on Arc.
         </p>

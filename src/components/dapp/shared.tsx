@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Shared building blocks for the AGFusion dApp (dark, Uniswap-style).
+ * Shared building blocks for the Ordenfi dApp (dark, Uniswap-style).
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { ChevronDown, Check, ExternalLink, Loader2, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { readErc20Balance } from "@/lib/dapp/erc20";
@@ -61,7 +61,7 @@ export function formatBalance(value: string, maxFrac = 4): string {
 export function TokenGlyph({ token, size = 24 }: { token: ArcToken; size?: number }) {
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white shadow-[0_2px_8px_rgba(0,0,0,0.35)]"
+      className="inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white "
       style={{
         width: size,
         height: size,
@@ -87,15 +87,33 @@ export function TokenSelect({
   disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const menuId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    function dismiss(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", dismiss);
+    return () => document.removeEventListener("keydown", dismiss);
+  }, [open]);
   return (
     <div className="relative">
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled}
+        aria-controls={menuId}
+        aria-expanded={open}
+        aria-label={`Select token, current is ${value.symbol}`}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.06] py-1.5 pl-1.5 pr-2.5 text-sm font-semibold text-white shadow-sm transition-all",
-          !disabled && "hover:bg-white/[0.12] hover:border-white/25 hover:scale-[1.02]",
+          "inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.08] py-1.5 pl-2 pr-3 text-sm font-semibold text-white shadow-md  transition-colors",
+          !disabled && "hover:bg-white/[0.14] hover:border-white/25",
           disabled && "opacity-60",
         )}
       >
@@ -112,7 +130,7 @@ export function TokenSelect({
             className="fixed inset-0 z-40 cursor-default"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 z-50 mt-2 w-52 overflow-hidden rounded-2xl border border-white/[0.12] bg-[#090e16]/95 p-1.5 shadow-[0_24px_50px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
+          <div id={menuId} role="group" aria-label="Choose a token" className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card p-2">
             {options.map((t) => {
               const active = t.symbol === value.symbol;
               return (
@@ -122,18 +140,19 @@ export function TokenSelect({
                   onClick={() => {
                     onChange(t);
                     setOpen(false);
+                    triggerRef.current?.focus();
                   }}
                   className={cn(
                     "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
-                    active ? "bg-emerald-500/15 text-emerald-300" : "hover:bg-white/[0.06] text-slate-200",
+                    active ? "bg-accent/15 text-accent font-semibold" : "hover:bg-white/[0.06] text-slate-200",
                   )}
                 >
                   <TokenGlyph token={t} size={26} />
                   <span className="flex-1">
                     <span className="block text-sm font-semibold text-slate-50">{t.symbol}</span>
-                    <span className="block text-[11px] text-slate-400">{t.name}</span>
+                    <span className="block text-xs text-slate-400">{t.name}</span>
                   </span>
-                  {active && <Check className="h-4 w-4 text-emerald-400" />}
+                  {active && <Check className="h-4 w-4 text-accent" />}
                 </button>
               );
             })}
@@ -176,19 +195,19 @@ export function AmountField({
   lockToken?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-[#070c14]/95 px-4 py-3.5 shadow-inner transition-all focus-within:border-emerald-400/40 focus-within:ring-1 focus-within:ring-emerald-400/20">
-      <div className="mb-1.5 flex items-center justify-between text-[12px]">
-        <span className="font-medium text-slate-300">{label}</span>
+    <div className="uniswap-glass-module p-3.5 ">
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="font-medium text-muted-foreground">{label}</span>
         {balance !== undefined && (
-          <span className="flex items-center gap-1.5 text-slate-400 font-mono text-[11px] tabular-nums">
-            <span>Bal: <strong className="text-slate-200">{formatBalance(balance)}</strong></span>
+          <span className="flex items-center gap-1.5 text-muted-foreground font-mono text-xs tabular-nums">
+            <span>Bal: <strong className="text-foreground">{formatBalance(balance)}</strong></span>
             {onMax && (
               <button
                 type="button"
                 onClick={onMax}
-                className="rounded-md px-1.5 py-0.5 text-[10px] font-bold text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors uppercase tracking-wider"
+                className="rounded-md px-2 py-0.5 text-xs font-semibold text-accent bg-accent/10 hover:bg-accent/20 border border-accent/30 transition-colors"
               >
-                MAX
+                Max
               </button>
             )}
           </span>
@@ -197,15 +216,17 @@ export function AmountField({
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           {readOnly ? (
-            <div className="flex h-10 items-center font-mono tabular-nums text-2xl font-bold text-white">
+            <div className="flex h-11 items-center font-sans tabular-nums text-3xl font-semibold text-foreground">
               {loading ? (
-                <Loader2 className="h-5 w-5 animate-spin text-emerald-400" />
+                <Loader2 className="h-6 w-6 animate-spin text-accent" />
               ) : (
-                <span className="truncate">{amount || "0.0"}</span>
+                <span className="truncate">{amount || "—"}</span>
               )}
             </div>
           ) : (
             <input
+              id={`amount-${label.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+              aria-label={label}
               inputMode="decimal"
               placeholder="0.0"
               value={amount}
@@ -213,10 +234,10 @@ export function AmountField({
                 const v = e.target.value;
                 if (v === "" || /^\d*\.?\d*$/.test(v)) onAmountChange?.(v);
               }}
-              className="h-10 w-full bg-transparent font-mono tabular-nums text-2xl font-bold text-white outline-none placeholder:text-slate-600"
+              className="h-11 w-full bg-transparent font-sans tabular-nums text-3xl font-semibold text-foreground outline-none placeholder:text-muted-foreground/30"
             />
           )}
-          {secondary && <div className="mt-0.5 text-[12px] font-mono text-slate-400">{secondary}</div>}
+          {secondary && <div role={readOnly ? "status" : undefined} className="mt-1 text-xs font-mono text-muted-foreground">{secondary}</div>}
         </div>
         <TokenSelect
           value={token}
@@ -236,7 +257,7 @@ export function AmountField({
 export function StepList({ steps }: { steps: TxStep[] }) {
   if (!steps.length) return null;
   return (
-    <div className="space-y-2 rounded-2xl border border-white/[0.06] bg-[#0a1017] p-3">
+    <div className="space-y-2 rounded-2xl border border-white/[0.06] bg-card p-3">
       {steps.map((s, i) => (
         <div key={i} className="flex items-center gap-2.5 text-[13px]">
           <StepIcon state={s.state} />
@@ -250,7 +271,7 @@ export function StepList({ steps }: { steps: TxStep[] }) {
             )}
           >
             {s.name}
-            {s.message && <span className="ml-1 text-[11px] text-slate-500">· {s.message}</span>}
+            {s.message && <span className="ml-1 text-xs text-slate-500">· {s.message}</span>}
           </span>
         </div>
       ))}

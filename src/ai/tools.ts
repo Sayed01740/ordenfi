@@ -1,5 +1,5 @@
 /**
- * AGFusion agent tools — small, verifiable capabilities.
+ * Ordenfi agent tools — small, verifiable capabilities.
  * Used by the local planner and optional xAI function-calling loop.
  */
 

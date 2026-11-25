@@ -173,7 +173,7 @@ export function SwapPanelBody() {
             disabled={busy}
           />
         </Field>
-        <p className="text-[11px] text-slate-500 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           Live swap on {ARC_NETWORK_NAME}. Your wallet will ask you to sign — that is
           normal.
         </p>
@@ -187,14 +187,14 @@ export function SwapPanelBody() {
           }`}
         >
           <p
-            className={`text-[11px] leading-relaxed ${
+            className={`text-xs leading-relaxed ${
               hasKey ? "text-emerald-200/90" : "text-amber-100/90"
             }`}
           >
             {keyStatus}
           </p>
           {!hasKey && (
-            <p className="text-[10px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed">
               Site owner sets Circle kit key on the server. If swap fails, paste
               a kit key from{" "}
               <a

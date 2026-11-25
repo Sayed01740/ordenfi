@@ -72,17 +72,17 @@ export function OnrampCard({ embedded = false }: { embedded?: boolean }) {
             Buy USDC with Fiat (Circle Onramp)
           </span>
         </div>
-        <Badge variant="outline" className="text-[10px] border-accent/30 text-accent">
+        <Badge variant="outline" className="text-xs border-accent/30 text-accent">
           Card · Apple Pay · Bank
         </Badge>
       </div>
 
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         Fund your connected wallet directly with fiat via Circle&apos;s hosted Onramp widget.
       </p>
 
       <div className="flex flex-wrap items-center gap-2">
-        <div className="inline-flex rounded-lg border border-border bg-muted p-0.5 text-[11px]">
+        <div className="inline-flex rounded-lg border border-border bg-muted p-0.5 text-xs">
           <button
             type="button"
             onClick={() => setMode("popup")}
@@ -120,12 +120,12 @@ export function OnrampCard({ embedded = false }: { embedded?: boolean }) {
       </div>
 
       {status && (
-        <p className="text-[11px] text-emerald-400 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1.5">
+        <p className="text-xs text-emerald-400 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1.5">
           {status}
         </p>
       )}
       {error && (
-        <p className="text-[11px] text-danger rounded-lg border border-danger/20 bg-danger/10 px-2.5 py-1.5">
+        <p className="text-xs text-danger rounded-lg border border-danger/20 bg-danger/10 px-2.5 py-1.5">
           {error}
         </p>
       )}

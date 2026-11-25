@@ -50,7 +50,6 @@ interface PilotState {
   liveBalanceUsdc: string | null;
   hydrated: boolean;
   authenticated: boolean;
-  developerMode: boolean;
   addMessage: (msg: ChatMessage) => void;
   setMessages: (msgs: ChatMessage[]) => void;
   addTransaction: (tx: TransactionRecord) => void;
@@ -63,7 +62,6 @@ interface PilotState {
   setLiveBalance: (v: string | null) => void;
   setForceDemo: (v: boolean) => void;
   setAuthenticated: (v: boolean) => void;
-  setDeveloperMode: (v: boolean) => void;
   loadServerTransactions: (wallet?: string) => Promise<void>;
   loadDemoTransactions: () => void;
   refreshBalances: () => void;
@@ -88,7 +86,6 @@ export const usePilotStore = create<PilotState>((set, get) => ({
   liveBalanceUsdc: null,
   hydrated: false,
   authenticated: false,
-  developerMode: false,
 
   addMessage: (msg) => set((s) => ({ messages: [...s.messages, msg] })),
   setMessages: (msgs) => set({ messages: msgs }),
@@ -199,7 +196,6 @@ export const usePilotStore = create<PilotState>((set, get) => ({
   setLiveBalance: (v) => set({ liveBalanceUsdc: v }),
   setForceDemo: () => set({ forceDemo: false }),
   setAuthenticated: (v) => set({ authenticated: v }),
-  setDeveloperMode: (v) => set({ developerMode: v }),
   loadServerTransactions: async (wallet) => {
     try {
       const q = wallet ? `?address=${encodeURIComponent(wallet)}` : "";

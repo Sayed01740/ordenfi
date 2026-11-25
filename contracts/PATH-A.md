@@ -74,7 +74,7 @@ Open: `https://testnet.arcscan.app/address/0xYOUR_DEPLOYED_ADDRESS`
 ```powershell
 $REGISTRY = "0xYOUR_DEPLOYED_ADDRESS"
 cast send $REGISTRY "register(string,string,string)" `
-  "AGFusion Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
+  "OrdenFi Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
   --rpc-url https://rpc.testnet.arc.network `
   --private-key $env:PRIVATE_KEY
 ```
@@ -91,7 +91,8 @@ cast call $REGISTRY "projectInfo()(string,string,address,string,bool,uint256)" `
 Vercel → Environment Variables:
 
 ```ini
-NEXT_PUBLIC_AGFUSION_REGISTRY=0xYOUR_DEPLOYED_ADDRESS
+NEXT_PUBLIC_ORDENFI_REGISTRY=0xYOUR_DEPLOYED_ADDRESS
+# NEXT_PUBLIC_AGFUSION_REGISTRY also supported
 ```
 
 Then redeploy the Next app (optional wiring next).

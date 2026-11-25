@@ -102,7 +102,9 @@ export function getToken(symbol: string, isMainnet: boolean = IS_ARC_MAINNET): A
  * then — the Batch panel falls back to sequential sends automatically.
  */
 export const DISPERSE_ADDRESS = (
-  process.env.NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS || ""
+  process.env.NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS ||
+  process.env.NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS ||
+  ""
 ).trim();
 
 export function isAddress(value: string): boolean {

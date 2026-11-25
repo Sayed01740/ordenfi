@@ -1,15 +1,6 @@
-# Ordenfi
+# OrdenFi
 
-Ordenfi is the current public identity of this application. Existing `AGFUSION_*` environment variables, deployed `OrdenFi*` contracts, authentication cookies, and browser storage identifiers remain compatible. Set `NEXT_PUBLIC_APP_URL` for a new deployment domain; the existing application URL remains the fallback. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
-
-[![Arc Network](https://img.shields.io/badge/Network-Arc_Mainnet_(5042)-0052FF?style=flat-square)](https://explorer.arc.io)
-[![Circle CCTP](https://img.shields.io/badge/Bridge-Circle_CCTP_v2-2775CA?style=flat-square)](https://developers.circle.com/stablecoins/docs/cctp-getting-started)
-[![Uniswap V3](https://img.shields.io/badge/DEX-Uniswap_V3_AMM-FF007A?style=flat-square)](https://uniswap.org)
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.5_(App_Router)-black?style=flat-square&logo=next.js)](https://nextjs.org)
-[![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
-[![License](https://img.shields.io/badge/License-Proprietary-blue?style=flat-square)](#license)
-
-**Ordenfi** is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails.
+OrdenFi is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails. Deployed contracts are verified under the OrdenFi namespace on Arc Mainnet, with full backwards compatibility for existing configurations and browser storage identifiers. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
 
 * **Live Application:** [https://ordenfi.vercel.app](https://ordenfi.vercel.app)
 * **Interactive Docs:** [https://ordenfi.vercel.app/docs](https://ordenfi.vercel.app/docs)
@@ -134,10 +125,11 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
    NEXT_PUBLIC_ARC_RPC_URL="https://rpc.mainnet.arc.io"
    NEXT_PUBLIC_ARC_EXPLORER_URL="https://explorer.arc.io"
    
-   # Deployed Contract Addresses
-   NEXT_PUBLIC_AGFUSION_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
-   NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
-   NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
+   # Deployed Contract Addresses (Arc Mainnet)
+   NEXT_PUBLIC_ORDENFI_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
+   NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
+   NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
+   # Legacy aliases supported: NEXT_PUBLIC_AGFUSION_*
    ```
 
 4. **Initialize Database & Run Development Server:**

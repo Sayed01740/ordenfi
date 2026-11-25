@@ -1,4 +1,4 @@
-# AGFusion — Arc MAINNET (chain 5042) deploy + Blockscout verify
+﻿# AGFusion — Arc MAINNET (chain 5042) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://explorer.arc.io
@@ -143,6 +143,18 @@ Write-Host ""
 Write-Host "Saved: $OutFile" -ForegroundColor Green
 Write-Host "Add to Vercel / .env.local:" -ForegroundColor Cyan
 $c = $result.contracts
-if ($c.AGFusionRegistry) { Write-Host "  NEXT_PUBLIC_AGFUSION_REGISTRY=$($c.AGFusionRegistry.address)" }
-if ($c.AGFusionEscrow)   { Write-Host "  NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS=$($c.AGFusionEscrow.address)" }
-if ($c.AGFusionDisperse) { Write-Host "  NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS=$($c.AGFusionDisperse.address)" }
+if ($c.OrdenFiRegistry -or $c.AGFusionRegistry) { 
+  $addr = if ($c.OrdenFiRegistry) { $c.OrdenFiRegistry.address } else { $c.AGFusionRegistry.address }
+  Write-Host "  NEXT_PUBLIC_ORDENFI_REGISTRY=$addr"
+  Write-Host "  NEXT_PUBLIC_AGFUSION_REGISTRY=$addr"
+}
+if ($c.OrdenFiEscrow -or $c.AGFusionEscrow) {
+  $addr = if ($c.OrdenFiEscrow) { $c.OrdenFiEscrow.address } else { $c.AGFusionEscrow.address }
+  Write-Host "  NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS=$addr"
+  Write-Host "  NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS=$addr"
+}
+if ($c.OrdenFiDisperse -or $c.AGFusionDisperse) {
+  $addr = if ($c.OrdenFiDisperse) { $c.OrdenFiDisperse.address } else { $c.AGFusionDisperse.address }
+  Write-Host "  NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS=$addr"
+  Write-Host "  NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS=$addr"
+}

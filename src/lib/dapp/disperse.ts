@@ -3,7 +3,7 @@
  *
  * Dynamically detects the active Arc network and switches accordingly.
  * When the OrdenFiDisperse contract is deployed and configured
- * (NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS), a whole batch of USDC/EURC/cirBTC
+ * (NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS or NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS), a whole batch of USDC/EURC/cirBTC
  * payouts is executed with ONE wallet signature via disperseToken().
  *
  * After the first max-approval, every future batch for that token is a single
@@ -116,7 +116,7 @@ export async function runBatchDisperse(params: {
   }
   if (!isDisperseConfigured()) {
     throw new Error(
-      "Disperse contract not configured. Deploy AGFusionDisperse and set NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS.",
+      "Disperse contract not configured. Set NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS (or NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS).",
     );
   }
 

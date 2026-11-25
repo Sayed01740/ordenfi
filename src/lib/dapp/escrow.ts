@@ -24,6 +24,7 @@ import { uid } from "@/lib/utils";
 
 export const ESCROW_ADDRESS: Address | undefined = (() => {
   const env =
+    process.env.NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS ||
     process.env.NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS ||
     process.env.NEXT_PUBLIC_ESCROW_CONTRACT;
   return env && isAddress(env) ? (env.toLowerCase() as Address) : undefined;

@@ -152,7 +152,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
         <CardContent id="guide-content" role="region" hidden={!open} aria-labelledby="guide" className="space-y-4 text-sm text-muted-foreground">
           <div className="rounded-xl border border-border bg-muted p-3 space-y-2">
             <p className="text-sm text-foreground font-medium leading-snug">
-              AGFusion helps you <span className="text-accent">send</span>,{" "}
+              OrdenFi helps you <span className="text-accent">send</span>,{" "}
               <span className="text-accent">swap</span>, and{" "}
               <span className="text-accent">move</span> digital dollars (USDC)
               on Arc — with an AI helper that explains the plan first.
@@ -294,7 +294,7 @@ export function UserGuideCard({ open, onOpenChange }: { open: boolean; onOpenCha
                 aria-describedby={helpErr ? "guide-help-error" : undefined}
                 value={helpQ}
                 onChange={(e) => setHelpQ(e.target.value)}
-                placeholder="Ask anything about using AGFusion…"
+                placeholder="Ask anything about using OrdenFi…"
                 disabled={helpBusy}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") void askHelp();

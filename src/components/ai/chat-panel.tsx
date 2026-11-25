@@ -451,7 +451,7 @@ export function ChatPanel() {
           </div>
           <div>
             <h2 className="text-sm font-semibold tracking-wide text-foreground">
-              AGFusion Agent
+              OrdenFi Agent
             </h2>
             <p className="text-[11px] font-medium text-muted-foreground">
               AI Transaction Assistant

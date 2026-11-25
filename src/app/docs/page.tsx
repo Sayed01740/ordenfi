@@ -29,7 +29,7 @@ const SECTIONS = [
   { id: "escrow", title: "5. On-Chain Agent Escrow", icon: Shield },
   { id: "session-keys", title: "6. Autonomous Session Keys", icon: KeyRound },
   { id: "x402", title: "7. Machine-to-Machine (x402)", icon: Cpu },
-  { id: "mcp-server", title: "8. AGFusion MCP Server", icon: Terminal },
+  { id: "mcp-server", title: "8. OrdenFi MCP Server", icon: Terminal },
   { id: "contracts", title: "9. Verified Contracts", icon: Code2 },
 ];
 
@@ -48,13 +48,13 @@ export default function DocsPage() {
       {/* Page Header */}
       <div className="mb-10 text-center sm:text-left border-b border-white/[0.08] pb-8">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400 mb-3">
-          <Sparkles className="h-3.5 w-3.5" /> AGFusion Developer &amp; Reviewer Documentation
+          <Sparkles className="h-3.5 w-3.5" /> OrdenFi Developer &amp; Reviewer Documentation
         </div>
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-          AGFusion Protocol Documentation
+          OrdenFi Protocol Documentation
         </h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300 sm:text-base">
-          Complete guide to AGFusion: the AI-native stablecoin operating system on Arc Network.
+          Complete guide to OrdenFi: the AI-native stablecoin operating system on Arc Network.
           Explore our smart contract architecture, native USDC gas economy, agent escrow lifecycles,
           and Model Context Protocol (MCP) integrations.
         </p>
@@ -124,7 +124,7 @@ export default function DocsPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">1. Overview &amp; Architecture</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              <strong>AGFusion</strong> is an AI-assisted stablecoin workspace and agentic command layer built on <strong>Arc Network</strong>.
+              <strong>OrdenFi</strong> is an AI-assisted stablecoin workspace and agentic command layer built on <strong>Arc Network</strong>.
               It eliminates multi-dapp fragmentation by unifying payments, token swaps, cross-chain CCTP bridging, and corporate treasury management into a single, high-performance interface.
             </p>
             <div className="rounded-2xl border border-white/[0.06] bg-black/40 p-4 font-mono text-xs text-slate-300 space-y-2 mb-4 overflow-x-auto">
@@ -202,7 +202,7 @@ export default function DocsPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">3. Swap, Send &amp; Cross-Chain CCTP Bridge</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              AGFusion provides 4 unified money actions directly from the home surface:
+              OrdenFi provides 4 unified money actions directly from the home surface:
             </p>
             <div className="space-y-3 text-xs">
               <div className="rounded-xl border border-white/[0.06] bg-black/30 p-3.5 flex items-start gap-3">
@@ -239,7 +239,7 @@ export default function DocsPage() {
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
               Corporate payroll and contractor disbursements on traditional dApps require approving and signing for every recipient individually.
-              AGFusion solves this via <strong>AGFusionDisperse.sol</strong>:
+              OrdenFi solves this via <strong>AGFusionDisperse.sol</strong>:
             </p>
             <div className="relative rounded-2xl bg-black/50 p-4 border border-white/[0.06] font-mono text-xs mb-4">
               <div className="text-slate-400 mb-2">// Solidity Interface: Single-Signature Disperse</div>
@@ -270,7 +270,7 @@ export default function DocsPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">5. On-Chain AI Agent Escrow (AGFusionEscrow.sol)</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              Rather than simulating agent escrow phases in the UI, AGFusion deploys a verified on-chain escrow contract on Arc:
+              Rather than simulating agent escrow phases in the UI, OrdenFi deploys a verified on-chain escrow contract on Arc:
             </p>
             <div className="space-y-2 text-xs mb-4">
               <div className="p-3 rounded-xl bg-black/40 border border-white/[0.04] flex items-center justify-between">
@@ -301,7 +301,7 @@ export default function DocsPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">6. ERC-7715 Autonomous Session Keys</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              To power truly autonomous AI workflows without constant wallet popups, AGFusion implements an <strong>ERC-7715 scoped session engine</strong>:
+              To power truly autonomous AI workflows without constant wallet popups, OrdenFi implements an <strong>ERC-7715 scoped session engine</strong>:
             </p>
             <ul className="list-disc pl-5 text-xs text-slate-300 space-y-1.5 mb-4">
               <li><strong>Daily Spend Cap:</strong> Hard limit (e.g. 10.00 USDC per day) that resets at 00:00 UTC.</li>
@@ -320,7 +320,7 @@ export default function DocsPage() {
               <h2 className="text-xl font-bold text-white sm:text-2xl">7. Machine-to-Machine HTTP-402 (x402) Protocol</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              Arc Network is the ideal home for machine-to-machine commerce. AGFusion implements the <strong>HTTP-402 (Payment Required)</strong> specification for pay-per-call AI endpoints:
+              Arc Network is the ideal home for machine-to-machine commerce. OrdenFi implements the <strong>HTTP-402 (Payment Required)</strong> specification for pay-per-call AI endpoints:
             </p>
             <div className="rounded-xl border border-white/[0.08] bg-black/40 p-3 font-mono text-xs text-slate-300 mb-3 overflow-x-auto">
               <span className="text-amber-400">GET /api/x402/agent-service</span> &rarr; HTTP 402 Payment Required<br />
@@ -337,10 +337,10 @@ export default function DocsPage() {
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
                 <Terminal className="h-4 w-4" />
               </span>
-              <h2 className="text-xl font-bold text-white sm:text-2xl">8. AGFusion MCP (Model Context Protocol) Server</h2>
+              <h2 className="text-xl font-bold text-white sm:text-2xl">8. OrdenFi MCP (Model Context Protocol) Server</h2>
             </div>
             <p className="text-sm leading-relaxed text-slate-300 mb-4">
-              AGFusion provides an official MCP Server that connects Claude Desktop, Cursor, and IDE AI agents to Arc Network tools over standard stdio JSON-RPC:
+              OrdenFi provides an official MCP Server that connects Claude Desktop, Cursor, and IDE AI agents to Arc Network tools over standard stdio JSON-RPC:
             </p>
             <div className="relative rounded-2xl bg-black/50 p-4 border border-white/[0.06] font-mono text-xs mb-4">
               <div className="flex items-center justify-between text-slate-400 mb-2">
@@ -524,7 +524,7 @@ export default function DocsPage() {
           {/* Quick Action Return */}
           <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 to-cyan-950/40">
             <div>
-              <h3 className="font-bold text-white text-base">Ready to use AGFusion?</h3>
+              <h3 className="font-bold text-white text-base">Ready to use OrdenFi?</h3>
               <p className="text-xs text-slate-300">Launch the live unified swap, CCTP v2 bridge, batch payroll, or AI agent workspace on Arc Mainnet &amp; Testnet.</p>
             </div>
             <Link href="/">

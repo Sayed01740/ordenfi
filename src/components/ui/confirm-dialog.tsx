@@ -80,7 +80,7 @@ export function ConfirmDialog({
         </div>
         <p role="status" className="sr-only">{busy ? "Working. Please complete the request in your wallet." : ""}</p>
         <p className="text-[10px] text-muted-foreground text-center">
-          Fees shown above are route-specific estimates · AGFusion never asks for seed phrases.
+          Fees shown above are route-specific estimates · OrdenFi never asks for seed phrases.
         </p>
       </div>
     </ModalDialog>

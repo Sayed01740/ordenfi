@@ -33,12 +33,12 @@ export type AgentEvent =
   | { type: "tool"; name: string; summary: string; ok: boolean }
   | { type: "confirm"; preview: ActionPreview }
   | {
-      type: "message";
-      content: string;
-      intent?: string;
-      codeBlocks?: CodeBlock[];
-      actionPreview?: ActionPreview;
-    }
+    type: "message";
+    content: string;
+    intent?: string;
+    codeBlocks?: CodeBlock[];
+    actionPreview?: ActionPreview;
+  }
   | { type: "transaction"; transaction: TransactionRecord }
   | { type: "done"; message: ChatMessage; transaction?: TransactionRecord };
 
@@ -197,7 +197,7 @@ export async function runAgentLoop(
         "**Agents on Arc**",
         "",
         last?.summary ||
-          "ERC-8004 identity, ERC-8183 escrow jobs, policy-bound USDC payments.",
+        "ERC-8004 identity, ERC-8183 escrow jobs, policy-bound USDC payments.",
         "",
         "Open the **Agents** page to register identity and run an ERC-8183 job.",
         "Or say: `Swap 1 USDC to EURC` to plan a payout.",
@@ -224,7 +224,7 @@ export async function runAgentLoop(
         const content = [
           "Doing great — ready to help with your on-chain operations.",
           "",
-          `I'm the **AGFusion** execution assistant for **${NETWORK_LABEL}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
+          `I'm the **OrdenFi** execution assistant for **${NETWORK_LABEL}** (USDC payments, Uniswap V3 swaps, and Circle CCTP v2 bridging).`,
           "",
           wallet.address
             ? `Wallet connected: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\``
@@ -243,7 +243,7 @@ export async function runAgentLoop(
         const content = [
           wallet.address
             ? `Wallet connected (\`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\`) on **${NETWORK_LABEL}**.`
-            : `Welcome to **AGFusion** — your stablecoin operations workspace on **${NETWORK_LABEL}**.`,
+            : `Welcome to **OrdenFi** — your stablecoin operations workspace on **${NETWORK_LABEL}**.`,
           "",
           "Capabilities:",
           "• **Send** — Instant native USDC transfers (21k gas, sub-second finality)",
@@ -515,7 +515,7 @@ export async function runAgentLoop(
             "**Payment plan**",
             "",
             `Amount: **${amount} USDC** on Arc` +
-              (recipientLabel ? ` · label: ${recipientLabel}` : ""),
+            (recipientLabel ? ` · label: ${recipientLabel}` : ""),
             "",
             "Paste a full **0x address** (42 chars) in the Payment Engine panel,",
             "or say: `Send 0.05 USDC to 0xYourAddress… on Arc`",
@@ -673,7 +673,7 @@ export async function runAgentLoop(
             ? "You're welcome!"
             : "I'm here and ready to help.",
           "",
-          `I'm the AGFusion execution assistant for **${NETWORK_LABEL}** (Send · Swap · Bridge).`,
+          `I'm the OrdenFi execution assistant for **${NETWORK_LABEL}** (Send · Swap · Bridge).`,
           "",
           'Try: `"Show my balances"`, `"Swap 1 USDC to EURC"`, or `"Bridge 5 USDC from Arc to Base"`.',
         ].join("\n");
@@ -681,7 +681,7 @@ export async function runAgentLoop(
       }
 
       const content = [
-        `I’m the **AGFusion** assistant for **${NETWORK_LABEL}**.`,
+        `I’m the **OrdenFi** assistant for **${NETWORK_LABEL}**.`,
         "",
         wallet.address
           ? `Wallet: \`${wallet.address.slice(0, 8)}…${wallet.address.slice(-4)}\` · Chain ID \`${wallet.chainId ?? "?"}\``

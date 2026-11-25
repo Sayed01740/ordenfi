@@ -8,7 +8,7 @@ import { ARC_CHAIN_ID } from "@/lib/arc-chain";
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_SIWE_CHAIN_ID || ARC_CHAIN_ID);
 
 export const SIWE_STATEMENT =
-  "Sign in to AGFusion. This request will not trigger a blockchain transaction or cost any fees.";
+  "Sign in to OrdenFi. This request will not trigger a blockchain transaction or cost any fees.";
 
 const NONCE_TTL_MS = 10 * 60_000;
 const MAX_CLOCK_SKEW_MS = 60_000;

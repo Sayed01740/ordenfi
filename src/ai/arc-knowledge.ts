@@ -168,7 +168,7 @@ export function answerArcKnowledgeQuery(rawQuery: string): string {
 
   if (/\b(8004|8183|x402|escrow|agent|payroll|unified|gateway)\b/.test(q)) {
     return [
-      "**Arc Agentic Economy & AGFusion Protocols:**",
+      "**Arc Agentic Economy & OrdenFi Protocols:**",
       "",
       `• **ERC-8004:** ${ARC_KNOWLEDGE.protocols.erc8004}`,
       `• **ERC-8183:** ${ARC_KNOWLEDGE.protocols.erc8183}`,

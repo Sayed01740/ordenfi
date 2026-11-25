@@ -32,16 +32,16 @@ const sora = Sora({
   display: "swap",
 });
 
-const siteUrl = "https://agfusion.vercel.app";
-const siteTitle = "AGFusion — Stablecoin operations on Arc";
-const siteDescription = "AGFusion is an AI-assisted workspace for payments, treasury, agents, and developers on Arc — the Economic OS for programmable money with USDC gas and sub-second finality.";
+const siteUrl = "https://ordenfi.vercel.app";
+const siteTitle = "OrdenFi — Stablecoin operations on Arc";
+const siteDescription = "OrdenFi is an AI-assisted workspace for payments, treasury, agents, and developers on Arc — the Economic OS for programmable money with USDC gas and sub-second finality.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl), title: siteTitle, description: siteDescription,
-  keywords: ["AGFusion", "Arc Network", "Arc House", "USDC", "stablecoin", "Economic OS", "programmable money", "AI finance"],
-  applicationName: "AGFusion", authors: [{ name: "AGFusion" }],
+  keywords: ["OrdenFi", "AGFusion", "Arc Network", "Arc House", "USDC", "stablecoin", "Economic OS", "programmable money", "AI finance"],
+  applicationName: "OrdenFi", authors: [{ name: "OrdenFi" }],
   icons: { icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/icon-32.png", sizes: "32x32", type: "image/png" }, { url: "/icon-180.png", sizes: "180x180", type: "image/png" }], apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }], shortcut: ["/favicon.ico"] },
-  openGraph: { type: "website", url: siteUrl, siteName: "AGFusion", title: siteTitle, description: siteDescription, images: [{ url: "/og.png", width: 1200, height: 630, alt: "AGFusion — AI-native stablecoin OS on Arc" }] },
+  openGraph: { type: "website", url: siteUrl, siteName: "OrdenFi", title: siteTitle, description: siteDescription, images: [{ url: "/og.png", width: 1200, height: 630, alt: "OrdenFi — AI-native stablecoin OS on Arc" }] },
   twitter: { card: "summary_large_image", site: "@AGfusion_", creator: "@AGfusion_", title: siteTitle, description: siteDescription, images: ["/og.png"] },
 };
 

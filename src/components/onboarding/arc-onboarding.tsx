@@ -69,7 +69,7 @@ export function ArcOnboarding() {
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <p className="text-xs text-slate-400 leading-relaxed">
-          <strong className="text-slate-300 font-medium">Step 1 of using AGFusion:</strong>{" "}
+          <strong className="text-slate-300 font-medium">Step 1 of using OrdenFi:</strong>{" "}
           connect a browser wallet (Rabby recommended). This only shares your public
           address. Never share seed phrases or private keys.
         </p>

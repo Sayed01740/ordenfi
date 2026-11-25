@@ -62,7 +62,7 @@ export function RecoveryPanelBody() {
           {failedTx.amount} USDC {failedTx.fromChain.replace(/_/g, " ")} →{" "}
           {failedTx.toChain.replace(/_/g, " ")}
         </strong>
-        . AGFusion resumes from the last confirmed step and will not burn again.
+        . OrdenFi resumes from the last confirmed step and will not burn again.
       </p>
       {error && <p className="text-xs text-red-300">{error}</p>}
       <Button

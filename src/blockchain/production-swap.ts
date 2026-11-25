@@ -476,7 +476,7 @@ async function preflightSwap(
   } catch (error) {
     // Arc RPC has documented eth_estimateGas/simulation quirks for DEX writes.
     // Log a warning rather than aborting the swap before the user's wallet can open.
-    console.warn("[AGFusion][Swap] Testnet eth_estimateGas preflight warning (proceeding with deterministic gas limit):", { errorName: error instanceof Error ? error.name : "UnknownError" });
+    console.warn("[OrdenFi][Swap] Testnet eth_estimateGas preflight warning (proceeding with deterministic gas limit):", { errorName: error instanceof Error ? error.name : "UnknownError" });
   }
 }
 

@@ -105,7 +105,7 @@ if (!zodV3Types.includes(setMarker)) {
 
 if (guardsAdded > 0) fs.writeFileSync(zodV3TypesPath, zodV3Types);
 console.log(
-  "[AGFusion] Circle Zod compatibility patch: rewrote " +
+  "[OrdenFi] Circle Zod compatibility patch: rewrote " +
   importsRewritten +
   " import(s) across " +
   filesVisited +

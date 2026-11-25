@@ -96,7 +96,7 @@ export async function runAgentStream(opts: {
       return serverResult;
     }
   } catch (e) {
-    console.warn("[AGFusion] server agent failed, using local", e);
+    console.warn("[OrdenFi] server agent failed, using local", e);
   }
 
   return runLocal(opts);
@@ -294,7 +294,7 @@ async function runLocal(opts: {
             handlers.onDone?.(e.message, e.transaction);
           }
         } catch (handlerErr) {
-          console.warn("[AGFusion] agent handler error", handlerErr);
+          console.warn("[OrdenFi] agent handler error", handlerErr);
         }
       },
     });
@@ -317,7 +317,7 @@ async function runLocal(opts: {
 
     return { message: result.message, transaction: result.transaction };
   } catch (e) {
-    console.error("[AGFusion] agent loop error", e);
+    console.error("[OrdenFi] agent loop error", e);
     const msg =
       e instanceof Error ? e.message : "Agent failed — try a simpler command";
     handlers.onError?.(msg);

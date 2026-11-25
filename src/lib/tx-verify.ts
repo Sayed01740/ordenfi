@@ -91,7 +91,7 @@ export async function verifyReceiptOnChain(opts: {
     }
     return { status: "not_found", receipt: lastReceipt };
   } catch (error) {
-    console.warn("[AGFusion] receipt verification unavailable; refusing success", error);
+    console.warn("[OrdenFi] receipt verification unavailable; refusing success", error);
     return { status: "not_found", receipt: lastReceipt };
   }
 }

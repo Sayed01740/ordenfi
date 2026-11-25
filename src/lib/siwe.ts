@@ -87,12 +87,13 @@ export function isAllowedSiweDomain(domain: string): boolean {
   const allowed = new Set<string>([
     "localhost",
     "127.0.0.1",
+    "ordenfi.vercel.app",
     "agfusion.vercel.app",
   ]);
   const envDomain = process.env.NEXT_PUBLIC_APP_DOMAIN?.toLowerCase().trim();
   if (envDomain) allowed.add(envDomain.split(":")[0]);
 
-  if (d.endsWith(".vercel.app") && d.includes("agfusion")) return true;
+  if (d.endsWith(".vercel.app") && (d.includes("ordenfi") || d.includes("agfusion"))) return true;
   return allowed.has(d);
 }
 

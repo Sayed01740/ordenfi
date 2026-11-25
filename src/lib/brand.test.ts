@@ -11,6 +11,11 @@ describe("Ordenfi public identity", () => {
     expect(resolveBrandUrl(" https://app.ordenfi.example/ ")).toBe("https://app.ordenfi.example");
   });
 
+  it("rejects obsolete agfusion URLs and normalizes to Ordenfi fallback", () => {
+    expect(resolveBrandUrl("https://agfusion.vercel.app")).toBe("https://ordenfi.vercel.app");
+    expect(resolveBrandUrl("https://agfusion.xyz")).toBe("https://ordenfi.vercel.app");
+  });
+
   it("rejects unsafe schemes and malformed deployment URLs", () => {
     for (const value of ["javascript:alert(1)", "not a url", "file:///tmp/app"]) {
       expect(resolveBrandUrl(value)).toBe("https://ordenfi.vercel.app");

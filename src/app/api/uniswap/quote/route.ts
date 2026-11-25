@@ -115,7 +115,7 @@ export async function POST(req: Request) {
 
     const payload: unknown = await upstream.json().catch(() => null);
     if (!upstream.ok) {
-      console.warn("[AGFusion] Uniswap quote request failed", { status: upstream.status });
+      console.warn("[OrdenFi] Uniswap quote request failed", { status: upstream.status });
       return NextResponse.json(
         { error: "uniswap_quote_unavailable", detail: "Uniswap could not provide a quote for this pair and amount." },
         { status: upstream.status === 429 ? 429 : 502 },
@@ -238,7 +238,7 @@ export async function POST(req: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error("[AGFusion] Uniswap quote proxy failed", { errorName: error instanceof Error ? error.name : "UnknownError" });
+    console.error("[OrdenFi] Uniswap quote proxy failed", { errorName: error instanceof Error ? error.name : "UnknownError" });
     return NextResponse.json({ error: "uniswap_quote_proxy_failed" }, { status: 502 });
   }
 }

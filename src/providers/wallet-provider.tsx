@@ -323,7 +323,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         });
         if (!verifyRes.ok) {
           const d = await verifyRes.json().catch(() => ({}));
-          console.warn("[AGFusion] SIWE verification failed:", verifyRes.status, d);
+          console.warn("[OrdenFi] SIWE verification failed:", verifyRes.status, d);
           return false;
         }
         setAuthLocal(true);
@@ -331,7 +331,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         await loadServerTransactions(address);
         return true;
       } catch (err) {
-        console.warn("[AGFusion] SIWE signing cancelled or failed:", err);
+        console.warn("[OrdenFi] SIWE signing cancelled or failed:", err);
         return false;
       }
     },

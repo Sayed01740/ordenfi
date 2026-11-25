@@ -81,7 +81,7 @@ export async function getAppKit(): Promise<AppKitLike | null> {
     return kitSingleton;
   } catch (e) {
     loadError = e instanceof Error ? e.message : String(e);
-    console.error("[AGFusion] Failed to load @circle-fin/app-kit:", e);
+    console.error("[OrdenFi] Failed to load @circle-fin/app-kit:", e);
     return null;
   }
 }

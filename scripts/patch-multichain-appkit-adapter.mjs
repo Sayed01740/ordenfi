@@ -14,7 +14,7 @@ if (adapterSource === beforeCapabilityRemoval && /supportedChains:\s*\[/m.test(a
   throw new Error("Permanent adapter patch refused: an unexpected supportedChains block exists and was not removed.");
 }
 fs.writeFileSync(adapterFile, adapterSource);
-console.log("[AGFusion] App Kit browser adapter normalized: no unsupported capabilities block");
+console.log("[OrdenFi] App Kit browser adapter normalized: no unsupported capabilities block");
 
 const serviceFile = path.resolve("src/blockchain/appkit-service.ts");
 let serviceSource = fs.readFileSync(serviceFile, "utf8");
@@ -64,4 +64,4 @@ if (!serviceSource.includes("runBridgeKitFlow") || !serviceSource.includes("runB
   throw new Error("Permanent bridge patch incomplete: direct CCTP bridge functions missing.");
 }
 fs.writeFileSync(serviceFile, serviceSource);
-console.log("[AGFusion] Bridge execution and recovery locked to direct Circle CCTP v2 without dead App Kit code");
+console.log("[OrdenFi] Bridge execution and recovery locked to direct Circle CCTP v2 without dead App Kit code");

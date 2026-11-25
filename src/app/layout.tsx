@@ -7,14 +7,42 @@ import "./ordenfi-web3-premium.css";
 const sans = Host_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-host", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-jetbrains-mono", display: "swap" });
 const title = "Ordenfi — Your money. In order.";
+const ogImageUrl = `${BRAND_URL}/og.png?v=3`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BRAND_URL), title, description: BRAND_DESCRIPTION,
-  applicationName: BRAND_NAME, authors: [{ name: BRAND_NAME }],
+  metadataBase: new URL(BRAND_URL),
+  title,
+  description: BRAND_DESCRIPTION,
+  applicationName: BRAND_NAME,
+  authors: [{ name: BRAND_NAME }],
   keywords: [BRAND_NAME, "Arc Network", "USDC", "stablecoin", "payments", "treasury"],
-  icons: { icon: [{ url: "/brand/ordenfi-mark.svg", type: "image/svg+xml" }, { url: "/icon-32.png", sizes: "32x32", type: "image/png" }], apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }], shortcut: ["/favicon.ico"] },
-  openGraph: { type: "website", url: BRAND_URL, siteName: BRAND_NAME, title, description: BRAND_DESCRIPTION, images: [{ url: "/og.png", width: 1200, height: 630, alt: "Ordenfi — Your money. In order." }] },
-  twitter: { card: "summary_large_image", title, description: BRAND_DESCRIPTION, images: ["/og.png"] },
+  icons: {
+    icon: [
+      { url: "/brand/ordenfi-mark.svg?v=3", type: "image/svg+xml" },
+      { url: "/icon-32.png?v=3", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png?v=3", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico?v=3"],
+  },
+  openGraph: {
+    type: "website",
+    url: BRAND_URL,
+    siteName: BRAND_NAME,
+    title,
+    description: BRAND_DESCRIPTION,
+    images: [{
+      url: ogImageUrl,
+      width: 1200,
+      height: 630,
+      alt: "Ordenfi — Your money. In order.",
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description: BRAND_DESCRIPTION,
+    images: [ogImageUrl],
+  },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#111315" };

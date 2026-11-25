@@ -171,7 +171,7 @@ export async function POST(req: Request) {
     });
     const payload: unknown = await upstream.json().catch(() => null);
     if (!upstream.ok || !isRecord(payload) || !isRecord(payload.swap)) {
-      console.warn("[AGFusion] Uniswap swap preparation failed", { status: upstream.status });
+      console.warn("[OrdenFi] Uniswap swap preparation failed", { status: upstream.status });
       return NextResponse.json({ error: "uniswap_swap_preparation_unavailable" }, { status: upstream.status === 429 ? 429 : 502 });
     }
 
@@ -251,7 +251,7 @@ export async function POST(req: Request) {
       executionEnabled: isMainnetExecutionEnabled(),
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.warn("[AGFusion] Arc Mainnet swap preparation rejected", {
+    console.warn("[OrdenFi] Arc Mainnet swap preparation rejected", {
       errorName: error instanceof Error ? error.name : "UnknownError",
     });
     return NextResponse.json({

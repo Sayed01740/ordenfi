@@ -102,11 +102,11 @@ export async function getArcWalletAddParams(): Promise<{
     chainId = live.hex;
     if (live.decimal !== ARC_CHAIN_ID) {
       console.warn(
-        `[AGFusion] RPC chainId decimal ${live.decimal} != expected ${ARC_CHAIN_ID}`,
+        `[OrdenFi] RPC chainId decimal ${live.decimal} != expected ${ARC_CHAIN_ID}`,
       );
     }
   } catch (e) {
-    console.warn("[AGFusion] using static chainId hex; RPC probe failed", e);
+    console.warn("[OrdenFi] using static chainId hex; RPC probe failed", e);
   }
 
   return {

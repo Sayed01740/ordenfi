@@ -113,7 +113,7 @@ export async function releaseAgentSpendReservation(operationId: string): Promise
       WHERE "operationId" = ${operationId}
     `;
   } catch (error) {
-    console.warn("[AGFusion][AgentPolicy] reservation release failed", { error, operationId });
+    console.warn("[OrdenFi][AgentPolicy] reservation release failed", { error, operationId });
   }
 }
 
@@ -252,7 +252,7 @@ export async function enforceAgentSpendingPolicy(params: {
       };
     });
   } catch (error) {
-    console.error("[AGFusion][AgentPolicy] persistent storage check failed", {
+    console.error("[OrdenFi][AgentPolicy] persistent storage check failed", {
       error,
       walletAddress,
       action: params.action,

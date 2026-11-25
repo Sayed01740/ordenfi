@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     if (error instanceof Error && error.message.startsWith("Arc Mainnet receipt verification failed:")) {
       return NextResponse.json({ error: "receipt_verification_failed" }, { status: 422 });
     }
-    console.warn("[AGFusion] Arc Mainnet receipt lookup unavailable", { errorName });
+    console.warn("[OrdenFi] Arc Mainnet receipt lookup unavailable", { errorName });
     return NextResponse.json({ error: "receipt_verification_unavailable" }, { status: 503 });
   }
 }

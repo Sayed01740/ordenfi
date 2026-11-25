@@ -194,7 +194,7 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("[AGFusion] Circle App Kit swap preparation failed", error);
+    console.error("[OrdenFi] Circle App Kit swap preparation failed", error);
     return NextResponse.json(
       { error: message || "Circle App Kit could not prepare this swap." },
       { status: 502 },

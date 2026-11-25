@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       } : null,
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.warn("[AGFusion] Arc Mainnet Permit2 preflight unavailable", {
+    console.warn("[OrdenFi] Arc Mainnet Permit2 preflight unavailable", {
       errorName: error instanceof Error ? error.name : "UnknownError",
     });
     return NextResponse.json({ error: "mainnet_preflight_unavailable" }, { status: 503 });

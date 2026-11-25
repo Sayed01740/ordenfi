@@ -16,7 +16,7 @@ export type BridgeDebugSession = {
   diagnosticVersion: 5;
   sessionId: string;
   exportedAt: string;
-  app: "AGFusion";
+  app: "OrdenFi";
   purpose: "Circle CCTP bridge diagnostic log";
   eventCount: number;
   context: Record<string, unknown>;
@@ -60,7 +60,7 @@ function persist(events: BridgeDebugEvent[]) {
 }
 function sendToServer(event: BridgeDebugEvent, sessionId?: string) {
   if (typeof window === "undefined") return;
-  const body = JSON.stringify({ diagnosticVersion: 5, sessionId, app: "AGFusion", purpose: "Circle CCTP bridge diagnostic log", event });
+  const body = JSON.stringify({ diagnosticVersion: 5, sessionId, app: "OrdenFi", purpose: "Circle CCTP bridge diagnostic log", event });
   try {
     if (typeof navigator.sendBeacon === "function" && body.length < 60_000 && navigator.sendBeacon(SERVER_ENDPOINT, new Blob([body], { type: "application/json" }))) return;
   } catch {}
@@ -88,7 +88,7 @@ export function recordBridgeDebug(stage: string, data?: unknown, txId?: string, 
     durationMs: extra.durationMs, data: safe(data), error: extra.error === undefined ? undefined : safe(extra.error),
   };
   current.push(event); persist(current);
-  try { console.debug("[AGFusion Bridge]", event); } catch {}
+  try { console.debug("[OrdenFi Bridge]", event); } catch {}
   sendToServer(event, sessionId);
 }
 
@@ -130,7 +130,7 @@ export function clearBridgeDebugEvents(): void { if (typeof window !== "undefine
 export function downloadBridgeDebugLog(): void {
   if (typeof window === "undefined") return;
   const events = getBridgeDebugEvents();
-  const payload: BridgeDebugSession = { exportedAt: new Date().toISOString(), app: "AGFusion", purpose: "Circle CCTP bridge diagnostic log", diagnosticVersion: 5, sessionId: activeSessionId || events[0]?.txId || newId(), eventCount: events.length, context: { url: location.href, userAgent: navigator.userAgent }, events };
+  const payload: BridgeDebugSession = { exportedAt: new Date().toISOString(), app: "OrdenFi", purpose: "Circle CCTP bridge diagnostic log", diagnosticVersion: 5, sessionId: activeSessionId || events[0]?.txId || newId(), eventCount: events.length, context: { url: location.href, userAgent: navigator.userAgent }, events };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `agfusion-bridge-debug-v5-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `ordenfi-bridge-debug-v5-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

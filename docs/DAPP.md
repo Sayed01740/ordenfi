@@ -12,7 +12,7 @@ Receive generates QR codes locally and binds payment links to the receiving addr
 | **Receive** | Create a USDC request | Local SVG QR + validated network-bound payment link |
 | **Batch Payments** | Pay many recipients | `executeSend` sequentially; one signature per recipient |
 
-`/welcome` is a compatibility alias for the homepage. The former `AGFusionDapp` and `StreamlinedHero` components are retained as unused source; the current page renders `OperationsWorkspace`.
+`/welcome` is a compatibility alias for the homepage. The former `OrdenFiDapp` and `StreamlinedHero` components are retained as unused source; the current page renders `OperationsWorkspace`.
 
 ---
 
@@ -35,9 +35,9 @@ never holds balances and is reentrancy-guarded.
 **On-chain (Foundry, `contracts/`)**
 
 ```
-src/AGFusionDisperse.sol                    # batch send: disperseToken / disperseTokenEqual / disperseNative
-script/DeployAGFusionDisperse.s.sol         # deploy script (prints the address to set in env)
-test/AGFusionDisperse.t.sol                 # unit tests (split, equal, native+refund, no-return tokens, reverts)
+src/OrdenFiDisperse.sol                    # batch send: disperseToken / disperseTokenEqual / disperseNative
+script/DeployOrdenFiDisperse.s.sol         # deploy script (prints the address to set in env)
+test/OrdenFiDisperse.t.sol                 # unit tests (split, equal, native+refund, no-return tokens, reverts)
 ```
 
 **Client (`src/`)**
@@ -52,7 +52,7 @@ components/dapp/swap-card.tsx  # debounced live quote + swap
 components/dapp/send-card.tsx  # single send
 components/dapp/bridge-card.tsx# route picker + CCTP bridge
 components/dapp/batch-card.tsx # recipient rows + single-signature disperse (sequential fallback)
-components/dapp/agfusion-dapp.tsx # container: tabs + wallet header + wrong-network switch
+components/dapp/ordenfi-dapp.tsx # container: tabs + wallet header + wrong-network switch
 components/workspace/operations-workspace.tsx # shared actions, balances, payments, and activity
 components/workspace/workspace-assistant.tsx # assistant with draft-preserving disclosure
 app/page.tsx                   # renders <OperationsWorkspace />
@@ -68,7 +68,7 @@ balances, and transaction history all continue to work exactly as before.
 
 ## The single-signature batch (headline feature)
 
-`AGFusionDisperse` enables paying an arbitrary list of recipients in **one** on-chain transaction.
+`OrdenFiDisperse` enables paying an arbitrary list of recipients in **one** on-chain transaction.
 
 ```solidity
 disperseToken(IERC20 token, address[] recipients, uint256[] values)
@@ -101,10 +101,10 @@ cd contracts
 forge install foundry-rs/forge-std --no-commit   # if not already installed
 
 # 1. Test
-forge test -vv --match-contract AGFusionDisperse
+forge test -vv --match-contract OrdenFiDisperse
 
 # 2. Deploy (key passed on CLI; never commit it)
-forge script script/DeployAGFusionDisperse.s.sol:DeployAGFusionDisperse \
+forge script script/DeployOrdenFiDisperse.s.sol:DeployOrdenFiDisperse \
   --rpc-url https://rpc.testnet.arc.network \
   --private-key 0xYOUR_KEY \
   --broadcast -vvvv
@@ -115,13 +115,13 @@ PowerShell:
 ```powershell
 cd contracts
 $env:PRIVATE_KEY="0x..."
-forge script script/DeployAGFusionDisperse.s.sol:DeployAGFusionDisperse `
+forge script script/DeployOrdenFiDisperse.s.sol:DeployOrdenFiDisperse `
   --rpc-url https://rpc.testnet.arc.network `
   --private-key $env:PRIVATE_KEY `
   --broadcast -vvvv
 ```
 
-Copy the printed `AGFusionDisperse deployed at: 0x...` into `NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS`,
+Copy the printed `OrdenFiDisperse deployed at: 0x...` into `NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS`,
 then restart `next dev` so the env var is picked up.
 
 ---

@@ -118,7 +118,7 @@ export async function POST(req: Request) {
   const kitKey = getServerKitKey();
 
   try {
-    // AGFusion already installs @circle-fin/app-kit and its Viem adapter.
+    // OrdenFi already installs @circle-fin/app-kit and its Viem adapter.
     // Use the official App Kit swap API instead of the lower-level
     // StablecoinServiceSwapProvider. Arc Testnet is an official supported
     // testnet in the repository's Circle swap skill.

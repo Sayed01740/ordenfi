@@ -6,7 +6,7 @@ web
 
 ## Product purpose
 
-Ordenfi is the new product name for the existing AGFusion application: a wallet-connected workspace for stablecoin operations on Arc. Workflows include swaps, transfers, bridging, receiving payments, batch payments, transaction history, and analytics.
+Ordenfi is the new product name for the existing OrdenFi application: a wallet-connected workspace for stablecoin operations on Arc. Workflows include swaps, transfers, bridging, receiving payments, batch payments, transaction history, and analytics.
 
 The owner requested one combined operating workspace instead of separate Swap and Dashboard screens: action tools on the left, AI assistant on the right, and activity in the same page. On mobile, actions precede the assistant. `/dashboard` remains a compatibility alias for existing bookmarks and payment links.
 

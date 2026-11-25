@@ -1,4 +1,4 @@
-# AGFusion — Staging & production deploy checklist
+# OrdenFi — Staging & production deploy checklist
 
 ## Environments
 
@@ -76,7 +76,7 @@ npm start
 ## Vercel
 
 1. Import Git repo  
-2. Root: `agfusion`  
+2. Root: `ordenfi`  
 3. Env vars from `.env.staging.example`  
 4. Build: `prisma generate && next build` (via `npm run build`)  
 5. Add Postgres (Vercel Postgres / Neon / Supabase)  

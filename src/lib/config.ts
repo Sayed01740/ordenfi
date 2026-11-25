@@ -1,5 +1,5 @@
 /**
- * AGFusion final policy: LIVE ONLY.
+ * OrdenFi final policy: LIVE ONLY.
  * Public config is intentionally minimal — no internal infra details.
  */
 

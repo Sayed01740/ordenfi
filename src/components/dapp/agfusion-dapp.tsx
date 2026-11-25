@@ -34,7 +34,7 @@ function shortAddr(a: string) {
   return `${a.slice(0, 6)}…${a.slice(-4)}`;
 }
 
-export function AGFusionDapp() {
+export function OrdenFiDapp() {
   const [tab, setTab] = useState<Tab>("swap");
   const { openConnectModal, disconnect, switchToArc, connecting } = useWallet();
   const walletAddress = usePilotStore((s) => s.walletAddress);
@@ -163,3 +163,5 @@ export function AGFusionDapp() {
     </section>
   );
 }
+
+export const AGFusionDapp = OrdenFiDapp;

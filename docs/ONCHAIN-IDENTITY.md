@@ -1,14 +1,14 @@
-# AGFusion — On-chain contracts & project identity (Arc Testnet)
+# OrdenFi — On-chain contracts & project identity (Arc Testnet)
 
 ## Important honesty
 
-**AGFusion does not currently deploy its own app-specific Solidity contracts.**  
+**OrdenFi does not currently deploy its own app-specific Solidity contracts.**  
 It is a **live app** that uses **Arc + Circle official contracts** (USDC, EURC, CCTP, App Kit bridge adapter, ERC-8004 registries).
 
 Your **project blockchain identity** is:
 
 1. **Owner wallet** = the Arc Testnet address you use to build/fund/demo (from Rabby)  
-2. **Optional ERC-8004 agent NFT** = register AGFusion agent on Arc IdentityRegistry (see below)
+2. **Optional ERC-8004 agent NFT** = register OrdenFi agent on Arc IdentityRegistry (see below)
 
 ---
 
@@ -24,7 +24,7 @@ Your **project blockchain identity** is:
 
 ---
 
-## Contracts AGFusion uses (official Arc / Circle)
+## Contracts OrdenFi uses (official Arc / Circle)
 
 ### Stablecoins
 
@@ -67,11 +67,11 @@ Official refs:
 https://docs.arc.io/arc/references/contract-addresses  
 https://docs.arc.io/arc/tutorials/register-your-first-ai-agent  
 
-### AGFusion product surfaces (not contracts)
+### OrdenFi product surfaces (not contracts)
 
 | Asset | URL |
 |-------|-----|
-| Live app | https://agfusion.vercel.app |
+| Live app | https://ordenfi.vercel.app |
 | Agent metadata JSON | https://agfusion.vercel.app/identity/agfusion-agent.json |
 | X | https://x.com/AGfusion_ |
 
@@ -83,7 +83,7 @@ Fill in after connecting Rabby on Arc:
 
 | Field | Value |
 |-------|--------|
-| **Project name** | AGFusion |
+| **Project name** | OrdenFi |
 | **Network** | Arc Testnet (`5042002`) |
 | **Owner / deployer wallet** | `0xYOUR_WALLET` ← paste from Rabby |
 | **Explorer (identity)** | `https://testnet.arcscan.app/address/0xYOUR_WALLET` |
@@ -112,8 +112,8 @@ Full tutorial: https://docs.arc.io/arc/tutorials/register-your-first-ai-agent
 ```
 Network: Arc Testnet | Chain ID: 5042002
 
-Project: AGFusion
-App: https://agfusion.vercel.app
+Project: OrdenFi
+App: https://ordenfi.vercel.app
 Owner wallet: 0xYOUR_WALLET
 
 Contracts used (Circle / Arc official):
@@ -125,5 +125,5 @@ Contracts used (Circle / Arc official):
 - ERC-8004 IdentityRegistry: 0x8004A818BFB912233c491871b3d84c89A494BD9e
 
 Agent metadata: https://agfusion.vercel.app/identity/agfusion-agent.json
-Note: AGFusion is an application layer; settlement uses official Arc/Circle contracts.
+Note: OrdenFi is an application layer; settlement uses official Arc/Circle contracts.
 ```

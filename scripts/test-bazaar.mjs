@@ -40,8 +40,8 @@ const res = await fetch("https://bazaarlink.ai/api/v1/chat/completions", {
   headers: {
     Authorization: `Bearer ${key}`,
     "Content-Type": "application/json",
-    "HTTP-Referer": "https://agfusion.vercel.app",
-    "X-Title": "AGFusion",
+    "HTTP-Referer": "https://ordenfi.vercel.app",
+    "X-Title": "OrdenFi",
   },
   body: JSON.stringify({
     model: "google/gemini-2.5-flash",

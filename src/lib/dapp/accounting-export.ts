@@ -1,12 +1,12 @@
 /**
- * Accounting and Financial Statement Export for AGFusion on Arc Network.
+ * Accounting and Financial Statement Export for OrdenFi on Arc Network.
  * Exports transaction history into GAAP-compliant CSV format for corporate treasury.
  */
 import type { TransactionRecord } from "@/types";
 
 export function exportTreasuryStatementCsv(
   transactions: TransactionRecord[],
-  filenamePrefix = "agfusion-arc-statement"
+  filenamePrefix = "ordenfi-arc-statement"
 ): void {
   if (!transactions.length) {
     alert("No transactions recorded to export.");

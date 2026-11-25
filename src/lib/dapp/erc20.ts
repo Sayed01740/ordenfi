@@ -1,5 +1,5 @@
 /**
- * Read-only ERC-20 helpers for the AGFusion dApp, using the same-origin Arc RPC
+ * Read-only ERC-20 helpers for the OrdenFi dApp, using the same-origin Arc RPC
  * proxy (/api/rpc?chain=arc) so the app never leaks a wallet's private RPC.
  *
  * arcPublicClient() and arcRpcUrl() are now network-aware: they use IS_ARC_MAINNET

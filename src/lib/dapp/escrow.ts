@@ -1,5 +1,5 @@
 /**
- * Client integration for AGFusionEscrow on Arc Network.
+ * Client integration for OrdenFiEscrow on Arc Network.
  * Handles creating on-chain agent tasks, submitting proofs, releasing funds,
  * and refunds on Arc Testnet (chainId 5042002).
  */
@@ -24,6 +24,7 @@ import { uid } from "@/lib/utils";
 
 export const ESCROW_ADDRESS: Address | undefined = (() => {
   const env =
+    process.env.NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS ||
     process.env.NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS ||
     process.env.NEXT_PUBLIC_ESCROW_CONTRACT;
   return env && isAddress(env) ? (env.toLowerCase() as Address) : undefined;

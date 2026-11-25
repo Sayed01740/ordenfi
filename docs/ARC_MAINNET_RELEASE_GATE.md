@@ -31,7 +31,7 @@ Arc Mainnet requests to the Circle swap-preparation route are always rejected. T
 
 1. CI passes on the exact proposed release commit: Circle SDK compatibility, Elliptic regression, lint, typecheck, unit tests, and production build.
 2. Dependency audit passes, with any skipped enforcement step explicitly reviewed.
-   - The `@mapped/elliptic@6.6.10` fork provenance, full source diff, RFC 6979 regression vectors, and actual signing call path require independent verification tracked in [issue #30](https://github.com/Sayed01740/agfusion/issues/30). A green npm audit alone does not satisfy this gate.
+   - The `@mapped/elliptic@6.6.10` fork provenance, full source diff, RFC 6979 regression vectors, and actual signing call path require independent verification tracked in [issue #30](https://github.com/Sayed01740/OrdenFi/issues/30). A green npm audit alone does not satisfy this gate.
 3. Independent security review confirms chain binding, RPC trust, token/quote integrity, and that the endpoint only prepares unsigned transaction data.
 4. Preview verification confirms Testnet default behavior, Mainnet disabled behavior, and gated Mainnet preparation using non-production credentials and no wallet signing or broadcast.
 5. Confirm the production RPC, explorer, Circle App Kit Mainnet support, and Mainnet token metadata against current official Circle documentation before enabling the flag.
@@ -53,7 +53,7 @@ The current browser swap UI executes through `runCircleSafeSwapFlow()` and `runP
 Do not re-enable Mainnet in the UI by changing a public network flag. Circle StableFX is permissioned and requires approved access, a live RFQ quote, trade-intent/funding authorization, and verified PvP settlement data. A reference FX rate or a direct call to the FxEscrow address is not a valid swap implementation. Circle App Kit `estimateSwap()` returns quote information and does not itself supply an unsigned transaction for a browser wallet.
 
 Before re-enabling Mainnet UI swaps:
-1. Confirm AGFusion has approved StableFX participant access and the required StableFX API credential, or select a separately verified Mainnet DEX with a published router ABI and live liquidity.
+1. Confirm OrdenFi has approved StableFX participant access and the required StableFX API credential, or select a separately verified Mainnet DEX with a published router ABI and live liquidity.
 2. Implement the documented RFQ/trade-intent/settlement workflow or verified DEX route, with wallet-confirmed typed-data/transaction steps.
 3. Add end-to-end tests through the actual UI execution path and confirm no signing or broadcast occurs before explicit user wallet confirmation.
 4. Keep Mainnet disabled until independent security review and explicit release approval.
@@ -111,13 +111,13 @@ The Worker source, D1 schema, Wrangler template, Next.js client, and unit tests 
 
 Cloudflare resources were provisioned and checked on 2026-11-09:
 
-- Dedicated D1 database `agfusion-quote-sessions` exists with the `arc_quote_sessions` table and both supporting indexes.
-- Dedicated Worker `agfusion-quote-session-store` is deployed at `https://agfusion-quote-session-store.sayedhasan01740.workers.dev`.
+- Dedicated D1 database `OrdenFi-quote-sessions` exists with the `arc_quote_sessions` table and both supporting indexes.
+- Dedicated Worker `OrdenFi-quote-session-store` is deployed at `https://OrdenFi-quote-session-store.sayedhasan01740.workers.dev`.
 - The Worker has its D1 binding, write-only `API_TOKEN` secret binding, and hourly cleanup cron.
 - The OpenNext Cloudflare feature-branch build and `wrangler preview` deploy completed successfully on commit `c64f32fa9db0554201481998aa82ffd15c8d90d2`.
-- Vercel Preview is READY for the feature branch. Its Preview environment contains `AGFUSION_QUOTE_SESSION_STORE_URL`, a sensitive `AGFUSION_QUOTE_SESSION_SECRET`, and `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED=false`.
-- The one missing Preview credential is `AGFUSION_QUOTE_SESSION_STORE_TOKEN`. Rotate the write-only Worker `API_TOKEN` in Cloudflare, then enter the same new value directly in Vercel Preview. Do not paste it into chat or commit it.
-- The dedicated quote-session Worker has its authenticated `workers.dev` route enabled at `https://agfusion-quote-session-store.sayedhasan01740.workers.dev`, with its Preview URL disabled. The main application Worker `agfusion` still has both `workers.dev` and Preview routes disabled. The quote-session endpoint will reject Vercel requests until the exact Cloudflare `API_TOKEN` value is entered directly in Vercel Preview as `AGFUSION_QUOTE_SESSION_STORE_TOKEN`.
+- Vercel Preview is READY for the feature branch. Its Preview environment contains `OrdenFi_QUOTE_SESSION_STORE_URL`, a sensitive `OrdenFi_QUOTE_SESSION_SECRET`, and `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED=false`.
+- The one missing Preview credential is `OrdenFi_QUOTE_SESSION_STORE_TOKEN`. Rotate the write-only Worker `API_TOKEN` in Cloudflare, then enter the same new value directly in Vercel Preview. Do not paste it into chat or commit it.
+- The dedicated quote-session Worker has its authenticated `workers.dev` route enabled at `https://OrdenFi-quote-session-store.sayedhasan01740.workers.dev`, with its Preview URL disabled. The main application Worker `OrdenFi` still has both `workers.dev` and Preview routes disabled. The quote-session endpoint will reject Vercel requests until the exact Cloudflare `API_TOKEN` value is entered directly in Vercel Preview as `OrdenFi_QUOTE_SESSION_STORE_TOKEN`.
 
 The direct D1 SQL validation used synthetic test hashes and confirmed:
 - Concurrent conditional consume updates returned changes `1` and `0` for the same row.
@@ -132,4 +132,4 @@ Cloudflare's D1 documentation confirms that Worker bindings use prepared stateme
 - https://developers.cloudflare.com/d1/worker-api/prepared-statements/
 - https://developers.cloudflare.com/d1/worker-api/return-object/
 
-Still not implemented: wallet UI approval/Permit2/swap orchestration, user-facing transaction confirmations, wallet signing/broadcast, post-submission tracking, live liquidity validation, and independent security review. Keep `AGFUSION_MAINNET_SWAP_PREPARATION_ENABLED=false`. No Mainnet signing or broadcast is enabled by this work.
+Still not implemented: wallet UI approval/Permit2/swap orchestration, user-facing transaction confirmations, wallet signing/broadcast, post-submission tracking, live liquidity validation, and independent security review. Keep `OrdenFi_MAINNET_SWAP_PREPARATION_ENABLED=false`. No Mainnet signing or broadcast is enabled by this work.

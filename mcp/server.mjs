@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * AGFusion MCP (Model Context Protocol) Server for Arc Network
+ * OrdenFi MCP (Model Context Protocol) Server for Arc Network
  * Standard stdio JSON-RPC 2.0 server for Claude Desktop, Cursor, and AI Coding Agents.
  *
  * Usage:
@@ -9,7 +9,7 @@
  *
  * In claude_desktop_config.json:
  *   "mcpServers": {
- *     "agfusion-arc": {
+ *     "ordenfi-arc": {
  *       "command": "node",
  *       "args": ["<PATH_TO_PROJECT>/mcp/server.mjs"]
  *     }
@@ -60,7 +60,7 @@ const TOOLS = [
   },
   {
     name: "arc_prepare_batch_disperse",
-    description: "Generate calldata and execution plan for AGFusionDisperse contract (single-signature batch send).",
+    description: "Generate calldata and execution plan for OrdenFiDisperse contract (single-signature batch send).",
     inputSchema: {
       type: "object",
       properties: {
@@ -93,7 +93,7 @@ const TOOLS = [
       properties: {
         taskId: {
           type: "number",
-          description: "The numeric task ID in AGFusionEscrow contract",
+          description: "The numeric task ID in OrdenFiEscrow contract",
         },
       },
       required: ["taskId"],
@@ -190,7 +190,7 @@ async function handleToolCall(name, args) {
       return {
         taskId,
         network: "Arc Testnet",
-        contract: "AGFusionEscrow",
+        contract: "OrdenFiEscrow",
         status: "Active",
         details: "AI Agent milestone escrow verified on-chain.",
         explorerUrl: `https://testnet.arcscan.app`,
@@ -222,7 +222,7 @@ rl.on("line", async (line) => {
         result: {
           protocolVersion: "2024-11-05",
           serverInfo: {
-            name: "agfusion-arc-mcp",
+            name: "ordenfi-arc-mcp",
             version: "1.0.0",
           },
           capabilities: {
@@ -281,4 +281,4 @@ rl.on("line", async (line) => {
   }
 });
 
-process.stderr.write("AGFusion Arc MCP Server started on stdio\n");
+process.stderr.write("OrdenFi Arc MCP Server started on stdio\n");

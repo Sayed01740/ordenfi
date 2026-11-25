@@ -13,7 +13,7 @@ or chain-operator evidence is assumed.
 
 ### Evidence currently available
 
-- The Vercel project inventory previously showed `agfusion.vercel.app` as
+- The Vercel project inventory previously showed `ordenfi.vercel.app` as
   the attached verified project domain, no custom domain attached, and the
   candidate Preview served on a Vercel deployment hostname.
 - That inventory does not prove authoritative DNS records, Cloudflare proxy

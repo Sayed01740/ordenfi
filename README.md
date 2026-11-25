@@ -1,18 +1,9 @@
-# Ordenfi
+# OrdenFi
 
-Ordenfi is the current public identity of this application. Existing `AGFUSION_*` environment variables, deployed `AGFusion*` contracts, authentication cookies, and browser storage identifiers remain compatible. Set `NEXT_PUBLIC_APP_URL` for a new deployment domain; the existing application URL remains the fallback. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
+OrdenFi is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails. Deployed contracts are verified under the OrdenFi namespace on Arc Mainnet, with full backwards compatibility for existing configurations and browser storage identifiers. The UI uses the shared tokens in `src/app/ordenfi-theme.css`.
 
-[![Arc Network](https://img.shields.io/badge/Network-Arc_Mainnet_(5042)-0052FF?style=flat-square)](https://explorer.arc.io)
-[![Circle CCTP](https://img.shields.io/badge/Bridge-Circle_CCTP_v2-2775CA?style=flat-square)](https://developers.circle.com/stablecoins/docs/cctp-getting-started)
-[![Uniswap V3](https://img.shields.io/badge/DEX-Uniswap_V3_AMM-FF007A?style=flat-square)](https://uniswap.org)
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.5_(App_Router)-black?style=flat-square&logo=next.js)](https://nextjs.org)
-[![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?style=flat-square&logo=solidity)](https://soliditylang.org)
-[![License](https://img.shields.io/badge/License-Proprietary-blue?style=flat-square)](#license)
-
-**Ordenfi** is an institutional-grade stablecoin orchestration engine and decentralized treasury workspace natively deployed on **Arc Mainnet**. It unites multi-chain liquidity, cross-chain CCTP settlement, DEX swaps, batch disbursements, and automated treasury actions under strict, wallet-confirmed policy guardrails.
-
-* **Live Application:** [https://agfusion.vercel.app](https://agfusion.vercel.app)
-* **Interactive Docs:** [https://agfusion.vercel.app/docs](https://agfusion.vercel.app/docs)
+* **Live Application:** [https://ordenfi.vercel.app](https://ordenfi.vercel.app)
+* **Interactive Docs:** [https://ordenfi.vercel.app/docs](https://ordenfi.vercel.app/docs)
 * **Mainnet Block Explorer:** [https://explorer.arc.io](https://explorer.arc.io)
 
 ---
@@ -29,9 +20,9 @@ Ordenfi is the current public identity of this application. Existing `AGFUSION_*
                    ▼                                           ▼
 ┌──────────────────────────────────────┐    ┌──────────────────────────────────────┐
 │        Serverless API & Gateways     │    │       On-Chain Smart Contracts       │
-│  • SIWE / Web3 Wallet Verification   │    │  • AGFusionRegistry (Agent Metadata) │
-│  • Uniswap V3 Permit2 Routing Proxy  │    │  • AGFusionEscrow (Milestones/Fees)  │
-│  • AES-256-GCM Quote Session Store   │    │  • AGFusionDisperse (Multi-batch)    │
+│  • SIWE / Web3 Wallet Verification   │    │  • OrdenFiRegistry (Agent Metadata) │
+│  • Uniswap V3 Permit2 Routing Proxy  │    │  • OrdenFiEscrow (Milestones/Fees)  │
+│  • AES-256-GCM Quote Session Store   │    │  • OrdenFiDisperse (Multi-batch)    │
 │  • Circle CCTP v2 Iris Attestations  │    │  • Canonical Native / ERC20 USDC     │
 └──────────────────┬───────────────────┘    └──────────────────┬───────────────────┘
                    │                                           │
@@ -64,9 +55,9 @@ Arc Network utilizes USDC as its native gas currency (18 decimals in the EVM exe
 * **Automated Iris Attestation Tracking:** Real-time polling and verification against Circle's off-chain Iris attestation service.
 
 ### 4. Smart Contract Treasury Protocols
-* **Conditional Escrow (`AGFusionEscrow`):** Trust-minimized milestone payouts with configurable arbitrator dispute resolution, 50 bps protocol fees, and emergency recovery timelocks.
-* **Batch Disperse (`AGFusionDisperse`):** Single-transaction mass distribution of native and ERC-20 stablecoins, reducing network gas overhead by up to $65\%$.
-* **On-Chain Agent Registry (`AGFusionRegistry`):** EIP-712 compatible agent identity registration and decentralized metadata anchors.
+* **Conditional Escrow (`OrdenFiEscrow`):** Trust-minimized milestone payouts with configurable arbitrator dispute resolution, 50 bps protocol fees, and emergency recovery timelocks.
+* **Batch Disperse (`OrdenFiDisperse`):** Single-transaction mass distribution of native and ERC-20 stablecoins, reducing network gas overhead by up to $65\%$.
+* **On-Chain Agent Registry (`OrdenFiRegistry`):** EIP-712 compatible agent identity registration and decentralized metadata anchors.
 
 ---
 
@@ -76,9 +67,9 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
 
 | Contract | Mainnet Address | Deployment Tx | Explorer |
 | :--- | :--- | :--- | :--- |
-| **AGFusionRegistry** | `0xf25757227337130Fb33A70A31aFFD782FfA44f6D` | [`0xab66ea...`](https://explorer.arc.io/tx/0xab66eac920a45fce0a2d6e861bde671ea2a851ed4ae44ef4016ba46884ff8c1b) | [View on Explorer](https://explorer.arc.io/address/0xf25757227337130Fb33A70A31aFFD782FfA44f6D) |
-| **AGFusionEscrow** | `0x23554d16C1F397fde97cf394FF603d7372b61f20` | [`0x20eeda...`](https://explorer.arc.io/tx/0x20eeda61acc3203224565f92b9f3ebafdbe18444ec65d45031a259402458b82d) | [View on Explorer](https://explorer.arc.io/address/0x23554d16C1F397fde97cf394FF603d7372b61f20) |
-| **AGFusionDisperse** | `0x376323cCE5233C0C20339BBeeCFEB838602B5578` | [`0xd24b58...`](https://explorer.arc.io/tx/0xd24b5819d9c90a2118e2f77f97af58745b84893798533ae0c4b2a1b5b69c4f7a) | [View on Explorer](https://explorer.arc.io/address/0x376323cCE5233C0C20339BBeeCFEB838602B5578) |
+| **OrdenFiRegistry** | `0xf25757227337130Fb33A70A31aFFD782FfA44f6D` | [`0xab66ea...`](https://explorer.arc.io/tx/0xab66eac920a45fce0a2d6e861bde671ea2a851ed4ae44ef4016ba46884ff8c1b) | [View on Explorer](https://explorer.arc.io/address/0xf25757227337130Fb33A70A31aFFD782FfA44f6D) |
+| **OrdenFiEscrow** | `0x23554d16C1F397fde97cf394FF603d7372b61f20` | [`0x20eeda...`](https://explorer.arc.io/tx/0x20eeda61acc3203224565f92b9f3ebafdbe18444ec65d45031a259402458b82d) | [View on Explorer](https://explorer.arc.io/address/0x23554d16C1F397fde97cf394FF603d7372b61f20) |
+| **OrdenFiDisperse** | `0x376323cCE5233C0C20339BBeeCFEB838602B5578` | [`0xd24b58...`](https://explorer.arc.io/tx/0xd24b5819d9c90a2118e2f77f97af58745b84893798533ae0c4b2a1b5b69c4f7a) | [View on Explorer](https://explorer.arc.io/address/0x376323cCE5233C0C20339BBeeCFEB838602B5578) |
 
 ### Canonical Token Addresses (Arc Mainnet)
 
@@ -114,8 +105,8 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Sayed01740/agfusion.git
-   cd agfusion
+   git clone https://github.com/Sayed01740/ordenfi.git
+   cd ordenfi
    ```
 
 2. **Install dependencies:**
@@ -134,10 +125,10 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
    NEXT_PUBLIC_ARC_RPC_URL="https://rpc.mainnet.arc.io"
    NEXT_PUBLIC_ARC_EXPLORER_URL="https://explorer.arc.io"
    
-   # Deployed Contract Addresses
-   NEXT_PUBLIC_AGFUSION_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
-   NEXT_PUBLIC_AGFUSION_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
-   NEXT_PUBLIC_AGFUSION_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
+   # Deployed Contract Addresses (Arc Mainnet)
+   NEXT_PUBLIC_ORDENFI_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
+   NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
+   NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
    ```
 
 4. **Initialize Database & Run Development Server:**
@@ -154,9 +145,9 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
 ```text
 ├── contracts/                  # Solidity smart contracts and deployment suites
 │   ├── src/                    # Smart contract source files & flattened verifiers
-│   │   ├── AGFusionRegistry.sol
-│   │   ├── AGFusionEscrow.sol
-│   │   └── AGFusionDisperse.sol
+│   │   ├── OrdenFiRegistry.sol
+│   │   ├── OrdenFiEscrow.sol
+│   │   └── OrdenFiDisperse.sol
 │   └── deployments/            # Verified deployment records (arc-mainnet.json)
 ├── src/
 │   ├── app/                    # Next.js 15 App Router pages & API routes

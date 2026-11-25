@@ -2,7 +2,7 @@ export const BRAND_NAME = "Ordenfi";
 export const BRAND_DESCRIPTION = "Swap, send, and bridge stablecoins on Arc. Review every action and confirm it in your wallet.";
 
 // Keep the working deployment until the owner configures a new domain.
-const LEGACY_DEPLOYMENT_URL = "https://agfusion.vercel.app";
+const LEGACY_DEPLOYMENT_URL = "https://ordenfi.vercel.app";
 
 export function resolveBrandUrl(value: string | undefined): string {
   if (!value?.trim()) return LEGACY_DEPLOYMENT_URL;

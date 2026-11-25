@@ -4,7 +4,7 @@ import { BRAND_NAME, resolveBrandUrl } from "./brand";
 describe("Ordenfi public identity", () => {
   it("uses the new name while retaining the existing deployment as fallback", () => {
     expect(BRAND_NAME).toBe("Ordenfi");
-    expect(resolveBrandUrl(undefined)).toBe("https://agfusion.vercel.app");
+    expect(resolveBrandUrl(undefined)).toBe("https://ordenfi.vercel.app");
   });
 
   it("normalizes a configured deployment URL", () => {
@@ -13,7 +13,7 @@ describe("Ordenfi public identity", () => {
 
   it("rejects unsafe schemes and malformed deployment URLs", () => {
     for (const value of ["javascript:alert(1)", "not a url", "file:///tmp/app"]) {
-      expect(resolveBrandUrl(value)).toBe("https://agfusion.vercel.app");
+      expect(resolveBrandUrl(value)).toBe("https://ordenfi.vercel.app");
     }
   });
 });

@@ -24,7 +24,7 @@ function secret(): string {
     process.env.CIRCLE_API_KEY?.trim();
   if (value) return value;
   if (process.env.NODE_ENV !== "production") {
-    return "agfusion-local-dev-confirm-secret-change-me";
+    return "ordenfi-local-dev-confirm-secret-change-me";
   }
   throw new Error("A server confirmation secret is required.");
 }

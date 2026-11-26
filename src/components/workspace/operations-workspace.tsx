@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { getArcNetworkMeta } from "@/lib/arc-chain";
 import { CHAINS } from "@/lib/chains";
+import { isValidTxHash } from "@/lib/tx-verify";
 import { getInjectedProvider, switchToArcNetwork } from "@/sdk/wallet-adapter";
 import type { ChainId, TransactionRecord, TxStep } from "@/types";
 
@@ -56,6 +57,14 @@ function getStepExplorerUrl(tx: TransactionRecord, step: TxStep): string | null 
 
 function bridgeTxSteps(tx: TransactionRecord): TxStep[] {
   return (tx.steps || []).filter((step) => Boolean(step.txHash));
+}
+
+function getTxExplorerHref(tx: TransactionRecord): string | null {
+  if (tx.explorerUrl && /^https?:\/\//i.test(tx.explorerUrl)) return tx.explorerUrl;
+  if (!tx.txHash || !isValidTxHash(tx.txHash)) return null;
+  const chain = tx.toChain || tx.fromChain;
+  const explorer = chain ? CHAINS[chain]?.explorer : undefined;
+  return explorer ? `${explorer}/tx/${tx.txHash}` : null;
 }
 
 export function OperationsWorkspace() {
@@ -263,6 +272,7 @@ export function OperationsWorkspace() {
                 const detail = getActivityDetail(tx);
                 const isBridgeError = tx.type === "bridge" && (tx.status === "error" || tx.retryable);
                 const childSteps = tx.type === "bridge" ? bridgeTxSteps(tx) : [];
+                const txExplorerHref = getTxExplorerHref(tx);
                 return (
                   <div
                     key={tx.id}
@@ -299,6 +309,24 @@ export function OperationsWorkspace() {
                         {tx.status}
                       </Badge>
                     </button>
+                    {txExplorerHref && childSteps.length === 0 && (
+                      <div className="mt-2 flex items-center justify-between gap-2 border-t border-border/60 pt-2">
+                        <span className="truncate font-mono text-[11px] text-muted-foreground">
+                          {tx.txHash ? `Tx: ${shortenAddress(tx.txHash, 4)}` : "On-chain receipt"}
+                        </span>
+                        <a
+                          href={txExplorerHref}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-accent hover:bg-accent/10 hover:underline transition-colors"
+                          title={tx.txHash || txExplorerHref}
+                        >
+                          View on explorer
+                          <ExternalLink aria-hidden="true" className="h-3 w-3" />
+                        </a>
+                      </div>
+                    )}
                     {childSteps.length > 0 && (
                       <div className="mt-2.5 border-t border-border/80 pt-2 space-y-1.5">
                         {childSteps.map((step, index) => {

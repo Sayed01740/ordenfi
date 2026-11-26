@@ -440,6 +440,7 @@ export async function runAgentLoop(
         amount,
         token: tokenIn,
         tokenOut,
+        toChain: defaultArcChain,
       });
       preview = prep.preview ?? {
         type: "swap" as const,
@@ -518,6 +519,7 @@ export async function runAgentLoop(
       const prep = await emitTool("prepare_payment", {
         kind: "send",
         amount,
+        toChain: defaultArcChain,
         ...(hasAddr ? { recipient } : {}),
         ...(recipientLabel ? { recipientLabel } : {}),
       });

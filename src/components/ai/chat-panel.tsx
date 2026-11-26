@@ -231,7 +231,7 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
         const id = uid("msg");
         if (lastContent) setReplyId(id);
         if (!lastContent) setChatError("The assistant could not complete that request. Try asking again.");
-        addMessage({
+        finalMsg = {
           id,
           role: "assistant",
           content:
@@ -240,7 +240,20 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
           createdAt: new Date().toISOString(),
           toolTrace: trace,
           actionPreview: pendingPreview,
-        });
+        };
+        addMessage(finalMsg);
+      }
+
+      // Auto-trigger wallet signature request when Kona produces an executable transaction plan
+      const autoPreview = !sawError && !execute ? finalMsg?.actionPreview : undefined;
+      if (autoPreview?.canExecute && !autoPreview.executed && autoPreview.requiresWallet !== false && finalMsg) {
+        const activeMeta = (await import("@/sdk/active-wallet")).getActiveWalletMeta();
+        if (walletAddress || activeMeta?.address) {
+          sendingRef.current = false;
+          setThinking(false);
+          void executePreview(finalMsg.id, autoPreview, { bypassBusyCheck: true });
+          return;
+        }
       }
     } catch (e) {
       setChatError(`Agent failed: ${e instanceof Error ? e.message : "unknown error"}. See the conversation for retry guidance.`);
@@ -262,9 +275,13 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
    * Run the planned action directly (do NOT re-chat).
    * Re-parsing "Swap 5 USDC…" often failed to open the wallet; execute* hits App Kit / viem.
    */
-  async function executePreview(messageId: string, preview: ActionPreview) {
-    if (preview.executed || !preview.canExecute || isThinking || sendingRef.current)
-      return;
+  async function executePreview(
+    messageId: string,
+    preview: ActionPreview,
+    opts?: { bypassBusyCheck?: boolean },
+  ) {
+    if (preview.executed || !preview.canExecute) return;
+    if (!opts?.bypassBusyCheck && (isThinking || sendingRef.current)) return;
 
     setChatError(null);
     setReplyId(null);
@@ -292,13 +309,12 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
       return;
     }
 
-    markPreviewExecuted(messageId);
     sendingRef.current = true;
     setThinking(true);
     setStatusLine(
       preview.type === "swap"
-        ? "Executing swap..."
-        : "Executing transaction..."
+        ? "Executing swap — check your wallet…"
+        : "Requesting wallet signature…"
     );
 
     try {
@@ -415,6 +431,9 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
         throw new Error(`Unsupported action type: ${preview.type}`);
       }
 
+      if (tx.status !== "error") {
+        markPreviewExecuted(messageId);
+      }
       addTransaction(tx);
       setActiveTx(tx.id);
       if (tx.status === "error") setChatError(`${preview.title} failed. See the conversation and activity timeline for details.`);

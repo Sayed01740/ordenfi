@@ -137,14 +137,17 @@ export function ActionPreviewCard({ preview, onExecute, onReviewPlan, onGuide, b
         <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={busy} onClick={() => missingField && onGuide?.(missingField)} type="button">
           {assistantGuides[missingField].label}<ArrowRight aria-hidden="true" className="h-4 w-4" />
         </Button>
-      ) : draft ? (
-        <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={busy} onClick={() => onReviewPlan?.(draft)} type="button">
-          Review in {draft.type === "swap" ? "Swap" : "Send"}<ArrowRight aria-hidden="true" className="h-4 w-4" />
-        </Button>
       ) : (
-        <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={!preview.canExecute || done || busy || confirming} onClick={(e) => { e.preventDefault(); e.stopPropagation(); void confirmAndExecute(); }} type="button">
-          {done ? <><Check className="h-4 w-4" />Executed</> : busy || confirming ? <><LiveSpinner />{confirming ? "Authorizing…" : "Confirming in wallet…"}</> : preview.canExecute ? cta : "Missing details"}
-        </Button>
+        <div className="space-y-2">
+          <Button size="lg" className="w-full text-sm font-semibold h-11" disabled={!preview.canExecute || done || busy || confirming} onClick={(e) => { e.preventDefault(); e.stopPropagation(); void confirmAndExecute(); }} type="button">
+            {done ? <><Check className="h-4 w-4" />Executed</> : busy || confirming ? <><LiveSpinner />{confirming ? "Requesting signature…" : "Confirming in wallet…"}</> : preview.canExecute ? cta : "Missing details"}
+          </Button>
+          {draft && !done && (
+            <Button size="sm" variant="ghost" className="w-full text-xs text-muted-foreground hover:text-foreground h-8" disabled={busy || confirming} onClick={() => onReviewPlan?.(draft)} type="button">
+              Edit in {draft.type === "swap" ? "Swap" : "Send"} tab<ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
       )}
       {error && <div className="rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs leading-relaxed text-red-200">{error}</div>}
     </div>

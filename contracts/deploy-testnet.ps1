@@ -1,4 +1,4 @@
-# OrdenFi — Arc TESTNET (chain 5042002) deploy + Blockscout verify
+﻿# OrdenFi — Arc TESTNET (chain 5042002) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://testnet.arcscan.app
@@ -26,7 +26,7 @@ $foundryBin = Join-Path $env:USERPROFILE ".foundry\bin"
 if (Test-Path $foundryBin) { $env:Path = "$foundryBin;$env:Path" }
 if (-not (Get-Command forge -ErrorAction SilentlyContinue)) { throw "forge not found. Install Foundry (foundryup)." }
 
-$RPC          = if ($env:ARC_TESTNET_RPC_URL) { $env:ARC_TESTNET_RPC_URL } else { "https://rpc.testnet.arc.network" }
+$RPC          = if ($env:ARC_TESTNET_RPC_URL) { $env:ARC_TESTNET_RPC_URL } else { "https://rpc.testnet.arc.io" }
 $CHAIN_ID     = 5042002
 $EXPLORER     = "https://testnet.arcscan.app"
 $VERIFIER_URL = "$EXPLORER/api/"

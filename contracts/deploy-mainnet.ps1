@@ -1,4 +1,4 @@
-# OrdenFi — Arc MAINNET (chain 5042) deploy + Blockscout verify
+﻿# OrdenFi — Arc MAINNET (chain 5042) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://explorer.arc.io
@@ -26,7 +26,7 @@ $foundryBin = Join-Path $env:USERPROFILE ".foundry\bin"
 if (Test-Path $foundryBin) { $env:Path = "$foundryBin;$env:Path" }
 if (-not (Get-Command forge -ErrorAction SilentlyContinue)) { throw "forge not found. Install Foundry (foundryup)." }
 
-$RPC          = if ($env:ARC_RPC_URL) { $env:ARC_RPC_URL } else { "https://rpc.mainnet.arc.network" }
+$RPC          = if ($env:ARC_RPC_URL) { $env:ARC_RPC_URL } else { "https://rpc.mainnet.arc.io" }
 $CHAIN_ID     = 5042
 $EXPLORER     = "https://explorer.arc.io"
 $VERIFIER_URL = "$EXPLORER/api/"

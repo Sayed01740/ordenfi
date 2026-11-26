@@ -1,4 +1,4 @@
-# AGFusion — Arc MAINNET (chain 5042) deploy + Blockscout verify
+# OrdenFi — Arc MAINNET (chain 5042) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://explorer.arc.io
@@ -26,11 +26,11 @@ $foundryBin = Join-Path $env:USERPROFILE ".foundry\bin"
 if (Test-Path $foundryBin) { $env:Path = "$foundryBin;$env:Path" }
 if (-not (Get-Command forge -ErrorAction SilentlyContinue)) { throw "forge not found. Install Foundry (foundryup)." }
 
-$RPC          = if ($env:ARC_RPC_URL) { $env:ARC_RPC_URL } else { "https://rpc.mainnet.arc.io" }
+$RPC          = if ($env:ARC_RPC_URL) { $env:ARC_RPC_URL } else { "https://rpc.mainnet.arc.network" }
 $CHAIN_ID     = 5042
 $EXPLORER     = "https://explorer.arc.io"
 $VERIFIER_URL = "$EXPLORER/api/"
-$METADATA     = if ($env:AGFUSION_METADATA_URI) { $env:AGFUSION_METADATA_URI } else { "https://agfusion.vercel.app/identity/agfusion-agent.json" }
+$METADATA     = if ($env:ORDENFI_METADATA_URI) { $env:ORDENFI_METADATA_URI } elseif ($env:AGFUSION_METADATA_URI) { $env:AGFUSION_METADATA_URI } else { "https://ordenfi.xyz/identity/ordenfi-agent.json" }
 $OutDir       = Join-Path $PSScriptRoot "deployments"
 $OutFile      = Join-Path $OutDir "arc-mainnet.json"
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null

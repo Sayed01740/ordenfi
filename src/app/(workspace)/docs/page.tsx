@@ -16,6 +16,7 @@ const topics = [
   { id: "batch-payroll", label: "Batch payments" },
   { id: "kona", label: "Use Kona" },
   { id: "activity", label: "Track a transaction" },
+  { id: "contracts", label: "Smart contracts" },
   { id: "more", label: "More tools" },
 ] as const;
 
@@ -113,13 +114,13 @@ export default function DocsPage() {
 
           <DocsSection id="batch-payroll" title="Batch payments">
             <p>Open <strong>Batch Payments</strong> and add up to 200 recipients. Download the CSV template, upload a UTF-8 CSV or TSV, or paste rows from a spreadsheet. Include an <code>address</code> and <code>amount</code> column. Use <code>label</code> to identify payments in the report.</p>
-            <p>Append the imported rows or replace the current draft. Fix invalid amounts, addresses and duplicate recipients before reviewing the network, payment total and estimated gas. Confirm each transfer separately in your wallet.</p>
-            <p>Use <strong>Stop after current payment</strong> to stop before the next recipient. A failed or unconfirmed transfer also stops the batch. Download the full results, or download only the unsent rows to import into a new batch. Check the <strong>Activity timeline</strong> before repeating a payment marked <strong>Needs review</strong>.</p>
+            <p>Append the imported rows or replace the current draft. Fix invalid amounts, addresses and duplicate recipients before reviewing the network, payment total and estimated gas. On both <strong>Arc Mainnet</strong> and <strong>Arc Testnet</strong>, OrdenFi routes batches through <code>OrdenFiDisperse</code> so you can pay up to 200 recipients in a single wallet signature (with automatic sequential fallback when needed).</p>
+            <p>Use <strong>Stop after current payment</strong> to stop before the next recipient in sequential mode. Download the full results, or download only the unsent rows to import into a new batch. Check the <strong>Activity timeline</strong> before repeating a payment marked <strong>Needs review</strong>.</p>
           </DocsSection>
 
           <DocsSection id="kona" title="Use Kona">
-            <p>Select <strong>Ask Kona</strong> to open the assistant. Describe what you want to do or use a shortcut. A supported swap or send plan can open the corresponding form with its details filled in. Review the form and confirm in your wallet when you’re ready.</p>
-            <p>Minimizing Kona keeps your draft. When a new answer arrives, select <strong>Read reply</strong> to return to it. Kona can also flag a network mismatch or an expired Mainnet quote.</p>
+            <p>Select <strong>Ask Kona</strong> to open the assistant. Describe what you want to do (for example, sending USDC, swapping tokens, or bridging) and Kona will prepare the route and trigger your wallet signature request directly when your wallet is connected, or let you review and edit the pre-filled form in the workspace.</p>
+            <p>Minimizing Kona keeps your draft. When a new answer arrives, select <strong>Read reply</strong> to return to it. Kona also adapts to your active network (Arc Mainnet or Arc Testnet) and flags network mismatches or expired Mainnet quotes.</p>
           </DocsSection>
 
           <DocsSection id="activity" title="Track a transaction">
@@ -138,6 +139,80 @@ export default function DocsPage() {
                 <dd>Check the last completed step. If recovery is available, open <strong>Bridge</strong> and resume the existing transfer.</dd>
               </div>
             </dl>
+          </DocsSection>
+
+          <DocsSection id="contracts" title="Smart contracts">
+            <p>OrdenFi deploys its core contracts on both <strong>Arc Mainnet</strong> (<code>5042</code>) and <strong>Arc Testnet</strong> (<code>5042002</code>) using Solidity <code>0.8.24</code>.</p>
+            <table className="w-full text-left text-sm">
+              <caption className="mb-2 text-left font-semibold text-foreground">Arc Mainnet (5042)</caption>
+              <thead>
+                <tr className="border-b border-border text-foreground">
+                  <th scope="col" className="py-2 pr-3 font-medium">Contract</th>
+                  <th scope="col" className="py-2 font-medium">Address</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiRegistry</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://explorer.arc.io/address/0x06B16942e9bcE49b38281704eDBeE4CAE28FD884" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x06B16942e9bcE49b38281704eDBeE4CAE28FD884
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiEscrow</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://explorer.arc.io/address/0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiDisperse</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://explorer.arc.io/address/0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="w-full text-left text-sm">
+              <caption className="mb-2 text-left font-semibold text-foreground">Arc Testnet (5042002)</caption>
+              <thead>
+                <tr className="border-b border-border text-foreground">
+                  <th scope="col" className="py-2 pr-3 font-medium">Contract</th>
+                  <th scope="col" className="py-2 font-medium">Address</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiRegistry</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://testnet.arcscan.app/address/0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiEscrow</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://testnet.arcscan.app/address/0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" className="py-2 pr-3 font-medium text-foreground">OrdenFiDisperse</th>
+                  <td className="py-2 font-mono text-xs break-all">
+                    <a href="https://testnet.arcscan.app/address/0x37d42057D6914fC7eA231DD1F47A3A51314d8688" target="_blank" rel="noreferrer" className="text-accent underline decoration-accent/45 underline-offset-4 hover:decoration-accent">
+                      0x37d42057D6914fC7eA231DD1F47A3A51314d8688
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </DocsSection>
 
           <DocsSection id="more" title="More tools">

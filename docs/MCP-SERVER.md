@@ -48,6 +48,6 @@ In Cursor Settings → Features → MCP:
 ## Example Agent Prompts
 
 Once connected, your AI assistant can answer and execute tasks like:
-- *"Check the balance of 0x76bb5678ec11ae94b34ed9cf90b25c9eea440483 on Arc Testnet."*
+- *"Check the balance of 0x06B16942e9bcE49b38281704eDBeE4CAE28FD884 on Arc Mainnet."*
 - *"Estimate how much USDC gas I will save by batching 10 payroll transfers on Arc instead of Ethereum L1."*
 - *"Prepare a batch disperse payload to pay 3 contractor addresses 10 USDC each."*

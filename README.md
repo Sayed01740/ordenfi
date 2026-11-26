@@ -161,11 +161,15 @@ All contracts are deployed under the **OrdenFi** namespace on both **Arc Mainnet
 
 ```text
 ├── contracts/                  # Solidity smart contracts and deployment suites
-│   ├── src/                    # Smart contract source files & flattened verifiers
+│   ├── src/                    # Smart contract source files
 │   │   ├── OrdenFiRegistry.sol
 │   │   ├── OrdenFiEscrow.sol
 │   │   └── OrdenFiDisperse.sol
-│   └── deployments/            # Verified deployment records (arc-mainnet.json)
+│   ├── deployments/            # Deployment records (arc-mainnet.json, arc-testnet.json)
+│   ├── flatten/                # Flattened Solidity sources for explorer verification
+│   ├── verify/                 # Standard JSON verification inputs
+│   ├── deploy-mainnet.ps1      # Arc Mainnet deploy & verify script
+│   └── deploy-testnet.ps1      # Arc Testnet deploy & verify script
 ├── src/
 │   ├── app/                    # Next.js 15 App Router pages & API routes
 │   │   ├── api/circle/         # CCTP and Iris attestation relays

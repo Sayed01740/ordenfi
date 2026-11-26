@@ -1,4 +1,4 @@
-﻿# OrdenFi — Arc TESTNET (chain 5042002) deploy + Blockscout verify
+# OrdenFi — Arc TESTNET (chain 5042002) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://testnet.arcscan.app

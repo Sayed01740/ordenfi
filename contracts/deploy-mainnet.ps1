@@ -1,4 +1,4 @@
-﻿# OrdenFi — Arc MAINNET (chain 5042) deploy + Blockscout verify
+# OrdenFi — Arc MAINNET (chain 5042) deploy + Blockscout verify
 #
 # Deploys: OrdenFiRegistry, OrdenFiEscrow, OrdenFiDisperse
 # Verifies each on https://explorer.arc.io

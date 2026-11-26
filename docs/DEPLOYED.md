@@ -1,63 +1,58 @@
-# OrdenFi — Deployed on Arc Testnet
+# OrdenFi — Deployed Smart Contracts
 
-## Custom contract (yours)
+All OrdenFi contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`) and **Arc Testnet** (`Chain ID: 5042002`) with Solidity `0.8.24` (`cancun` EVM, 200 optimizer runs).
 
-| Field | Value |
-|-------|--------|
-| **Contract** | `OrdenFiRegistry` |
-| **Address** | `0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483` |
-| **Deployer / owner** | `0xB00f41172c23d31571a3bE850AA0e81e58Ab8828` |
-| **Deploy tx** | `0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99` |
-| **Chain** | Arc Testnet · `5042002` |
-| **Metadata URI** | https://ordenfi.vercel.app/identity/agfusion-agent.json |
+---
 
-### Explorer links
+## Arc Mainnet (`5042`)
 
-- Contract: https://testnet.arcscan.app/address/0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483  
-- Deploy tx: https://testnet.arcscan.app/tx/0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99  
-- Deployer: https://testnet.arcscan.app/address/0xB00f41172c23d31571a3bE850AA0e81e58Ab8828  
+| Contract | Address | Deploy Tx | Explorer |
+| :--- | :--- | :--- | :--- |
+| **OrdenFiRegistry** | `0x06B16942e9bcE49b38281704eDBeE4CAE28FD884` | `0xb864ca803b70a7de7be681d97506d6f35eb6c879f7e51a6c5d5c044163e212d4` | [View on Explorer](https://explorer.arc.io/address/0x06B16942e9bcE49b38281704eDBeE4CAE28FD884) |
+| **OrdenFiEscrow** | `0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F` | `0x4f558fa13e2e32e90b67337541dec037be7ce790ae23d23a72624d0eb0767159` | [View on Explorer](https://explorer.arc.io/address/0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F) |
+| **OrdenFiDisperse** | `0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0` | `0xc52253a06511c969b54b440b9d1c8b04b6357a08acc3a45ff2217b842d5b6dc0` | [View on Explorer](https://explorer.arc.io/address/0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0) |
 
-### Verify (if not already)
+- **Deployer / Owner:** `0xB00f41172c23d31571a3bE850AA0e81e58Ab8828`
+- **RPC:** `https://rpc.mainnet.arc.io`
+- **Metadata URI:** `https://ordenfi.xyz/identity/ordenfi-agent.json`
 
-```powershell
-$env:Path = "$env:USERPROFILE\.foundry\bin;$env:Path"
-cd C:\Users\sayed\.grok\bin\ordenfi\contracts
-$ADDRESS = "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
-$URI = "https://ordenfi.vercel.app/identity/agfusion-agent.json"
-$args = cast abi-encode "constructor(string)" $URI
-forge verify-contract $ADDRESS src/OrdenFiRegistry.sol:OrdenFiRegistry `
-  --chain-id 5042002 `
-  --verifier blockscout `
-  --verifier-url https://testnet.arcscan.app/api/ `
-  --constructor-args $args
-```
+---
 
-### Register agent on your contract
+## Arc Testnet (`5042002`)
 
-```powershell
-$REGISTRY = "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
-cast send $REGISTRY "register(string,string,string)" `
-  "OrdenFi Agent" "agent" "https://ordenfi.vercel.app/identity/agfusion-agent.json" `
-  --rpc-url https://rpc.testnet.arc.network `
-  --private-key $env:PRIVATE_KEY
-```
+| Contract | Address | Deploy Tx | Explorer |
+| :--- | :--- | :--- | :--- |
+| **OrdenFiRegistry** | `0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4` | `0x609a7b7ca5aaf871588de682c6a4b945d9218ee7c925c4768b00cd30166fd79e` | [View on Explorer](https://testnet.arcscan.app/address/0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4) |
+| **OrdenFiEscrow** | `0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c` | `0xc929acfaccd90b6a2e6c0fb4820e12f8bc628aa745530a4eaebd8bbb4c0554b3` | [View on Explorer](https://testnet.arcscan.app/address/0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c) |
+| **OrdenFiDisperse** | `0x37d42057D6914fC7eA231DD1F47A3A51314d8688` | `0xfda50000b16e0f68d0910d1d48ee3afb709992904b036b5c0b5f654cfef14311` | [View on Explorer](https://testnet.arcscan.app/address/0x37d42057D6914fC7eA231DD1F47A3A51314d8688) |
 
-## App env
+- **Deployer / Owner:** `0xB00f41172c23d31571a3bE850AA0e81e58Ab8828`
+- **RPC:** `https://rpc.testnet.arc.io`
+- **Metadata URI:** `https://ordenfi.xyz/identity/ordenfi-agent.json`
+
+---
+
+## Verification & Deployment Scripts
+
+- **Mainnet deploy / verify:** `contracts/deploy-mainnet.ps1` (`-VerifyOnly`)
+- **Testnet deploy / verify:** `contracts/deploy-testnet.ps1` (`-VerifyOnly`)
+- **Flattened Solidity sources:** `contracts/flatten/`
+- **Standard JSON inputs:** `contracts/verify/`
+- **Deployment records:** `contracts/deployments/arc-mainnet.json`, `contracts/deployments/arc-testnet.json`
+
+---
+
+## App Environment Variables
 
 ```ini
-NEXT_PUBLIC_AGFUSION_REGISTRY=0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483
-NEXT_PUBLIC_AGFUSION_DEPLOYER=0xB00f41172c23d31571a3bE850AA0e81e58Ab8828
-NEXT_PUBLIC_AGFUSION_DEPLOY_TX=0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99
+NEXT_PUBLIC_ORDENFI_REGISTRY=0x06B16942e9bcE49b38281704eDBeE4CAE28FD884
+NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS=0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F
+NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS=0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0
+NEXT_PUBLIC_ORDENFI_DEPLOYER=0xB00f41172c23d31571a3bE850AA0e81e58Ab8828
+NEXT_PUBLIC_ORDENFI_DEPLOY_TX=0xb864ca803b70a7de7be681d97506d6f35eb6c879f7e51a6c5d5c044163e212d4
+NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS=0x37d42057D6914fC7eA231DD1F47A3A51314d8688
 ```
 
-Defaults are also hard-coded in `src/lib/onchain.ts`.
+Defaults are configured in `src/lib/onchain.ts` and `src/lib/dapp/tokens.ts`.
 
-## New product surfaces (2026-07)
-
-| Feature | Where | Notes |
-|---------|--------|--------|
-| **Unified Balance deposit/spend** | Dashboard → Unified Balance | App Kit Gateway; deposit from Base/ETH Sepolia; spend on Arc |
-| **ERC-8004 register** | Agents → Register on Arc | Live `IdentityRegistry.register` + metadata URI |
-| **x402 risk oracle** | Dashboard → Route risk oracle | Pay 0.001 USDC → `/api/x402/risk-oracle` verifies + assesses |
-
-ERC-8004 registry: `0x8004A818BFB912233c491871b3d84c89A494BD9e`
+ERC-8004 `IdentityRegistry`: `0x8004A818BFB912233c491871b3d84c89A494BD9e`

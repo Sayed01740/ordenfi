@@ -9,12 +9,12 @@
     "website": "https://ordenfi.xyz",
     "x": "https://x.com/AGfusion_",
     "docs": "https://ordenfi.xyz/docs",
-    "network": "Arc Testnet",
-    "chainId": 5042002,
-    "registry": "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483",
+    "network": "Arc Mainnet",
+    "chainId": 5042,
+    "registry": "0x06B16942e9bcE49b38281704eDBeE4CAE28FD884",
     "deployer": "0xB00f41172c23d31571a3bE850AA0e81e58Ab8828",
-    "deployTx": "0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99",
-    "explorer": "https://testnet.arcscan.app/address/0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483"
+    "deployTx": "0xb864ca803b70a7de7be681d97506d6f35eb6c879f7e51a6c5d5c044163e212d4",
+    "explorer": "https://explorer.arc.io/address/0x06B16942e9bcE49b38281704eDBeE4CAE28FD884"
   },
   "capabilities": [
     "natural_language_payments",

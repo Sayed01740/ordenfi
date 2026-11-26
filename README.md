@@ -68,13 +68,23 @@ Arc Network utilizes USDC as its native gas currency (18 decimals in the EVM exe
 
 ## Smart Contract Deployments
 
-All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with Solidity `0.8.24` (`Cancun` EVM, 200 optimization runs).
+All contracts are deployed under the **OrdenFi** namespace on both **Arc Mainnet** (`Chain ID: 5042`) and **Arc Testnet** (`Chain ID: 5042002`), compiled with Solidity `0.8.24` (`Cancun` EVM, 200 optimization runs).
+
+### Arc Mainnet (`5042`)
 
 | Contract | Mainnet Address | Deployment Tx | Explorer |
 | :--- | :--- | :--- | :--- |
-| **OrdenFiRegistry** | `0xf25757227337130Fb33A70A31aFFD782FfA44f6D` | [`0xab66ea...`](https://explorer.arc.io/tx/0xab66eac920a45fce0a2d6e861bde671ea2a851ed4ae44ef4016ba46884ff8c1b) | [View on Explorer](https://explorer.arc.io/address/0xf25757227337130Fb33A70A31aFFD782FfA44f6D) |
-| **OrdenFiEscrow** | `0x23554d16C1F397fde97cf394FF603d7372b61f20` | [`0x20eeda...`](https://explorer.arc.io/tx/0x20eeda61acc3203224565f92b9f3ebafdbe18444ec65d45031a259402458b82d) | [View on Explorer](https://explorer.arc.io/address/0x23554d16C1F397fde97cf394FF603d7372b61f20) |
-| **OrdenFiDisperse** | `0x376323cCE5233C0C20339BBeeCFEB838602B5578` | [`0xd24b58...`](https://explorer.arc.io/tx/0xd24b5819d9c90a2118e2f77f97af58745b84893798533ae0c4b2a1b5b69c4f7a) | [View on Explorer](https://explorer.arc.io/address/0x376323cCE5233C0C20339BBeeCFEB838602B5578) |
+| **OrdenFiRegistry** | `0x06B16942e9bcE49b38281704eDBeE4CAE28FD884` | [`0xb864ca...`](https://explorer.arc.io/tx/0xb864ca803b70a7de7be681d97506d6f35eb6c879f7e51a6c5d5c044163e212d4) | [View on Explorer](https://explorer.arc.io/address/0x06B16942e9bcE49b38281704eDBeE4CAE28FD884) |
+| **OrdenFiEscrow** | `0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F` | [`0x4f558f...`](https://explorer.arc.io/tx/0x4f558fa13e2e32e90b67337541dec037be7ce790ae23d23a72624d0eb0767159) | [View on Explorer](https://explorer.arc.io/address/0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F) |
+| **OrdenFiDisperse** | `0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0` | [`0xc52253...`](https://explorer.arc.io/tx/0xc52253a06511c969b54b440b9d1c8b04b6357a08acc3a45ff2217b842d5b6dc0) | [View on Explorer](https://explorer.arc.io/address/0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0) |
+
+### Arc Testnet (`5042002`)
+
+| Contract | Testnet Address | Deployment Tx | Explorer |
+| :--- | :--- | :--- | :--- |
+| **OrdenFiRegistry** | `0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4` | [`0x609a7b...`](https://testnet.arcscan.app/tx/0x609a7b7ca5aaf871588de682c6a4b945d9218ee7c925c4768b00cd30166fd79e) | [View on Explorer](https://testnet.arcscan.app/address/0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4) |
+| **OrdenFiEscrow** | `0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c` | [`0xc929ac...`](https://testnet.arcscan.app/tx/0xc929acfaccd90b6a2e6c0fb4820e12f8bc628aa745530a4eaebd8bbb4c0554b3) | [View on Explorer](https://testnet.arcscan.app/address/0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c) |
+| **OrdenFiDisperse** | `0x37d42057D6914fC7eA231DD1F47A3A51314d8688` | [`0xfda500...`](https://testnet.arcscan.app/tx/0xfda50000b16e0f68d0910d1d48ee3afb709992904b036b5c0b5f654cfef14311) | [View on Explorer](https://testnet.arcscan.app/address/0x37d42057D6914fC7eA231DD1F47A3A51314d8688) |
 
 ### Canonical Token Addresses (Arc Mainnet)
 
@@ -131,11 +141,11 @@ All contracts are deployed on **Arc Mainnet** (`Chain ID: 5042`), compiled with 
    NEXT_PUBLIC_ARC_EXPLORER_URL="https://explorer.arc.io"
    
    # Deployed Contract Addresses (Arc Mainnet)
-   NEXT_PUBLIC_ORDENFI_REGISTRY="0xf25757227337130Fb33A70A31aFFD782FfA44f6D"
-   NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS="0x23554d16C1F397fde97cf394FF603d7372b61f20"
-   NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS="0x376323cCE5233C0C20339BBeeCFEB838602B5578"
-   # Optional: Arc Testnet Disperse address for 1-signature Testnet batches
-   NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS=""
+   NEXT_PUBLIC_ORDENFI_REGISTRY="0x06B16942e9bcE49b38281704eDBeE4CAE28FD884"
+   NEXT_PUBLIC_ORDENFI_ESCROW_ADDRESS="0x206ffcc9510E9ffF0F0262D2d7485D8Cc13f023F"
+   NEXT_PUBLIC_ORDENFI_DISPERSE_ADDRESS="0x1E24dB5F90a5BaF8e11A4736F835Dfc43dCB23a0"
+   # Arc Testnet Disperse address for 1-signature Testnet batches
+   NEXT_PUBLIC_ORDENFI_TESTNET_DISPERSE_ADDRESS="0x37d42057D6914fC7eA231DD1F47A3A51314d8688"
    ```
 
 4. **Initialize Database & Run Development Server:**

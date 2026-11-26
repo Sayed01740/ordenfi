@@ -7,7 +7,7 @@ export { ARC_CHAIN_ID };
 export const ORDENFI_REGISTRY =
   process.env.NEXT_PUBLIC_ORDENFI_REGISTRY?.trim() ||
   process.env.NEXT_PUBLIC_AGFUSION_REGISTRY?.trim() ||
-  "0x76BB5678eC11Ae94b34Ed9cF90B25C9Eea440483";
+  "0x06B16942e9bcE49b38281704eDBeE4CAE28FD884";
 
 /** Deployer / owner wallet that broadcast the deploy tx */
 export const ORDENFI_DEPLOYER =
@@ -18,7 +18,7 @@ export const ORDENFI_DEPLOYER =
 export const ORDENFI_DEPLOY_TX =
   process.env.NEXT_PUBLIC_ORDENFI_DEPLOY_TX?.trim() ||
   process.env.NEXT_PUBLIC_AGFUSION_DEPLOY_TX?.trim() ||
-  "0x2db9e1244770254ac0a80bc2d2052fe504965272f6dd076465203b6c32bfab99";
+  "0xb864ca803b70a7de7be681d97506d6f35eb6c879f7e51a6c5d5c044163e212d4";
 
 export const ORDENFI_METADATA_URI =
   `${BRAND_URL}/identity/ordenfi-agent.json`;

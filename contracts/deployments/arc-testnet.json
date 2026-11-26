@@ -1,0 +1,29 @@
+﻿{
+    "contracts":  {
+                      "OrdenFiRegistry":  {
+                                              "address":  "0x883e5b891e552faCB0cf6cfa23BD9B7953FaDea4",
+                                              "txHash":  "0x609a7b7ca5aaf871588de682c6a4b945d9218ee7c925c4768b00cd30166fd79e",
+                                              "path":  "src/OrdenFiRegistry.sol:OrdenFiRegistry",
+                                              "constructorArgs":  "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002f68747470733a2f2f6f7264656e66692e78797a2f6964656e746974792f6f7264656e66692d6167656e742e6a736f6e0000000000000000000000000000000000",
+                                              "deployedAt":  "2026-11-26T19:40:27.6114528+06:00"
+                                          },
+                      "OrdenFiEscrow":  {
+                                            "address":  "0x3c3E16f6E30f9Df54d9A78e74446cEda2919FB2c",
+                                            "txHash":  "0xc929acfaccd90b6a2e6c0fb4820e12f8bc628aa745530a4eaebd8bbb4c0554b3",
+                                            "path":  "src/OrdenFiEscrow.sol:OrdenFiEscrow",
+                                            "constructorArgs":  "0x000000000000000000000000b00f41172c23d31571a3be850aa0e81e58ab88280000000000000000000000000000000000000000000000000000000000000032000000000000000000000000b00f41172c23d31571a3be850aa0e81e58ab8828",
+                                            "deployedAt":  "2026-11-26T19:41:04.7379423+06:00"
+                                        },
+                      "OrdenFiDisperse":  {
+                                              "address":  "0x37d42057D6914fC7eA231DD1F47A3A51314d8688",
+                                              "txHash":  "0xfda50000b16e0f68d0910d1d48ee3afb709992904b036b5c0b5f654cfef14311",
+                                              "path":  "src/OrdenFiDisperse.sol:OrdenFiDisperse",
+                                              "constructorArgs":  null,
+                                              "deployedAt":  "2026-11-26T19:41:40.4633951+06:00"
+                                          }
+                  },
+    "network":  "arc-testnet",
+    "chainId":  5042002,
+    "deployer":  "0xB00f41172c23d31571a3bE850AA0e81e58Ab8828",
+    "explorer":  "https://testnet.arcscan.app"
+}

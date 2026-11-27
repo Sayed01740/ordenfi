@@ -8,6 +8,7 @@ import { ChevronDown, Check, ExternalLink, Loader2, CheckCircle2, XCircle, Clock
 import { cn } from "@/lib/utils";
 import { readErc20Balance } from "@/lib/dapp/erc20";
 import type { ArcToken } from "@/lib/dapp/tokens";
+import { TokenMark } from "@/components/brand/token-mark";
 import { usePilotStore } from "@/store/pilot-store";
 import type { TransactionRecord, TxStep } from "@/types";
 
@@ -59,20 +60,7 @@ export function formatBalance(value: string, maxFrac = 4): string {
 /* ----------------------------------------------------------------------- */
 
 export function TokenGlyph({ token, size = 24 }: { token: ArcToken; size?: number }) {
-  return (
-    <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white "
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.4,
-        background: `linear-gradient(140deg, ${token.accent}, ${token.accent}99)`,
-      }}
-      aria-hidden
-    >
-      {token.symbol.replace(/[^A-Za-z]/g, "").slice(0, 1).toUpperCase()}
-    </span>
-  );
+  return <TokenMark token={token.symbol} size={size} />;
 }
 
 export function TokenSelect({

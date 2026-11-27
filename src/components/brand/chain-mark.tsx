@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useId } from "react";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +23,21 @@ export type SupportedChainMark =
   | "Unichain"
   | "Unichain_Sepolia"
   | "Linea"
-  | "Linea_Sepolia";
+  | "Linea_Sepolia"
+  | "World_Chain"
+  | "World_Chain_Sepolia"
+  | "Sonic"
+  | "Sonic_Testnet"
+  | "Ink"
+  | "Ink_Testnet"
+  | "Monad"
+  | "Monad_Testnet"
+  | "Sei"
+  | "Sei_Testnet"
+  | "HyperEVM"
+  | "HyperEVM_Testnet"
+  | "XDC"
+  | "XDC_Apothem";
 
 type ChainFamily =
   | "arc"
@@ -36,7 +49,14 @@ type ChainFamily =
   | "polygon"
   | "solana"
   | "unichain"
-  | "linea";
+  | "linea"
+  | "worldchain"
+  | "sonic"
+  | "ink"
+  | "monad"
+  | "sei"
+  | "hyperevm"
+  | "xdc";
 
 const marks: Record<SupportedChainMark, { name: string; short: string; family: ChainFamily }> = {
   Arc: { name: "Arc Mainnet", short: "ARC", family: "arc" },
@@ -61,6 +81,20 @@ const marks: Record<SupportedChainMark, { name: string; short: string; family: C
   Unichain_Sepolia: { name: "Unichain Sepolia", short: "UNI", family: "unichain" },
   Linea: { name: "Linea", short: "LINEA", family: "linea" },
   Linea_Sepolia: { name: "Linea Sepolia", short: "LINEA", family: "linea" },
+  World_Chain: { name: "World Chain", short: "WLD", family: "worldchain" },
+  World_Chain_Sepolia: { name: "World Chain Sepolia", short: "WLD", family: "worldchain" },
+  Sonic: { name: "Sonic", short: "S", family: "sonic" },
+  Sonic_Testnet: { name: "Sonic Testnet", short: "S", family: "sonic" },
+  Ink: { name: "Ink", short: "INK", family: "ink" },
+  Ink_Testnet: { name: "Ink Testnet", short: "INK", family: "ink" },
+  Monad: { name: "Monad", short: "MON", family: "monad" },
+  Monad_Testnet: { name: "Monad Testnet", short: "MON", family: "monad" },
+  Sei: { name: "Sei", short: "SEI", family: "sei" },
+  Sei_Testnet: { name: "Sei Testnet", short: "SEI", family: "sei" },
+  HyperEVM: { name: "HyperEVM", short: "HYPE", family: "hyperevm" },
+  HyperEVM_Testnet: { name: "HyperEVM Testnet", short: "HYPE", family: "hyperevm" },
+  XDC: { name: "XDC", short: "XDC", family: "xdc" },
+  XDC_Apothem: { name: "XDC Apothem", short: "XDC", family: "xdc" },
 };
 
 function ChainIcon({ family, size }: { family: ChainFamily; size: number }) {
@@ -70,7 +104,15 @@ function ChainIcon({ family, size }: { family: ChainFamily; size: number }) {
   switch (family) {
     case "arc":
       return (
-        <Image src="/brand/arc-logo.png" alt="" width={size} height={size} className="block shrink-0 rounded-full" />
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/brand/arc-logo.png"
+          alt=""
+          width={size}
+          height={size}
+          style={{ width: size, height: size }}
+          className="block shrink-0 rounded-full object-cover"
+        />
       );
     case "base":
       return (
@@ -171,23 +213,81 @@ function ChainIcon({ family, size }: { family: ChainFamily; size: number }) {
           <circle cx="20.5" cy="11" r="2.2" fill="#61DFFF" />
         </svg>
       );
+    case "worldchain":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#111111" stroke="#fff" strokeWidth="1.4" />
+          <circle cx="16" cy="16" r="7.5" fill="none" stroke="#fff" strokeWidth="2.1" />
+          <path d="M8.8 16h14.4M16 8.5c2.2 2.1 2.2 12.9 0 15" fill="none" stroke="#fff" strokeWidth="1.7" />
+        </svg>
+      );
+    case "sonic":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#141926" stroke="#38BDF8" strokeWidth="1.4" />
+          <path d="M20.5 11.2c-1.1-.9-2.7-1.4-4.5-1.4-2.8 0-4.7 1.3-4.7 3.3 0 2.1 2 2.9 4.8 3.5 2.2.5 3.1 1 3.1 2 0 1.1-1.2 1.8-3 1.8-1.6 0-3-.5-4.1-1.4l-1.4 2c1.3 1.1 3.2 1.7 5.4 1.7 3.2 0 5.3-1.4 5.3-3.7 0-2.1-1.7-3.1-4.8-3.7-2.2-.5-3.1-.9-3.1-1.8 0-.9 1-1.5 2.6-1.5 1.3 0 2.5.4 3.4 1.1l1-1.9Z" fill="#fff" />
+        </svg>
+      );
+    case "ink":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#7132F5" />
+          <circle cx="16" cy="10.5" r="2.1" fill="#fff" />
+          <rect x="14.2" y="14.2" width="3.6" height="9.2" rx="1.8" fill="#fff" />
+        </svg>
+      );
+    case "monad":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#836EF9" />
+          <path d="M16 7.5 24.5 16 16 24.5 7.5 16 16 7.5Zm0 4.2L11.7 16l4.3 4.3 4.3-4.3-4.3-4.3Z" fill="#fff" />
+        </svg>
+      );
+    case "sei":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#9E1F19" />
+          <path d="M11 12.2c1.4-1.4 3.2-2.2 5-2.2 3.2 0 5.5 2 5.5 4.7 0 2.4-1.8 4-4.8 4.4l-1.5.2c-1.8.2-2.7.9-2.7 1.9 0 1.2 1.3 2 3.3 2 1.6 0 3-.6 4.1-1.5l1.4 1.8c-1.4 1.2-3.4 2-5.6 2-3.4 0-5.7-1.8-5.7-4.5 0-2.5 1.8-4.1 5-4.5l1.5-.2c1.7-.2 2.5-.8 2.5-1.7 0-1.2-1.2-2-3-2-1.4 0-2.6.5-3.6 1.4L11 12.2Z" fill="#fff" />
+        </svg>
+      );
+    case "hyperevm":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#0B2D26" stroke="#50E3C2" strokeWidth="1.4" />
+          <path d="M10.5 9.5v13h3v-5.2h5v5.2h3v-13h-3v5.1h-5V9.5h-3Z" fill="#50E3C2" />
+        </svg>
+      );
+    case "xdc":
+      return (
+        <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden="true" className="block shrink-0">
+          <circle cx="16" cy="16" r="15" fill="#1B3B6F" />
+          <path d="m10 10.5 4.8 5.5-4.8 5.5h3.2l3.2-3.8 3.2 3.8h3.2L18 16l4.8-5.5h-3.2l-3.2 3.8-3.2-3.8H10Z" fill="#fff" />
+        </svg>
+      );
   }
 }
 
 export function normalizeChainMark(chain: string): SupportedChainMark {
   if (chain in marks) return chain as SupportedChainMark;
   const lower = chain.toLowerCase();
-  if (lower.includes("arc") && lower.includes("test")) return "Arc_Testnet";
-  if (lower.includes("arc")) return "Arc_Mainnet";
-  if (lower.includes("base")) return lower.includes("sepolia") ? "Base_Sepolia" : "Base";
-  if (lower.includes("arb")) return lower.includes("sepolia") ? "Arbitrum_Sepolia" : "Arbitrum";
-  if (lower.includes("eth")) return lower.includes("sepolia") ? "Ethereum_Sepolia" : "Ethereum";
-  if (lower.includes("opt")) return lower.includes("sepolia") ? "Optimism_Sepolia" : "Optimism";
-  if (lower.includes("avax") || lower.includes("aval")) return "Avalanche";
-  if (lower.includes("poly")) return "Polygon";
-  if (lower.includes("sol")) return "Solana";
-  if (lower.includes("uni")) return "Unichain";
-  if (lower.includes("linea")) return "Linea";
+  const isTest = lower.includes("test") || lower.includes("sepolia") || lower.includes("fuji") || lower.includes("amoy") || lower.includes("devnet") || lower.includes("apothem");
+  if (lower.includes("arc")) return isTest ? "Arc_Testnet" : "Arc_Mainnet";
+  if (lower.includes("base")) return isTest ? "Base_Sepolia" : "Base";
+  if (lower.includes("arb")) return isTest ? "Arbitrum_Sepolia" : "Arbitrum";
+  if (lower.includes("eth")) return isTest ? "Ethereum_Sepolia" : "Ethereum";
+  if (lower.includes("opt")) return isTest ? "Optimism_Sepolia" : "Optimism";
+  if (lower.includes("avax") || lower.includes("aval")) return isTest ? "Avalanche_Fuji" : "Avalanche";
+  if (lower.includes("poly")) return isTest ? "Polygon_Amoy_Testnet" : "Polygon";
+  if (lower.includes("sol")) return isTest ? "Solana_Devnet" : "Solana";
+  if (lower.includes("uni")) return isTest ? "Unichain_Sepolia" : "Unichain";
+  if (lower.includes("linea")) return isTest ? "Linea_Sepolia" : "Linea";
+  if (lower.includes("world")) return isTest ? "World_Chain_Sepolia" : "World_Chain";
+  if (lower.includes("sonic")) return isTest ? "Sonic_Testnet" : "Sonic";
+  if (lower.includes("ink")) return isTest ? "Ink_Testnet" : "Ink";
+  if (lower.includes("monad")) return isTest ? "Monad_Testnet" : "Monad";
+  if (lower.includes("sei")) return isTest ? "Sei_Testnet" : "Sei";
+  if (lower.includes("hyper")) return isTest ? "HyperEVM_Testnet" : "HyperEVM";
+  if (lower.includes("xdc")) return isTest ? "XDC_Apothem" : "XDC";
   return "Arc_Mainnet";
 }
 

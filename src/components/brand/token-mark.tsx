@@ -58,6 +58,23 @@ function TokenSvg({ token, size }: { token: SupportedTokenMark; size: number }) 
   }
 }
 
+function normalizeTokenMark(token: string): SupportedTokenMark {
+  switch (token.trim().toUpperCase()) {
+    case "EURC":
+      return "EURC";
+    case "CIRBTC":
+      return "cirBTC";
+    case "WETH":
+    case "ETH":
+      return "wETH";
+    case "NATIVE":
+      return "NATIVE";
+    case "USDC":
+    default:
+      return "USDC";
+  }
+}
+
 export function TokenMark({
   token,
   size = 20,
@@ -69,11 +86,7 @@ export function TokenMark({
   showLabel?: boolean;
   className?: string;
 }) {
-  const key = (
-    token === "EURC" || token === "cirBTC" || token === "wETH" || token === "NATIVE"
-      ? token
-      : "USDC"
-  ) as SupportedTokenMark;
+  const key = normalizeTokenMark(token);
 
   return (
     <span className={cn("inline-flex items-center justify-center gap-1.5 shrink-0", className)} title={token}>

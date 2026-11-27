@@ -308,11 +308,11 @@ export async function switchToArcNetwork(
   const targetHex = isTargetMainnet ? "0x13b2" : "0x4cef52";
   const targetName = isTargetMainnet ? "Arc Mainnet" : "Arc Testnet";
   const targetRpc = isTargetMainnet
-    ? (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.mainnet.arc.network")
-    : (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.testnet.arc.network");
+    ? (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.mainnet.arc.io")
+    : (process.env.NEXT_PUBLIC_ARC_TESTNET_RPC_URL?.trim() || "https://rpc.testnet.arc.io");
   const targetExplorer = isTargetMainnet
     ? (process.env.NEXT_PUBLIC_ARC_EXPLORER_URL?.trim() || "https://explorer.arc.io")
-    : "https://testnet.arcscan.app";
+    : "https://explorer.testnet.arc.io";
 
   // Already on target chain?
   try {

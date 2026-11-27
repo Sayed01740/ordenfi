@@ -153,7 +153,7 @@ function buildHcnsecConfig(rawKey: string): LlmConfig | null {
     modelFallbacks: [model],
     chatCompletionsUrl: `${baseUrl}/chat/completions`,
     extraHeaders: {
-      "HTTP-Referer": "https://ordenfi.vercel.app",
+      "HTTP-Referer": "https://ordenfi.xyz",
       "X-Title": "OrdenFi",
     },
   };

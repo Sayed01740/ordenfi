@@ -239,7 +239,7 @@ Rules:
 - Never invent balances or transaction hashes.
 - If they are lost: point them to the **"New here? What is this app?"** card on the dashboard.
 - Keep answers under ~180 words unless they ask for detail.
-- Live app: https://ordenfi.vercel.app
+- Live app: https://ordenfi.xyz
 
 ${ARC_SYSTEM_KNOWLEDGE_BLOCK}
 

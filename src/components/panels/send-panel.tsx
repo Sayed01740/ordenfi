@@ -11,6 +11,7 @@ import { usePilotStore } from "@/store/pilot-store";
 import { getArcNetworkMeta } from "@/lib/arc-chain";
 import { executeSend } from "@/lib/client-actions";
 import { quoteSendFee } from "@/lib/fees";
+import { formatBalance } from "@/components/dapp/shared";
 import type { ChainId } from "@/types";
 import type { AssistantSendPlan } from "@/lib/assistant-plan";
 import { paymentChain } from "@/lib/payment-tools";
@@ -19,7 +20,7 @@ export function SendPanelBody({ initialPlan, onDraftSubmitted }: {
   initialPlan?: AssistantSendPlan;
   onDraftSubmitted?: () => void;
 } = {}) {
-  const { addTransaction, setActiveTx, setThinking, executionMode, walletChainId, networkMode } =
+  const { addTransaction, setActiveTx, setThinking, executionMode, walletAddress, walletChainId, networkMode, liveBalanceUsdc } =
     usePilotStore();
   const effectiveChainId =
     walletChainId === 5042 || walletChainId === 5042002
@@ -83,6 +84,29 @@ export function SendPanelBody({ initialPlan, onDraftSubmitted }: {
       <div className="space-y-3">
         {initialPlan && <p className="text-xs text-muted-foreground">Assistant draft · {meta.name}. Review the amount and address before sending.</p>}
         <Field label="Amount (USDC)">
+          {walletAddress && (
+            <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
+              <span className="tabular-nums">
+                Available: {liveBalanceUsdc !== null ? `${formatBalance(liveBalanceUsdc)} USDC` : "Loading…"}
+              </span>
+              {liveBalanceUsdc !== null && Number(liveBalanceUsdc) > 0 && (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    const maxSend = Math.max(0, Number(liveBalanceUsdc) - 0.001)
+                      .toFixed(6)
+                      .replace(/\.?0+$/, "");
+                    setAmount(maxSend);
+                    setError(null);
+                  }}
+                  className="rounded px-1.5 py-0.5 text-[11px] font-semibold text-accent hover:bg-accent/15 transition-colors disabled:opacity-50"
+                >
+                  Max
+                </button>
+              )}
+            </div>
+          )}
           <div className="relative">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
               <TokenMark token="USDC" size={18} />

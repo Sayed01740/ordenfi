@@ -207,6 +207,7 @@ export const usePilotStore = create<PilotState>((set, get) => ({
         s.messages[0].intent === "unknown";
       return {
         networkMode: mode,
+        liveBalanceUsdc: s.networkMode !== mode ? null : s.liveBalanceUsdc,
         messages: isInitialWelcome ? [welcomeMessage(mode)] : s.messages,
       };
     });

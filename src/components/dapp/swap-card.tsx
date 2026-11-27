@@ -27,8 +27,16 @@ export function SwapCard({ connected, initialPlan, onDraftSubmitted }: {
   const addTransaction = usePilotStore((s) => s.addTransaction);
   const refreshBalances = usePilotStore((s) => s.refreshBalances);
   const walletChainId = usePilotStore((s) => s.walletChainId);
+  const networkMode = usePilotStore((s) => s.networkMode);
   const draftChainId = initialPlan ? (initialPlan.chain === "Arc_Mainnet" ? 5042 : 5042002) : null;
-  const meta = getArcNetworkMeta(draftChainId ?? walletChainId);
+  const effectiveChainId =
+    draftChainId ??
+    (walletChainId === 5042 || walletChainId === 5042002
+      ? walletChainId
+      : networkMode === "mainnet"
+        ? 5042
+        : 5042002);
+  const meta = getArcNetworkMeta(effectiveChainId);
 
   const currentTokens = getArcTokens(meta.isMainnet);
   const swapTokensList: ArcToken[] = SWAP_SYMBOLS.map((s) => currentTokens[s] || ARC_TOKENS[s]);
@@ -42,7 +50,8 @@ export function SwapCard({ connected, initialPlan, onDraftSubmitted }: {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<TransactionRecord | null>(null);
 
-  const inBal = useArcBalance(tokenIn);
+  const activeTokenIn = currentTokens[tokenIn.symbol] || tokenIn;
+  const inBal = useArcBalance(activeTokenIn, meta.isMainnet);
   const paySymbol = tokenIn.symbol;
   const receiveSymbol = tokenOut.symbol;
   const input = Number(amountIn);

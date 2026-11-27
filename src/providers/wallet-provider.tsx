@@ -69,11 +69,12 @@ type WalletContextValue = {
 const WalletContext = createContext<WalletContextValue | null>(null);
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-    const {
+  const {
     setWallet,
     setLiveBalance,
     walletAddress,
     walletChainId,
+    networkMode,
     hydrate,
     setAuthenticated,
     loadServerTransactions,
@@ -166,7 +167,13 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         setAuthLocal(ok);
         setAuthenticated(ok);
         if (d.user?.address) {
-          const currentId = usePilotStore.getState().walletChainId || ARC_CHAIN_ID;
+          const st = usePilotStore.getState();
+          const currentId =
+            st.walletChainId === 5042 || st.walletChainId === 5042002
+              ? st.walletChainId
+              : st.networkMode === "mainnet"
+                ? 5042
+                : 5042002;
           setWallet(d.user.address, currentId);
           void loadServerTransactions(d.user.address);
         }
@@ -179,9 +186,16 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       setLiveBalance(null);
       return;
     }
+    const st = usePilotStore.getState();
+    const effectiveChainId =
+      st.walletChainId === 5042 || st.walletChainId === 5042002
+        ? st.walletChainId
+        : st.networkMode === "mainnet"
+          ? 5042
+          : 5042002;
     try {
       void import("@/lib/circle-proxy").then((m) => m.installCircleApiProxy());
-      const currentMeta = getArcNetworkMeta(usePilotStore.getState().walletChainId);
+      const currentMeta = getArcNetworkMeta(effectiveChainId);
       // Use chain-specific proxy key so testnet/mainnet balances are fetched
       // from the correct upstream regardless of IS_ARC_MAINNET default.
       const chainKey = currentMeta.chainId === 5042002 ? "arc_testnet" : "arc_mainnet";
@@ -201,9 +215,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       refreshBalances();
     } catch {
       try {
-        const cId = usePilotStore.getState().walletChainId || ARC_CHAIN_ID;
         const res = await fetch(
-          `/api/balances?address=${encodeURIComponent(walletAddress)}&chainId=${cId}`,
+          `/api/balances?address=${encodeURIComponent(walletAddress)}&chainId=${effectiveChainId}`,
         );
         if (res.ok) {
           const data = await res.json();
@@ -215,9 +228,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       }
       refreshBalances();
     }
-  }, [walletAddress, setLiveBalance, refreshBalances]);
+  }, [walletAddress, walletChainId, networkMode, setLiveBalance, refreshBalances]);
 
-  // Live data: fetch on connect, then poll on-chain balance + server history
+  // Live data: fetch on connect, network switch, then poll on-chain balance + server history
   useEffect(() => {
     if (!walletAddress) return;
     void refreshBalance();
@@ -227,7 +240,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       void usePilotStore.getState().loadServerTransactions(walletAddress);
     }, 15_000);
     return () => window.clearInterval(id);
-  }, [walletAddress, refreshBalance]);
+  }, [walletAddress, walletChainId, networkMode, refreshBalance]);
 
   const attachListeners = useCallback(
     (p: InjectedProvider, address: string) => {

@@ -21,6 +21,7 @@ import {
   type BridgeState,
 } from "@/lib/bridge-state";
 import { quoteBridgeFee } from "@/lib/fees";
+import { formatBalance } from "@/components/dapp/shared";
 import { validateUsdcAmount } from "@/lib/payment-tools";
 import { isValidTxHash } from "@/lib/tx-verify";
 import type { ChainId, TransactionRecord } from "@/types";
@@ -71,7 +72,7 @@ function NetworkSelect({ label, name, value, opposite, chains, onChange, disable
 }
 
 export function BridgePanelBody() {
-  const { addTransaction, setActiveTx, setThinking, isThinking, walletAddress, walletType, walletChainId, networkMode } =
+  const { addTransaction, setActiveTx, setThinking, isThinking, walletAddress, walletType, walletChainId, networkMode, liveBalanceUsdc } =
     usePilotStore();
   const { openConnectModal } = useWallet();
   const effectiveChainId =
@@ -302,7 +303,31 @@ export function BridgePanelBody() {
         </div>
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 rounded-xl border border-border bg-inset p-3">
           <label className="block min-w-0 space-y-1">
-            <span className="block text-xs font-medium text-muted-foreground">Amount</span>
+            <span className="flex items-center justify-between gap-2 text-xs font-medium text-muted-foreground">
+              <span>Amount</span>
+              {walletAddress && bridgeToken === "USDC" && (from === "Arc_Mainnet" || from === "Arc_Testnet") && (
+                <span className="inline-flex items-center gap-1.5 font-normal tabular-nums">
+                  <span>{liveBalanceUsdc !== null ? `Avail: ${formatBalance(liveBalanceUsdc)}` : "Loading…"}</span>
+                  {liveBalanceUsdc !== null && Number(liveBalanceUsdc) > 0 && (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const maxBridge = Math.max(0, Number(liveBalanceUsdc) - 0.01)
+                          .toFixed(6)
+                          .replace(/\.?0+$/, "");
+                        setAmount(maxBridge);
+                        setError(null);
+                      }}
+                      className="rounded px-1.5 py-0.5 text-[11px] font-semibold text-accent hover:bg-accent/15 transition-colors disabled:opacity-50"
+                    >
+                      Max
+                    </button>
+                  )}
+                </span>
+              )}
+            </span>
             <Input aria-label="Bridge amount" type="number" inputMode="decimal" min="0" step="any" placeholder="0.00"
               className="h-12 rounded-none border-0 bg-transparent px-0 text-[1.75rem] font-medium tabular-nums sm:text-[2rem]"
               value={amount} disabled={busy} onChange={event => { setAmount(event.target.value); setError(null); }} />

@@ -13,7 +13,8 @@ import { executeSwap } from "@/lib/client-actions";
 import { getArcDexSwapQuote } from "@/blockchain/production-swap";
 import { explorerTxUrl, getArcNetworkMeta } from "@/lib/arc-chain";
 import { arcPublicClient, readAllowance } from "@/lib/dapp/erc20";
-import { getToken } from "@/lib/dapp/tokens";
+import { getToken, getArcTokens } from "@/lib/dapp/tokens";
+import { useArcBalance, formatBalance } from "@/components/dapp/shared";
 import { ARC_PERMIT2_CONTRACT } from "@/blockchain/uniswap-permit2";
 import { uid } from "@/lib/utils";
 import type { AssistantSwapPlan } from "@/lib/assistant-plan";
@@ -53,8 +54,15 @@ export function ProductionSwapPanel({ embedded = false, initialPlan, onDraftSubm
   onDraftSubmitted?: () => void;
 } = {}) {
   const { openConnectModal } = useWallet();
-  const { addTransaction, setActiveTx, setThinking, walletAddress, walletChainId } = usePilotStore();
-  const meta = getArcNetworkMeta(initialPlan ? 5042 : walletChainId);
+  const { addTransaction, setActiveTx, setThinking, walletAddress, walletChainId, networkMode, liveBalanceUsdc } = usePilotStore();
+  const effectiveChainId = initialPlan
+    ? initialPlan.chain === "Arc_Mainnet" ? 5042 : 5042002
+    : walletChainId === 5042 || walletChainId === 5042002
+      ? walletChainId
+      : networkMode === "mainnet"
+        ? 5042
+        : 5042002;
+  const meta = getArcNetworkMeta(effectiveChainId);
 
   const [tokenIn, setTokenIn] = useState<ArcSwapToken>(initialPlan?.tokenIn ?? "USDC");
   const [tokenOut, setTokenOut] = useState<ArcSwapToken>(initialPlan?.tokenOut ?? "EURC");
@@ -73,6 +81,12 @@ export function ProductionSwapPanel({ embedded = false, initialPlan, onDraftSubm
   const [notice, setNotice] = useState<string | null>(null);
   const { setQuoteExpired } = useAssistantWorkspace() ?? {};
   const quoteExpired = quote !== null && expiredQuote === quote;
+  const activeTokens = useMemo(() => getArcTokens(meta.isMainnet), [meta.isMainnet]);
+  const inBal = useArcBalance(activeTokens[tokenIn] ?? null, meta.isMainnet);
+  const displayBalance =
+    tokenIn === "USDC" && Number(inBal.balance) === 0 && liveBalanceUsdc
+      ? liveBalanceUsdc
+      : inBal.balance;
 
   useEffect(() => {
     const expiresAt = quote?.quoteSessionExpiresAt;
@@ -731,6 +745,31 @@ export function ProductionSwapPanel({ embedded = false, initialPlan, onDraftSubm
         <div className="uniswap-glass-module p-3.5">
           <div className="mb-2 flex items-center justify-between text-xs">
             <span className="font-medium text-muted-foreground">You pay</span>
+            {walletAddress && (
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <span className="tabular-nums">
+                  {inBal.loading ? "Loading…" : `Available: ${formatBalance(displayBalance)} ${tokenIn}`}
+                </span>
+                {Number(displayBalance) > 0 && (
+                  <button
+                    type="button"
+                    disabled={quoteBusy || swapBusy}
+                    onClick={() => {
+                      const bal = Number(displayBalance);
+                      const maxVal = tokenIn === "USDC" ? Math.max(0, bal - 0.005).toFixed(6).replace(/\.?0+$/, "") : displayBalance;
+                      setAmount(maxVal);
+                      setQuote(null);
+                      setPrepared(null);
+                      setError(null);
+                      setNotice(null);
+                    }}
+                    className="rounded px-1.5 py-0.5 text-[11px] font-semibold text-accent hover:bg-accent/15 transition-colors disabled:opacity-50"
+                  >
+                    Max
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <input

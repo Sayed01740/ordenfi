@@ -22,7 +22,7 @@ const panelClass = "absolute right-0 top-full z-50 mt-2 w-[min(18rem,calc(100dvw
 
 export function Navbar() {
   const pathname = usePathname();
-  const { walletAddress, walletChainId, liveBalanceUsdc, transactions } = usePilotStore();
+  const { walletAddress, walletChainId, networkMode, liveBalanceUsdc, transactions } = usePilotStore();
   const {
     connect,
     disconnect,
@@ -30,7 +30,13 @@ export function Navbar() {
     switchToArcMainnet,
     switchToArcTestnet,
   } = useWallet();
-  const currentMeta = getArcNetworkMeta(walletChainId);
+  const effectiveChainId =
+    walletChainId === 5042 || walletChainId === 5042002
+      ? walletChainId
+      : networkMode === "mainnet"
+        ? 5042
+        : 5042002;
+  const currentMeta = getArcNetworkMeta(effectiveChainId);
   const [openMenu, setOpenMenu] = useState<"wallet" | null>(null);
   const walletRef = useRef<HTMLDivElement>(null);
   const walletId = useId();

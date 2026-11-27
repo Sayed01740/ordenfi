@@ -38,23 +38,20 @@ export const EXPECTED_CHAIN_IDS: Record<string, string> = {
 export const RPC_UPSTREAMS: Record<string, string[]> = {
   arc: IS_ARC_MAINNET
     ? [
-        "https://rpc.mainnet.arc.io",
-        "https://rpc.arc.network",
-      ]
+      "https://rpc.mainnet.arc.io",
+      "https://rpc.arc.network",
+    ]
     : [
-        "https://rpc.testnet.arc.io",
-        "https://rpc.testnet.arc.network",
-        "https://rpc.blockdaemon.testnet.arc.io",
-        "https://rpc.drpc.testnet.arc.io",
-        "https://rpc.quicknode.testnet.arc.io",
-      ],
+      "https://rpc.testnet.arc.io",
+      "https://rpc.blockdaemon.testnet.arc.io",
+      "https://rpc.drpc.testnet.arc.io",
+      "https://rpc.quicknode.testnet.arc.io",
+    ],
   arc_mainnet: [
     "https://rpc.mainnet.arc.io",
-    "https://rpc.arc.network",
   ],
   arc_testnet: [
     "https://rpc.testnet.arc.io",
-    "https://rpc.testnet.arc.network",
     "https://rpc.blockdaemon.testnet.arc.io",
     "https://rpc.drpc.testnet.arc.io",
     "https://rpc.quicknode.testnet.arc.io",

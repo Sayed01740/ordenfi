@@ -58,8 +58,8 @@ export function arcRpcUrl(isMainnet?: boolean): string {
     return `${window.location.origin}/api/rpc?chain=${mainnet ? "arc_mainnet" : "arc_testnet"}`;
   }
   return mainnet
-    ? (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.mainnet.arc.network")
-    : (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.testnet.arc.network");
+    ? (process.env.NEXT_PUBLIC_ARC_RPC_URL?.trim() || "https://rpc.mainnet.arc.io")
+    : (process.env.NEXT_PUBLIC_ARC_TESTNET_RPC_URL?.trim() || "https://rpc.testnet.arc.io");
 }
 
 /**

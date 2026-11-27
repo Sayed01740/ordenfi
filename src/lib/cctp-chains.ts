@@ -70,7 +70,7 @@ export const CCTP_CHAIN_CONFIG: Record<string, CctpChainConfig> = {
     messageTransmitter: CCTP_V2_MSG_TRANSMITTER,
     confirmations: 1,
     rpcProxyKey: "arc_testnet",
-    explorerUrl: ARC_EXPLORER,
+    explorerUrl: "https://testnet.arcscan.app",
   },
   Base_Sepolia: {
     chainId: 84532,

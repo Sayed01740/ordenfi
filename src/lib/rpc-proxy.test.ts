@@ -71,11 +71,11 @@ describe("rpc-proxy failover (Phase 2)", () => {
   it("falls back to the next upstream when the primary fails", async () => {
     mockFetch([
       { url: "https://rpc.testnet.arc.io", response: jsonRpcResponse("0x0", false) },
-      { url: "https://rpc.testnet.arc.network", response: jsonRpcResponse(ARC_EXPECTED_CHAIN_ID_HEX) },
+      { url: "https://rpc.blockdaemon.testnet.arc.io", response: jsonRpcResponse(ARC_EXPECTED_CHAIN_ID_HEX) },
     ]);
     const h = await healthCheck("arc");
     expect(h.ok).toBe(true);
-    expect(h.upstream).toContain("rpc.testnet.arc.network");
+    expect(h.upstream).toContain("rpc.blockdaemon.testnet.arc.io");
   });
 
   it("rejects a wrong chainId upstream and uses the correct one", async () => {

@@ -269,6 +269,7 @@ export function createAgentVaultProvider(
             data?: Hex;
             value?: string;
             gas?: string;
+            nonce?: string;
           };
           const client = getClient();
           return client.sendTransaction({
@@ -276,7 +277,32 @@ export function createAgentVaultProvider(
             data: tx.data,
             value: tx.value ? BigInt(tx.value) : 0n,
             gas: tx.gas ? BigInt(tx.gas) : undefined,
+            nonce: tx.nonce ? Number(tx.nonce) : undefined,
           });
+        }
+        case "eth_getBalance":
+        case "eth_call":
+        case "eth_estimateGas":
+        case "eth_getBlockByNumber":
+        case "eth_getTransactionCount":
+        case "eth_getTransactionReceipt":
+        case "eth_gasPrice":
+        case "eth_blockNumber":
+        case "net_version": {
+          const rpcUrl = getArcRpcProxyUrl(activeChainId === 5042);
+          const res = await fetch(rpcUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: Date.now(),
+              method,
+              params: Array.isArray(params) ? params : [],
+            }),
+          });
+          const json = (await res.json()) as { result?: unknown; error?: { message?: string } };
+          if (json.error) throw new Error(json.error.message || `RPC error for ${method}`);
+          return json.result;
         }
         default:
           throw new Error(`Agent Vault provider does not support ${method}`);

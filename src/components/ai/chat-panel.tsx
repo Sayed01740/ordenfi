@@ -438,8 +438,8 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
         addMessage(finalMsg);
       }
 
-      // Auto-trigger wallet signature request when Kona produces an executable transaction plan
-      const autoPreview = !sawError && !execute ? finalMsg?.actionPreview : undefined;
+      // Auto-trigger wallet signature request when Kona produces an executable transaction plan (manual mode only)
+      const autoPreview = !sawError && !execute && !autoPilotEnabled ? finalMsg?.actionPreview : undefined;
       if (autoPreview?.canExecute && !autoPreview.executed && autoPreview.requiresWallet !== false && finalMsg) {
         const activeMeta = (await import("@/sdk/active-wallet")).getActiveWalletMeta();
         if (walletAddress || activeMeta?.address) {

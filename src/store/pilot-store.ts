@@ -50,6 +50,8 @@ interface PilotState {
   liveBalanceUsdc: string | null;
   hydrated: boolean;
   authenticated: boolean;
+  autoPilotEnabled: boolean;
+  autoPilotMaxPerTx: number;
   addMessage: (msg: ChatMessage) => void;
   setMessages: (msgs: ChatMessage[]) => void;
   addTransaction: (tx: TransactionRecord) => void;
@@ -62,6 +64,8 @@ interface PilotState {
   setLiveBalance: (v: string | null) => void;
   setForceDemo: (v: boolean) => void;
   setAuthenticated: (v: boolean) => void;
+  setAutoPilotEnabled: (v: boolean) => void;
+  setAutoPilotMaxPerTx: (n: number) => void;
   loadServerTransactions: (wallet?: string) => Promise<void>;
   loadDemoTransactions: () => void;
   refreshBalances: () => void;
@@ -86,6 +90,8 @@ export const usePilotStore = create<PilotState>((set, get) => ({
   liveBalanceUsdc: null,
   hydrated: false,
   authenticated: false,
+  autoPilotEnabled: false,
+  autoPilotMaxPerTx: 5,
 
   addMessage: (msg) => set((s) => ({ messages: [...s.messages, msg] })),
   setMessages: (msgs) => set({ messages: msgs }),
@@ -216,6 +222,8 @@ export const usePilotStore = create<PilotState>((set, get) => ({
   setLiveBalance: (v) => set({ liveBalanceUsdc: v }),
   setForceDemo: () => set({ forceDemo: false }),
   setAuthenticated: (v) => set({ authenticated: v }),
+  setAutoPilotEnabled: (v) => set({ autoPilotEnabled: v }),
+  setAutoPilotMaxPerTx: (n) => set({ autoPilotMaxPerTx: Math.max(0.1, Math.min(100, n)) }),
   loadServerTransactions: async (wallet) => {
     try {
       const q = wallet ? `?address=${encodeURIComponent(wallet)}` : "";

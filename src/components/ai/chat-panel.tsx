@@ -25,6 +25,12 @@ import { requireSafeRecipient } from "@/lib/balances-empty";
 import { sanitizeAgentText } from "@/lib/sanitize";
 import { publishSwapHandoff } from "@/lib/swap-handoff";
 import { runMainnetUniswapSwap } from "@/blockchain/uniswap-mainnet-flow";
+import { processAutopilotTurn, type AutopilotDraft } from "@/ai/autopilot-slots";
+import {
+  createAgentVaultProvider,
+  executeAgentVaultSend,
+  getStoredAgentVault,
+} from "@/sdk/agent-autopilot";
 import type { AssistantMood } from "@/components/workspace/assistant-robot";
 import type { AssistantPlan } from "@/lib/assistant-plan";
 import type { AssistantGuide } from "@/lib/assistant-tools";
@@ -91,6 +97,8 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
     networkMode,
     liveBalanceUsdc,
     forceDemo,
+    autoPilotEnabled,
+    autoPilotMaxPerTx,
   } = usePilotStore();
   const suggestions = useMemo(() => getSuggestions(networkMode), [networkMode]);
   const [input, setInput] = useState("");
@@ -105,6 +113,7 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
   const replyRef = useRef<HTMLDivElement>(null);
   const wasVisible = useRef(visible);
   const sendingRef = useRef(false);
+  const autopilotDraftRef = useRef<AutopilotDraft | null>(null);
   const mood = chatError ? "error" : statusLine !== null ? "thinking" : replyId ? "reply" : "idle";
 
   useEffect(() => {
@@ -138,6 +147,191 @@ export function ChatPanel({ avatar, assistantName = "Ordenfi assistant", tools, 
     addMessage(userMsg);
     setInput("");
     setThinking(true);
+
+    // Opt-in Auto-Pilot mode: ONLY runs when explicitly enabled by the user
+    if (autoPilotEnabled && !execute) {
+      const isMainnetActive =
+        walletChainId === 5042
+          ? true
+          : walletChainId === 5042002
+            ? false
+            : networkMode === "mainnet";
+      const turn = processAutopilotTurn(content, autopilotDraftRef.current, isMainnetActive);
+
+      if (turn.status === "cancelled") {
+        autopilotDraftRef.current = null;
+        const msgId = uid("msg");
+        addMessage({
+          id: msgId,
+          role: "assistant",
+          content: turn.reply,
+          createdAt: new Date().toISOString(),
+        });
+        setReplyId(msgId);
+        setThinking(false);
+        sendingRef.current = false;
+        return;
+      }
+
+      if (turn.status === "ask") {
+        autopilotDraftRef.current = turn.draft;
+        const msgId = uid("msg");
+        addMessage({
+          id: msgId,
+          role: "assistant",
+          content: turn.reply,
+          createdAt: new Date().toISOString(),
+        });
+        setReplyId(msgId);
+        setThinking(false);
+        sendingRef.current = false;
+        return;
+      }
+
+      if (turn.status === "ready") {
+        autopilotDraftRef.current = null;
+        const amt = Number(turn.preview.amount || 0);
+        const vault = getStoredAgentVault(walletAddress);
+        if (!vault) {
+          const msgId = uid("msg");
+          addMessage({
+            id: msgId,
+            role: "assistant",
+            content: "Agent Vault is not initialized. Fund your Agent Vault in the Auto-Pilot panel above, or confirm manually below.",
+            createdAt: new Date().toISOString(),
+            actionPreview: turn.preview,
+          });
+          setReplyId(msgId);
+          setThinking(false);
+          sendingRef.current = false;
+          return;
+        }
+        if (!Number.isFinite(amt) || amt > autoPilotMaxPerTx) {
+          const msgId = uid("msg");
+          addMessage({
+            id: msgId,
+            role: "assistant",
+            content: `**Amount exceeds Auto-Pilot limit** ($${autoPilotMaxPerTx} USDC max/tx). Confirm with your main wallet below.`,
+            createdAt: new Date().toISOString(),
+            actionPreview: turn.preview,
+          });
+          setReplyId(msgId);
+          setThinking(false);
+          sendingRef.current = false;
+          return;
+        }
+
+        setStatusLine("Auto-Pilot executing from Agent Vault…");
+        try {
+          const defaultArcChain = isMainnetActive ? "Arc_Mainnet" : "Arc_Testnet";
+          let tx: TransactionRecord;
+          if (turn.preview.type === "send") {
+            const res = await executeAgentVaultSend({
+              ownerAddress: walletAddress,
+              recipient: turn.preview.recipient as `0x${string}`,
+              amount: turn.preview.amount || "0",
+              isMainnet: isMainnetActive,
+            });
+            tx = {
+              id: `tx_${Math.random().toString(36).slice(2, 11)}`,
+              type: "send",
+              status: "success",
+              amount: turn.preview.amount || "0",
+              token: "USDC",
+              fromChain: defaultArcChain,
+              toChain: defaultArcChain,
+              recipient: turn.preview.recipient,
+              feeUsd: 0.001,
+              txHash: res.txHash,
+              explorerUrl: res.explorerUrl,
+              createdAt: new Date().toISOString(),
+              message: `Auto-Pilot sent ${turn.preview.amount} USDC from Agent Vault`,
+              executionMode: "live",
+              steps: [{ name: "Agent Vault Send", state: "success", txHash: res.txHash }],
+            };
+          } else {
+            const activeMod = await import("@/sdk/active-wallet");
+            const prevProvider = activeMod.getActiveProvider();
+            const prevMeta = activeMod.getActiveWalletMeta();
+            const vaultProvider = createAgentVaultProvider(walletAddress, isMainnetActive);
+            activeMod.setActiveProvider(vaultProvider, {
+              uuid: "agent-vault",
+              name: "Kona Agent Vault",
+              address: vault.address.toLowerCase(),
+            });
+            try {
+              if (turn.preview.type === "swap") {
+                if (isMainnetActive) {
+                  tx = await runMainnetUniswapSwap({
+                    amount: turn.preview.amount || "1",
+                    tokenIn: turn.preview.token || "USDC",
+                    tokenOut: turn.preview.tokenOut || "EURC",
+                    walletAddress: vault.address,
+                    onStatus: (m) => setStatusLine(m),
+                  });
+                } else {
+                  tx = await executeSwap({
+                    amount: turn.preview.amount || "1",
+                    tokenIn: turn.preview.token || "USDC",
+                    tokenOut: turn.preview.tokenOut || "EURC",
+                    chain: "Arc_Testnet",
+                  });
+                }
+              } else {
+                tx = await executeBridge({
+                  amount: turn.preview.amount || "1",
+                  fromChain: (turn.preview.fromChain || defaultArcChain) as never,
+                  toChain: (turn.preview.toChain || (isMainnetActive ? "Base" : "Base_Sepolia")) as never,
+                  token: "USDC",
+                  preferLive: true,
+                });
+              }
+            } finally {
+              if (prevProvider && prevMeta) {
+                activeMod.setActiveProvider(prevProvider, prevMeta);
+              }
+            }
+          }
+
+          addTransaction(tx);
+          setActiveTx(tx.id);
+          const msgId = uid("msg");
+          addMessage({
+            id: msgId,
+            role: "assistant",
+            content: [
+              `✅ **Auto-Pilot Executed (${isMainnetActive ? "Arc Mainnet" : "Arc Testnet"})**`,
+              "",
+              `• **Action:** ${turn.preview.title}`,
+              `• **Amount:** ${tx.amount} ${tx.token}${tx.tokenOut ? ` → ${tx.tokenOut}` : ""}`,
+              tx.txHash ? `• **Tx Hash:** \`${tx.txHash}\`` : "",
+              tx.explorerUrl ? `• **Explorer:** ${tx.explorerUrl}` : "",
+            ]
+              .filter(Boolean)
+              .join("\n"),
+            createdAt: new Date().toISOString(),
+            transactionId: tx.id,
+          });
+          setReplyId(msgId);
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          const msgId = uid("msg");
+          addMessage({
+            id: msgId,
+            role: "assistant",
+            content: `**Auto-Pilot could not complete**\n\n${msg}\n\nYou can still confirm manually with your main wallet below:`,
+            createdAt: new Date().toISOString(),
+            actionPreview: turn.preview,
+          });
+          setReplyId(msgId);
+        } finally {
+          setThinking(false);
+          setStatusLine(null);
+          sendingRef.current = false;
+        }
+        return;
+      }
+    }
     setStatusLine("Agent online…");
     setLiveTrace([]);
 

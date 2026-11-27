@@ -9,6 +9,7 @@ import type { PaymentChain } from "@/lib/payment-tools";
 import { usePilotStore } from "@/store/pilot-store";
 import { AssistantRobot, type AssistantMood } from "./assistant-robot";
 import { AssistantNetworkNotice, AssistantQuoteNotice, AssistantToolbelt, AssistantTransactionCard, transactionStatus } from "./assistant-toolbelt";
+import { AutopilotControl } from "./autopilot-control";
 import { useAssistantWorkspace } from "./assistant-workspace-context";
 import styles from "./assistant-robot.module.css";
 import identity from "./kona-identity.json";
@@ -113,6 +114,7 @@ export function WorkspaceAssistant({ requestChain, onSwitchNetwork, switchingNet
           tools={visible ? (
             <div role="region" aria-label="Assistant tools and live status" className="max-h-48 space-y-2 overflow-y-auto overscroll-contain border-b border-border px-4 py-2.5 scrollbar-thin sm:px-6 lg:max-h-60">
               <AssistantToolbelt onGuide={showGuide} disabled={busy} />
+              <AutopilotControl disabled={busy} />
               {networkConflict && (
                 <AssistantNetworkNotice
                   {...networkConflict}

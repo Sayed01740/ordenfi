@@ -21,17 +21,37 @@ const INSTALL_LINKS = [
   {
     name: "MetaMask",
     url: "https://metamask.io/download/",
-    hint: "Most common",
+    hint: "Primary Arc EVM wallet",
   },
   {
     name: "Rabby",
     url: "https://rabby.io/",
-    hint: "Multi-chain friendly",
+    hint: "Multi-chain & tx simulation",
+  },
+  {
+    name: "Phantom",
+    url: "https://phantom.app/download",
+    hint: "Native Arc & multi-chain",
   },
   {
     name: "Coinbase Wallet",
     url: "https://www.coinbase.com/wallet/downloads",
     hint: "Easy onboarding",
+  },
+  {
+    name: "OKX Wallet",
+    url: "https://www.okx.com/web3",
+    hint: "Native Arc EVM support",
+  },
+  {
+    name: "Trust Wallet",
+    url: "https://trustwallet.com/download",
+    hint: "Multi-chain browser & mobile",
+  },
+  {
+    name: "Rainbow",
+    url: "https://rainbow.me/download",
+    hint: "EVM wallet",
   },
   {
     name: "Brave Wallet",

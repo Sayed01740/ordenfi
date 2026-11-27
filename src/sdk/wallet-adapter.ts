@@ -38,6 +38,13 @@ export type InjectedProvider = {
   isOkxWallet?: boolean;
   isTrust?: boolean;
   isPhantom?: boolean;
+  isRainbow?: boolean;
+  isBitKeep?: boolean;
+  isBinance?: boolean;
+  isGateWallet?: boolean;
+  isZerion?: boolean;
+  isOneInchIOSWallet?: boolean;
+  isTokenPocket?: boolean;
   providers?: InjectedProvider[];
 };
 
@@ -56,6 +63,11 @@ declare global {
     okxwallet?: InjectedProvider;
     trustwallet?: InjectedProvider;
     phantom?: { ethereum?: InjectedProvider };
+    bitkeep?: { ethereum?: InjectedProvider };
+    BinanceChain?: InjectedProvider;
+    gatewallet?: InjectedProvider;
+    rainbow?: InjectedProvider;
+    zerionWallet?: InjectedProvider;
   }
 }
 
@@ -71,18 +83,42 @@ function guessName(p: InjectedProvider): string {
   if (p.isOkxWallet) return "OKX Wallet";
   if (p.isTrust) return "Trust Wallet";
   if (p.isPhantom) return "Phantom";
+  if (p.isRainbow) return "Rainbow";
+  if (p.isBitKeep) return "Bitget Wallet";
+  if (p.isBinance) return "Binance Wallet";
+  if (p.isGateWallet) return "Gate Web3";
+  if (p.isZerion) return "Zerion";
+  if (p.isOneInchIOSWallet) return "1inch Wallet";
+  if (p.isTokenPocket) return "TokenPocket";
   // MetaMask sets isMetaMask=true even when window.ethereum is a multi-provider proxy
   if (p.isMetaMask && !p.isRabby) return "MetaMask";
   return "Browser Wallet";
 }
 
+function normalizeWalletName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+wallet$/i, "");
+}
+
 export async function discoverWallets(): Promise<DiscoveredWallet[]> {
   if (typeof window === "undefined") return [];
 
-  const byKey = new Map<string, DiscoveredWallet>();
+  const list: DiscoveredWallet[] = [];
+  const seenProviders = new Set<InjectedProvider>();
+  const seenRdns = new Set<string>();
+  const seenNames = new Set<string>();
+
   const add = (w: DiscoveredWallet) => {
-    const key = w.rdns || w.uuid || w.name;
-    if (!byKey.has(key)) byKey.set(key, w);
+    if (!w.provider) return;
+    if (seenProviders.has(w.provider)) return;
+    const rdnsKey = w.rdns?.trim().toLowerCase();
+    if (rdnsKey && seenRdns.has(rdnsKey)) return;
+    const nameKey = normalizeWalletName(w.name);
+    if (nameKey && seenNames.has(nameKey)) return;
+
+    seenProviders.add(w.provider);
+    if (rdnsKey) seenRdns.add(rdnsKey);
+    if (nameKey) seenNames.add(nameKey);
+    list.push(w);
   };
 
   await new Promise<void>((resolve) => {
@@ -107,7 +143,7 @@ export async function discoverWallets(): Promise<DiscoveredWallet[]> {
 
   const eth = window.ethereum;
   // Prefer EIP-6963 list; only fall back to ethereum.providers when empty
-  if (byKey.size === 0) {
+  if (list.length === 0) {
     if (eth?.providers && Array.isArray(eth.providers)) {
       eth.providers.forEach((p, i) => {
         const name = guessName(p);
@@ -126,36 +162,35 @@ export async function discoverWallets(): Promise<DiscoveredWallet[]> {
     }
   }
 
-  if (window.coinbaseWalletExtension) {
-    add({
-      uuid: "coinbase-ext",
-      name: "Coinbase Wallet",
-      provider: window.coinbaseWalletExtension,
-    });
-  }
-  if (window.okxwallet) {
-    add({
-      uuid: "okx",
-      name: "OKX Wallet",
-      provider: window.okxwallet,
-    });
-  }
-  if (window.trustwallet) {
-    add({
-      uuid: "trust",
-      name: "Trust Wallet",
-      provider: window.trustwallet,
-    });
-  }
-  if (window.phantom?.ethereum) {
-    add({
-      uuid: "phantom-evm",
-      name: "Phantom",
-      provider: window.phantom.ethereum,
-    });
+  // Legacy window.* fallbacks — skipped automatically if already discovered via EIP-6963
+  const legacyGlobals: Array<{
+    provider?: InjectedProvider;
+    uuid: string;
+    name: string;
+    rdns: string;
+  }> = [
+      { provider: window.coinbaseWalletExtension, uuid: "coinbase-ext", name: "Coinbase Wallet", rdns: "com.coinbase.wallet" },
+      { provider: window.okxwallet, uuid: "okx", name: "OKX Wallet", rdns: "com.okex.wallet" },
+      { provider: window.trustwallet, uuid: "trust", name: "Trust Wallet", rdns: "com.trustwallet.app" },
+      { provider: window.phantom?.ethereum, uuid: "phantom-evm", name: "Phantom", rdns: "app.phantom" },
+      { provider: window.bitkeep?.ethereum, uuid: "bitget-evm", name: "Bitget Wallet", rdns: "com.bitget.web3" },
+      { provider: window.BinanceChain, uuid: "binance-evm", name: "Binance Wallet", rdns: "com.binance.wallet" },
+      { provider: window.gatewallet, uuid: "gate-evm", name: "Gate Web3", rdns: "io.gate.wallet" },
+      { provider: window.rainbow, uuid: "rainbow-evm", name: "Rainbow", rdns: "me.rainbow" },
+      { provider: window.zerionWallet, uuid: "zerion-evm", name: "Zerion", rdns: "io.zerion.wallet" },
+    ];
+
+  for (const item of legacyGlobals) {
+    if (item.provider) {
+      add({
+        uuid: item.uuid,
+        name: item.name,
+        rdns: item.rdns,
+        provider: item.provider,
+      });
+    }
   }
 
-  const list = [...byKey.values()];
   // Alphabetical — do NOT rank MetaMask first
   list.sort((a, b) => a.name.localeCompare(b.name));
   return list;
@@ -193,7 +228,7 @@ export async function getInjectedProvider(
       try {
         const accs = (await w.provider.request({ method: "eth_accounts" })) as string[];
         if (accs && accs.length > 0) return w.provider;
-      } catch {}
+      } catch { }
     }
     if (typeof window !== "undefined" && window.ethereum) return window.ethereum;
     return wallets[0].provider;
@@ -862,15 +897,15 @@ export async function createAppKitAdapterFromBrowser(opts?: {
       if (!origin) return null;
       const map: Record<number, string> = {
         [ARC_CHAIN_ID]: `${origin}/api/rpc?chain=arc`,
-        84532:    `${origin}/api/rpc?chain=base`,
+        84532: `${origin}/api/rpc?chain=base`,
         11155111: `${origin}/api/rpc?chain=eth`,
-        421614:   `${origin}/api/rpc?chain=arb`,
+        421614: `${origin}/api/rpc?chain=arb`,
         11155420: `${origin}/api/rpc?chain=op`,
-        80002:    `${origin}/api/rpc?chain=polygon`,
-        43113:    `${origin}/api/rpc?chain=avax`,
-        1301:     `${origin}/api/rpc?chain=unichain`,
-        59141:    `${origin}/api/rpc?chain=linea`,
-        57054:    `${origin}/api/rpc?chain=sonic`,
+        80002: `${origin}/api/rpc?chain=polygon`,
+        43113: `${origin}/api/rpc?chain=avax`,
+        1301: `${origin}/api/rpc?chain=unichain`,
+        59141: `${origin}/api/rpc?chain=linea`,
+        57054: `${origin}/api/rpc?chain=sonic`,
       };
       return map[id] ?? null;
     };
@@ -878,7 +913,7 @@ export async function createAppKitAdapterFromBrowser(opts?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const adapter = await create({
       provider: proxyProvider,
-      
+
       getPublicClient: (args: {
         chain: {
           id?: number | bigint;
@@ -890,9 +925,9 @@ export async function createAppKitAdapterFromBrowser(opts?: {
         // Circle may pass id as number | bigint; Arc is always 5042002
         const id = Number(
           chainIn?.id ??
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (chainIn as any)?.chainId ??
-            ARC_CHAIN_ID,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (chainIn as any)?.chainId ??
+          ARC_CHAIN_ID,
         );
 
         // Per-chain direct RPC fallbacks (used when proxy is unavailable)

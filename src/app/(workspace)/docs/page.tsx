@@ -65,7 +65,7 @@ export default function DocsPage() {
         <article aria-label="Ordenfi user guide" className="max-w-[72ch] min-w-0 text-[0.9375rem] leading-[1.7] text-muted-foreground [&_strong]:font-semibold [&_strong]:text-foreground">
           <DocsSection id="overview" title="Get started">
             <ol className="list-decimal space-y-2 pl-5 marker:text-accent">
-              <li>Open the workspace and select <strong>Connect wallet</strong>. Once connected, open the wallet menu to check your address, available balance and recent activity.</li>
+              <li>Open the workspace and select <strong>Connect wallet</strong>. Ordenfi supports Arc-compatible EVM wallets via EIP-6963 (including MetaMask, Rabby, Phantom, Coinbase Wallet, OKX Wallet, Trust Wallet, Rainbow, Brave Wallet, Bitget Wallet, and Binance Wallet). Once connected, open the wallet menu to check your address, available balance and recent activity.</li>
               <li>Choose <strong>Mainnet</strong> or <strong>Testnet</strong> in the workspace. If your wallet asks to switch networks, review the request before accepting.</li>
               <li>Pick an action from the sidebar. Review the amount, network and any fees before confirming in your wallet. Arc network fees are paid in USDC.</li>
             </ol>
